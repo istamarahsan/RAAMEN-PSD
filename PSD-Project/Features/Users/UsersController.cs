@@ -71,7 +71,7 @@ namespace PSD_Project.Features.Users
         {
             if (form == null) return BadRequest();
 
-            if (_db.Users.Select(user => user.Email).Contains(form.Email)) return StatusCode(HttpStatusCode.Conflict);
+            if (_db.Users.Select(user => user.Username).Contains(form.Username)) return StatusCode(HttpStatusCode.Conflict);
 
             _db.Users.Add(new PSD_Project.User
             {
