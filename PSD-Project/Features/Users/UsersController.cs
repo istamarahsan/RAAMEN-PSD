@@ -95,6 +95,17 @@ namespace PSD_Project.Features.Users
             }
         }
 
+        [Route("login")]
+        [HttpPost]
+        public IHttpActionResult Login([FromBody] LoginCredentials credentials)
+        {
+            var credentialsMatch = _db.Users
+                .FirstOrDefault(user => user.Username == credentials.Username
+                                        && user.Password == credentials.Password) != null;
+
+            return credentialsMatch ? (IHttpActionResult)Ok() : BadRequest();
+        }
+
         private User ConvertModel(PSD_Project.User user) => new User(user.Id, user.Username, user.Email, user.Gender);
     }
 }
