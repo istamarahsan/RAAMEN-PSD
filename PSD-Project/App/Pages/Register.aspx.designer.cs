@@ -33,6 +33,15 @@ namespace PSD_Project.App.Pages
         protected global::System.Web.UI.WebControls.TextBox UsernameTextBox;
 
         /// <summary>
+        /// UsernameErrorLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label UsernameErrorLabel;
+
+        /// <summary>
         /// EmailTextBox control.
         /// </summary>
         /// <remarks>
@@ -40,6 +49,15 @@ namespace PSD_Project.App.Pages
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox EmailTextBox;
+
+        /// <summary>
+        /// EmailErrorLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label EmailErrorLabel;
 
         /// <summary>
         /// GenderRadioButtons control.
@@ -51,6 +69,15 @@ namespace PSD_Project.App.Pages
         protected global::System.Web.UI.WebControls.RadioButtonList GenderRadioButtons;
 
         /// <summary>
+        /// GenderErrorLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label GenderErrorLabel;
+
+        /// <summary>
         /// PasswordTextBox control.
         /// </summary>
         /// <remarks>
@@ -58,6 +85,15 @@ namespace PSD_Project.App.Pages
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox PasswordTextBox;
+
+        /// <summary>
+        /// PasswordErrorLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label PasswordErrorLabel;
 
         /// <summary>
         /// ConfirmPasswordTextBox control.
@@ -69,15 +105,6 @@ namespace PSD_Project.App.Pages
         protected global::System.Web.UI.WebControls.TextBox ConfirmPasswordTextBox;
 
         /// <summary>
-        /// SelectedLabel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label SelectedLabel;
-
-        /// <summary>
         /// SubmitButton control.
         /// </summary>
         /// <remarks>
@@ -85,5 +112,14 @@ namespace PSD_Project.App.Pages
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button SubmitButton;
+
+        /// <summary>
+        /// RegisterResultLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label RegisterResultLabel;
     }
 }

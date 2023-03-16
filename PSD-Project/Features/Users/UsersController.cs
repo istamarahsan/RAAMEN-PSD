@@ -50,6 +50,7 @@ namespace PSD_Project.Features.Users
                 .OrElse(NotFound());
         }
 
+        [Route]
         [HttpGet]
         public IEnumerable<User> GetUsersWithRole([FromUri] int roleId)
         {
@@ -64,6 +65,7 @@ namespace PSD_Project.Features.Users
                 .ToList();
         }
         
+        [Route]
         [HttpPost]
         public IHttpActionResult CreateNewUser([FromBody] RegistrationFormDetails form)
         {
@@ -73,6 +75,7 @@ namespace PSD_Project.Features.Users
 
             _db.Users.Add(new PSD_Project.User
             {
+                Id = _db.Users.Select(users => users.Id).DefaultIfEmpty(0).Max() + 1,
                 Username = form.Username,
                 Email = form.Email,
                 Gender = form.Gender,

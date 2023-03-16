@@ -38,6 +38,9 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="Try\TryErr.cs" />
+        <Compile Include="Try\TryOk.cs" />
+        <Compile Include="Try\Try.cs" />
         <Compile Include="Option\None.cs" />
         <Compile Include="Option\Option.cs" />
         <Compile Include="Option\Some.cs" />
