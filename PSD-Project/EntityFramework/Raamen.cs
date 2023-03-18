@@ -1,9 +1,6 @@
-using System;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
-using System.Linq;
 
-namespace PSD_Project
+namespace PSD_Project.EntityFramework
 {
     public partial class Raamen : DbContext
     {

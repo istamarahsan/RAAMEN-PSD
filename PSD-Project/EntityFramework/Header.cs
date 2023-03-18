@@ -1,10 +1,8 @@
-namespace PSD_Project
+namespace PSD_Project.EntityFramework
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-    using System.Data.Entity.Spatial;
 
     [Table("Header")]
     public partial class Header

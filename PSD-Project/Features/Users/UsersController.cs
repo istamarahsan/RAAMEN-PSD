@@ -10,42 +10,33 @@ using Util.Option;
 namespace PSD_Project.Features.Users
 {
     [RoutePrefix("api/users")]
-    public class UsersController : ApiController
+    public partial class UsersController : ApiController
     {
-        public class UserDetails
-        {
-            public string Username { get; set; }
-            public string Email { get; set; }
-            public string Gender { get; set; }
-            public string Password { get; set; }
+        private readonly IUsersRepository usersRepository;
 
-            public UserDetails(string username, string email, string gender, string password)
-            {
-                Username = username;
-                Email = email;
-                Gender = gender;
-                Password = password;
-            }
+        public UsersController()
+        {
+            usersRepository = new UsersRepository();
         }
-        
-        private readonly Raamen _db = new Raamen();
+
+        public UsersController(IUsersRepository usersRepository)
+        {
+            this.usersRepository = usersRepository;
+        }
 
         [Route]
         [HttpGet]
         public async Task<List<User>> GetAllUsers()
         {
-            var users = await _db.Users.ToListAsync();
-            return users.Select(ConvertModel).ToList();
+            return await usersRepository.GetUsersAsync();
         }
         
         [Route("{id}")]
         [HttpGet]
         public async Task<IHttpActionResult> GetUser(int id)
         {
-            var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == id);
+            var user = await usersRepository.GetUserAsync(id);
             return user
-                .ToOption()
-                .Map(ConvertModel)
                 .Map(Ok)
                 .Cast<IHttpActionResult>()
                 .OrElse(NotFound());
@@ -55,56 +46,35 @@ namespace PSD_Project.Features.Users
         [HttpGet]
         public async Task<List<User>> GetUsersWithRole([FromUri] int roleId)
         {
-            var users = await _db.Roles
-                .Where(role => role.id == roleId)
-                .Join(_db.Users,
-                    role => role.id,
-                    user => user.Roleid,
-                    (role, user) => user)
-                .ToListAsync();
-            return users
-                .Select(ConvertModel)
-                .ToList();
+            return await usersRepository.GetUsersWithRoleAsync(roleId);
         }
 
         [Route]
         [HttpGet]
-        public async Task<IHttpActionResult> GetUsersWithUsername([FromUri] string username)
+        public async Task<IHttpActionResult> GetUserWithUsername([FromUri] string username)
         {
-            var users = await _db.Users.Where(user => user.Username == username).ToListAsync();
-            return users.Any()
-                ? (IHttpActionResult)Ok(users)
-                : NotFound();
+            var user = await usersRepository.GetUserWithUsernameAsync(username);
+            return user.Map(Ok)
+                .Cast<IHttpActionResult>()
+                .OrElse(NotFound());
         }
         
         [Route]
         [HttpPost]
-        public async Task<IHttpActionResult> CreateNewUser([FromBody] UserDetails form)
+        public async Task<IHttpActionResult> CreateNewUser([FromBody] UserDetailsForm form)
         {
             if (form == null) return BadRequest();
 
-            _db.Users.Add(new PSD_Project.User
-            {
-                Id = _db.Users.Select(users => users.Id).DefaultIfEmpty(0).Max() + 1,
-                Username = form.Username,
-                Email = form.Email,
-                Gender = form.Gender,
-                Password = form.Password,
-                Roleid = 0
-            });
-
             try
             {
-                await _db.SaveChangesAsync();
+                await usersRepository.AddNewUserAsync(username: form.Username, email: form.Email, password: form.Password, gender: form.Gender, 0);
                 return Ok();
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.StackTrace);
+                Console.WriteLine(e);
                 return InternalServerError();
             }
         }
-
-        private User ConvertModel(PSD_Project.User user) => new User(user.Id, user.Username, user.Email, user.Gender);
     }
 }

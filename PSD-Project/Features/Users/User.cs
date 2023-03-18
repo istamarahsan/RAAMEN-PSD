@@ -11,15 +11,21 @@ namespace PSD_Project.Features.Users
         public readonly string Username;
         [DataMember]
         public readonly string Email;
+        [DataMember] 
+        public readonly string Password;
         [DataMember]
         public readonly string Gender;
+        [DataMember] 
+        public readonly Role Role;
 
-        public User(int id, string username, string email, string gender)
+        public User(int id, string username, string email, string password, string gender, Role role)
         {
             Id = id;
             Username = username;
             Email = email;
+            Password = password;
             Gender = gender;
+            Role = role;
         }
     }
 }

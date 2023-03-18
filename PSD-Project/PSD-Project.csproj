@@ -159,20 +159,25 @@
     </Compile>
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Class1.cs" />
-    <Compile Include="Detail.cs" />
+    <Compile Include="EntityFramework\Detail.cs" />
+    <Compile Include="EntityFramework\Header.cs" />
+    <Compile Include="EntityFramework\Meat.cs" />
+    <Compile Include="EntityFramework\Raamen.cs" />
+    <Compile Include="EntityFramework\Raman.cs" />
+    <Compile Include="EntityFramework\Role.cs" />
+    <Compile Include="EntityFramework\User.cs" />
     <Compile Include="Features\LogIn\LogInController.cs" />
     <Compile Include="Features\LogIn\LoginCredentials.cs" />
     <Compile Include="Features\Register\RegisterController.cs" />
     <Compile Include="Features\Register\RegistrationFormDetails.cs" />
+    <Compile Include="Features\Users\IUserRepository.cs" />
+    <Compile Include="Features\Users\Role.cs" />
     <Compile Include="Features\Users\User.cs" />
+    <Compile Include="Features\Users\UserDetailsForm.cs" />
     <Compile Include="Features\Users\UsersController.cs" />
+    <Compile Include="Features\Users\UsersRepository.cs" />
     <Compile Include="global.asax.cs" />
-    <Compile Include="Header.cs" />
-    <Compile Include="Meat.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Raamen.cs" />
-    <Compile Include="Raman.cs" />
-    <Compile Include="Role.cs" />
     <Compile Include="TEST\WebForm1.aspx.cs">
       <DependentUpon>WebForm1.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -180,7 +185,6 @@
     <Compile Include="TEST\WebForm1.aspx.designer.cs">
       <DependentUpon>WebForm1.aspx</DependentUpon>
     </Compile>
-    <Compile Include="User.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

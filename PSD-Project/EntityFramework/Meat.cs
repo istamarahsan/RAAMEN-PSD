@@ -1,18 +1,16 @@
-namespace PSD_Project
+namespace PSD_Project.EntityFramework
 {
-    using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-    using System.Data.Entity.Spatial;
 
-    [Table("Role")]
-    public partial class Role
+    [Table("Meat")]
+    public partial class Meat
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Role()
+        public Meat()
         {
-            Users = new HashSet<User>();
+            Ramen = new HashSet<Raman>();
         }
 
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
@@ -22,6 +20,6 @@ namespace PSD_Project
         public string name { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<User> Users { get; set; }
+        public virtual ICollection<Raman> Ramen { get; set; }
     }
 }
