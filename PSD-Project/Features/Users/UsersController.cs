@@ -67,12 +67,17 @@ namespace PSD_Project.Features.Users
 
             try
             {
-                await usersRepository.AddNewUserAsync(username: form.Username, email: form.Email, password: form.Password, gender: form.Gender, roleId: form.RoleId);
+                await usersRepository.AddNewUserAsync(username: form.Username, email: form.Email,
+                    password: form.Password, gender: form.Gender, roleId: form.RoleId);
                 return Ok();
+            }
+            catch (ArgumentException e)
+            {
+                Console.WriteLine(e);
+                return BadRequest();
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
                 return InternalServerError();
             }
         }

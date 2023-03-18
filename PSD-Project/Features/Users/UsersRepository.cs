@@ -45,6 +45,9 @@ namespace PSD_Project.Features.Users
 
         public async Task AddNewUserAsync(string username, string email, string password, string gender, int roleId)
         {
+            if (!await db.Roles.Select(role => role.id).ContainsAsync(roleId)) 
+                throw new ArgumentException("Role with that id does not exist");
+            
             db.Users.Add(new PSD_Project.EntityFramework.User
             {
                 Id = db.Users.Select(users => users.Id).DefaultIfEmpty(0).Max() + 1,
