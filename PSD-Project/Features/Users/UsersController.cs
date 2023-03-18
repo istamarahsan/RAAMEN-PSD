@@ -10,14 +10,14 @@ namespace PSD_Project.Features.Users
     [RoutePrefix("api/users")]
     public class UsersController : ApiController
     {
-        public class RegistrationFormDetails
+        public class UserDetails
         {
             public string Username { get; set; }
             public string Email { get; set; }
             public string Gender { get; set; }
             public string Password { get; set; }
 
-            public RegistrationFormDetails(string username, string email, string gender, string password)
+            public UserDetails(string username, string email, string gender, string password)
             {
                 Username = username;
                 Email = email;
@@ -64,14 +64,22 @@ namespace PSD_Project.Features.Users
                 .Select(ConvertModel)
                 .ToList();
         }
+
+        [Route]
+        [HttpGet]
+        public IHttpActionResult GetUsersWithUsername([FromUri] string username)
+        {
+            var users = _db.Users.Where(user => user.Username == username).ToList();
+            return users.Any()
+                ? (IHttpActionResult)Ok(users)
+                : NotFound();
+        }
         
         [Route]
         [HttpPost]
-        public IHttpActionResult CreateNewUser([FromBody] RegistrationFormDetails form)
+        public IHttpActionResult CreateNewUser([FromBody] UserDetails form)
         {
             if (form == null) return BadRequest();
-
-            if (_db.Users.Select(user => user.Email).Contains(form.Email)) return StatusCode(HttpStatusCode.Conflict);
 
             _db.Users.Add(new PSD_Project.User
             {
@@ -93,6 +101,17 @@ namespace PSD_Project.Features.Users
                 Console.WriteLine(e.StackTrace);
                 return InternalServerError();
             }
+        }
+
+        [Route("login")]
+        [HttpPost]
+        public IHttpActionResult Login([FromBody] LoginCredentials credentials)
+        {
+            var credentialsMatch = _db.Users
+                .FirstOrDefault(user => user.Username == credentials.Username
+                                        && user.Password == credentials.Password) != null;
+
+            return credentialsMatch ? (IHttpActionResult)Ok() : BadRequest();
         }
 
         private User ConvertModel(PSD_Project.User user) => new User(user.Id, user.Username, user.Email, user.Gender);

@@ -136,12 +136,20 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App\Pages\Login.aspx" />
     <Content Include="App\Pages\Register.aspx" />
     <Content Include="global.asax" />
     <Content Include="TEST\WebForm1.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App\Pages\Login.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+      <DependentUpon>Login.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="App\Pages\Login.aspx.designer.cs">
+      <DependentUpon>Login.aspx</DependentUpon>
+    </Compile>
     <Compile Include="App\Pages\Register.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
       <DependentUpon>Register.aspx</DependentUpon>
@@ -152,6 +160,8 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Class1.cs" />
     <Compile Include="Detail.cs" />
+    <Compile Include="Features\Register\RegisterController.cs" />
+    <Compile Include="Features\Users\LoginCredentials.cs" />
     <Compile Include="Features\Users\User.cs" />
     <Compile Include="Features\Users\UsersController.cs" />
     <Compile Include="global.asax.cs" />
@@ -181,7 +191,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data" />
-    <Folder Include="Features" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Util\Util.csproj">

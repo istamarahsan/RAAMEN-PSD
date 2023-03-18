@@ -36,7 +36,7 @@ namespace PSD_Project.App.Pages
             }
         }
         
-        private static readonly Uri UsersServiceUri = new Uri("http://localhost:5000/api/users");
+        private static readonly Uri UsersServiceUri = new Uri("http://localhost:5000/api/register");
         protected void Page_Load(object sender, EventArgs e)
         {
             
@@ -92,7 +92,7 @@ namespace PSD_Project.App.Pages
                         RegisterResultLabel.Text = "User Successfully Created";
                         break;
                     case HttpStatusCode.Conflict:
-                        EmailErrorLabel.Text = "It seems this email has already been registered";
+                        UsernameErrorLabel.Text = "It seems this username already exists";
                         break;
                     default:
                         RegisterResultLabel.Text = $"Oops. Something went wrong :( - {post.Result.StatusCode}";
