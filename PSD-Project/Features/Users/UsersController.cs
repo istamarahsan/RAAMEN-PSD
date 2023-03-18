@@ -10,7 +10,7 @@ using Util.Option;
 namespace PSD_Project.Features.Users
 {
     [RoutePrefix("api/users")]
-    public partial class UsersController : ApiController
+    public class UsersController : ApiController
     {
         private readonly IUsersRepository usersRepository;
 
@@ -61,13 +61,13 @@ namespace PSD_Project.Features.Users
         
         [Route]
         [HttpPost]
-        public async Task<IHttpActionResult> CreateNewUser([FromBody] UserDetailsForm form)
+        public async Task<IHttpActionResult> CreateNewUser([FromBody] NewUserDetails form)
         {
             if (form == null) return BadRequest();
 
             try
             {
-                await usersRepository.AddNewUserAsync(username: form.Username, email: form.Email, password: form.Password, gender: form.Gender, 0);
+                await usersRepository.AddNewUserAsync(username: form.Username, email: form.Email, password: form.Password, gender: form.Gender, roleId: form.RoleId);
                 return Ok();
             }
             catch (Exception e)

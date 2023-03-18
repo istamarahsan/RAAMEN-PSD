@@ -5,7 +5,9 @@ namespace Util.Option
     public abstract class Option<T>
     {
         public abstract void Match(Action<T> some, Action none);
+        public abstract TOut Match<TOut>(Func<T, TOut> some, Func<TOut> none);
         public abstract Option<TOut> Map<TOut>(Func<T, TOut> mapper);
+        public abstract Option<TOut> Bind<TOut>(Func<T, Option<TOut>> func);
         public abstract Option<TOut> Cast<TOut>() where TOut : class;
         public abstract T OrElse(T value);
     }
@@ -19,5 +21,12 @@ namespace Util.Option
             nullableObject != null 
                 ? Some(nullableObject) 
                 : None<T>();
+
+        public static Option<T> Check<T>(this T input, Predicate<T> check)
+        {
+            return check(input)
+                ? Some(input)
+                : None<T>();
+        }
     }
 }

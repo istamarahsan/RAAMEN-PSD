@@ -27,8 +27,7 @@ namespace PSD_Project.Features.Users
 
         public async Task<List<User>> GetUsersWithRoleAsync(int roleId)
         {
-            var usersWithRoleId = db.Users.Where(user => user.Roleid == roleId);
-            await usersWithRoleId.LoadAsync();
+            var usersWithRoleId = await db.Users.Where(user => user.Roleid == roleId).ToListAsync();
             return usersWithRoleId.AsEnumerable()
                 .Select(ConvertModel)
                 .ToList();

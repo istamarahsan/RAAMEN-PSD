@@ -1,12 +1,15 @@
 using System;
 using System.Net;
 using System.Net.Http;
-using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.UI;
 using Newtonsoft.Json;
+using PSD_Project.App.Common;
+using PSD_Project.Features.LogIn;
+using Util.Option;
+using Util.Try;
 
 namespace PSD_Project.App.Pages
 {
@@ -16,60 +19,109 @@ namespace PSD_Project.App.Pages
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            var usernameCookie = Request.Cookies["raamen-username"];
-            var passwordCookie = Request.Cookies["raamen-password"];
-            if (usernameCookie != null && passwordCookie != null)
-            {
-                UsernameTextBox.Text = usernameCookie.Value;
-                PasswordTextBox.Text = passwordCookie.Value;
-            }
+
+            var sessionTokenCookie = Request.Cookies["raamen-session"].ToOption();
+            sessionTokenCookie.Map(cookie => cookie.Value)
+                .Bind(val => Try.OfFallible<string, int>(int.Parse)(val).Ok())
+                .Match(
+                    some: token =>
+                    {
+                        if (ValidateSession(token))
+                        {
+                            Response.Redirect("Home.aspx");
+                        }
+                    },
+                    none: TryFillRememberedCredentials);
         }
 
         protected void OnClick(object sender, EventArgs e)
         {
-            var credentials = new LoginCredentials(
+            var credentials = new UserCredentials(
                 UsernameTextBox.Text,
                 PasswordTextBox.Text);
 
-            var json = JsonConvert.SerializeObject(credentials, Formatting.None);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-            var responseTask = RaamenApp.HttpClient.PostAsync(LoginServiceUri, content);
+            var credentialsAsJson = JsonConvert.SerializeObject(credentials, Formatting.None);
+            var credentialsAsContent = new StringContent(credentialsAsJson, Encoding.UTF8, "application/json");
+            var loginResponseTask = RaamenApp.HttpClient.PostAsync(LoginServiceUri, credentialsAsContent);
+            loginResponseTask.Wait();
+            loginResponseTask.Check(task => task.Status == TaskStatus.RanToCompletion, _ => "error sending http request")
+                .Map(task => task.Result)
+                .Bind(response => response.Check(
+                    r => r.StatusCode == HttpStatusCode.OK, 
+                    r => $"HTTP Error: {r.StatusCode}"))
+                .Map(response => response.Content)
+                .Bind(content => content.TryReadResponseString()
+                    .Match(
+                        some: Try.Of<string, string>,
+                        none: () => Try.Err<string, string>("error converting http response to string")))
+                .Bind(str => str.TryDeserializeJson<UserSession>()
+                    .Match(
+                        some: Try.Of<UserSession, string>,
+                        none: () => Try.Err<UserSession, string>("error deserializing response")))
+                .Map(s => s.SessionToken)
+                .Match(
+                    ok: token =>
+                    {
+                        LoginResultLabel.Text = "Login successful!";
+                        
+                        var tokenCookie = new HttpCookie("raamen-session")
+                        {
+                            Value = token.ToString(),
+                            Expires = DateTime.Now.AddDays(1)
+                        };
+                        Response.SetCookie(tokenCookie);
+
+                        if (RememberMeCheckBox.Checked)
+                        {
+                            var usernameCookie = new HttpCookie("raamen-username")
+                            {
+                                Value = credentials.Username,
+                                Expires = DateTime.Now.AddDays(1)
+                            };
+                            var passwordCookie = new HttpCookie("raamen-password")
+                            {
+                                Value = credentials.Password,
+                                Expires = DateTime.Now.AddDays(1)
+                            };
+                            Response.SetCookie(passwordCookie);
+                            Response.SetCookie(usernameCookie);
+                        }
+                        
+                        Response.Redirect("Home.aspx");
+                    },
+                    err: errorMessage =>
+                    {
+                        LoginResultLabel.Text = errorMessage;
+                    });
+            
+        }
+
+        private bool ValidateSession(int token)
+        {
+            var responseTask = RaamenApp.HttpClient.GetAsync(new Uri(LoginServiceUri, $"?sessionToken={token}"));
             while (responseTask.Status == TaskStatus.Running)
             {
             }
-
             var response = responseTask.Result;
-            var loginWasSuccessful = response.StatusCode == HttpStatusCode.OK;
-            LoginResultLabel.Text = loginWasSuccessful ? "Login Success" : "Something went wrong";
-            if (RememberMeCheckBox.Checked)
-            {
-                var usernameCookie = new HttpCookie("raamen-username")
-                {
-                    Value = credentials.Username,
-                    Expires = DateTime.Now.AddDays(1)
-                };
-                var passwordCookie = new HttpCookie("raamen-password")
-                {
-                    Value = credentials.Password,
-                    Expires = DateTime.Now.AddDays(1)
-                };
-                Response.SetCookie(passwordCookie);
-                Response.SetCookie(usernameCookie);
-            }
+
+            return response.StatusCode == HttpStatusCode.OK;
         }
 
-        [DataContract]
-        private class LoginCredentials
+        private void TryFillRememberedCredentials()
         {
-            [DataMember] public readonly string Password;
+            var usernameCookie = Request.Cookies["raamen-username"].ToOption();
+            var passwordCookie = Request.Cookies["raamen-password"].ToOption();
 
-            [DataMember] public readonly string Username;
-
-            public LoginCredentials(string username, string password)
-            {
-                Username = username;
-                Password = password;
-            }
+            usernameCookie.Map(cookie => cookie.Value)
+                .Bind(username => passwordCookie.Map(cookie => cookie.Value)
+                    .Map(password => (username, password)))
+                .Match(
+                    some: credentials =>
+                    {
+                        UsernameTextBox.Text = credentials.username;
+                        PasswordTextBox.Text = credentials.password;
+                    },
+                    none: () => { });
         }
     }
 }

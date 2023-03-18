@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Newtonsoft.Json;
+using PSD_Project.Features.Users;
 
 namespace PSD_Project.Features.Register
 {
@@ -32,7 +33,14 @@ namespace PSD_Project.Features.Register
                 await RaamenApp.HttpClient.GetAsync(new Uri(usersServiceUri, $"?username={form.Username}"));
             if (requestForUsersWithSameUsername.StatusCode == HttpStatusCode.NotFound)
             {
-                var userDetailsJson = JsonConvert.SerializeObject(form, Formatting.None);
+                var userDetailsJson = JsonConvert.SerializeObject(
+                    new NewUserDetails(
+                        username: form.Username,
+                        email: form.Email,
+                        password: form.Password,
+                        gender: form.Gender,
+                        0), 
+                    Formatting.None);
                 var userDetailsContent = new StringContent(userDetailsJson, Encoding.UTF8, "application/json");
                 var requestToAddNewUser = await RaamenApp.HttpClient.PostAsync(usersServiceUri, userDetailsContent);
                 return requestToAddNewUser.StatusCode == HttpStatusCode.OK

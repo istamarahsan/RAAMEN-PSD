@@ -9,6 +9,7 @@ namespace Util.Try
         public abstract void Match(Action<T> ok, Action<TErr> err);
         public abstract TOut Match<TOut>(Func<T, TOut> ok, Func<TErr, TOut> err);
         public abstract Try<TOut, TErr> Map<TOut>(Func<T, TOut> f);
+        public abstract Try<T, TOut> MapErr<TOut>(Func<TErr, TOut> f);
         public abstract Try<TOut, TErr> Cast<TOut>(Func<TErr> @catch);
         public abstract Try<TOut, TErr> Bind<TOut>(Func<T, Try<TOut, TErr>> f);
         public abstract Option<T> Ok();
@@ -46,6 +47,28 @@ namespace Util.Try
             return check(input) 
                 ? new TryOk<T, TErr>(input) as Try<T, TErr>
                 : new TryErr<T, TErr>(otherwise(input));
+        }
+
+        public static Try<T, TErr> Failed<T, TErr>(this Option<T> option, Func<TErr> otherwise)
+        {
+            return option.Match(
+                some: Of<T, TErr>,
+                none: () => Err<T, TErr>(otherwise()));
+        }
+
+        public static Func<TIn, Try<TOut, Exception>> OfFallible<TIn, TOut>(Func<TIn, TOut> fallible)
+        {
+            return @in =>
+            {
+                try
+                {
+                    return Of<TOut, Exception>(fallible(@in));
+                }
+                catch (Exception e)
+                {
+                    return Err<TOut, Exception>(e);
+                }
+            };
         }
     }
 }

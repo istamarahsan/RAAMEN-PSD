@@ -136,6 +136,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App\Pages\Home.aspx" />
     <Content Include="App\Pages\Login.aspx" />
     <Content Include="App\Pages\Register.aspx" />
     <Content Include="global.asax" />
@@ -143,6 +144,14 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App\Common\SerDe.cs" />
+    <Compile Include="App\Pages\Home.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+      <DependentUpon>Home.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="App\Pages\Home.aspx.designer.cs">
+      <DependentUpon>Home.aspx</DependentUpon>
+    </Compile>
     <Compile Include="App\Pages\Login.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
       <DependentUpon>Login.aspx</DependentUpon>
@@ -157,8 +166,8 @@
     <Compile Include="App\Pages\Register.aspx.designer.cs">
       <DependentUpon>Register.aspx</DependentUpon>
     </Compile>
+    <Compile Include="App\Pages\UserCredentials.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Class1.cs" />
     <Compile Include="EntityFramework\Detail.cs" />
     <Compile Include="EntityFramework\Header.cs" />
     <Compile Include="EntityFramework\Meat.cs" />
@@ -166,14 +175,18 @@
     <Compile Include="EntityFramework\Raman.cs" />
     <Compile Include="EntityFramework\Role.cs" />
     <Compile Include="EntityFramework\User.cs" />
+    <Compile Include="Features\LogIn\IUserSessions.cs" />
     <Compile Include="Features\LogIn\LogInController.cs" />
     <Compile Include="Features\LogIn\LoginCredentials.cs" />
+    <Compile Include="Features\LogIn\UserSession.cs" />
+    <Compile Include="Features\LogIn\UserSessionDetails.cs" />
+    <Compile Include="Features\LogIn\UserSessions.cs" />
     <Compile Include="Features\Register\RegisterController.cs" />
     <Compile Include="Features\Register\RegistrationFormDetails.cs" />
     <Compile Include="Features\Users\IUserRepository.cs" />
     <Compile Include="Features\Users\Role.cs" />
     <Compile Include="Features\Users\User.cs" />
-    <Compile Include="Features\Users\UserDetailsForm.cs" />
+    <Compile Include="Features\Users\NewUserDetails.cs" />
     <Compile Include="Features\Users\UsersController.cs" />
     <Compile Include="Features\Users\UsersRepository.cs" />
     <Compile Include="global.asax.cs" />

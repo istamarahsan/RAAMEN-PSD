@@ -27,6 +27,11 @@ namespace Util.Try
             return new TryOk<TOut, TErr>(f(_data));
         }
 
+        public override Try<T, TOut> MapErr<TOut>(Func<TErr, TOut> f)
+        {
+            return new TryOk<T, TOut>(_data);
+        }
+
         public override Try<TOut, TErr> Cast<TOut>(Func<TErr> @catch)
         {
             return _data is TOut @out 
