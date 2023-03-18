@@ -36,7 +36,7 @@ namespace PSD_Project.App.Pages
             }
         }
         
-        private static readonly Uri UsersServiceUri = new Uri("http://localhost:5000/api/users");
+        private static readonly Uri UsersServiceUri = new Uri("http://localhost:5000/api/register");
         protected void Page_Load(object sender, EventArgs e)
         {
             

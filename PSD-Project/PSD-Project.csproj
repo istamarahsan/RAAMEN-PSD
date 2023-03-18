@@ -160,6 +160,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Class1.cs" />
     <Compile Include="Detail.cs" />
+    <Compile Include="Features\Register\RegisterController.cs" />
     <Compile Include="Features\Users\LoginCredentials.cs" />
     <Compile Include="Features\Users\User.cs" />
     <Compile Include="Features\Users\UsersController.cs" />
@@ -190,7 +191,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data" />
-    <Folder Include="Features" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Util\Util.csproj">
