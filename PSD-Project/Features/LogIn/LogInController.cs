@@ -1,11 +1,9 @@
 using System;
-using System.Data.Entity;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Newtonsoft.Json;
 using PSD_Project.Features.Users;
-using Util.Option;
 
 namespace PSD_Project.Features.LogIn
 {
@@ -13,7 +11,16 @@ namespace PSD_Project.Features.LogIn
     public class LogInController : ApiController
     {
         private readonly Uri usersServiceUri = new Uri("http://localhost:5000/api/users");
-        
+
+        public LogInController()
+        {
+        }
+
+        public LogInController(Uri usersServiceUri)
+        {
+            this.usersServiceUri = usersServiceUri;
+        }
+
         [Route]
         [HttpPost]
         public async Task<IHttpActionResult> Login([FromBody] LoginCredentials credentials)
@@ -27,7 +34,7 @@ namespace PSD_Project.Features.LogIn
             var user = (User)JsonConvert.DeserializeObject(responseString, typeof(User));
 
             return user.Password == credentials.Password
-                ? (IHttpActionResult) Ok()
+                ? (IHttpActionResult)Ok()
                 : BadRequest();
         }
     }

@@ -38,6 +38,7 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="Collections\DictionaryExtensions.cs" />
         <Compile Include="Try\TryErr.cs" />
         <Compile Include="Try\TryOk.cs" />
         <Compile Include="Try\Try.cs" />

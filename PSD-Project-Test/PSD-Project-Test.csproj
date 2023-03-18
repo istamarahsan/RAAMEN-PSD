@@ -39,6 +39,9 @@
         <Reference Include="System" />
         <Reference Include="System.Core" />
         <Reference Include="System.Data" />
+        <Reference Include="System.Web.Http">
+          <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.9\lib\net45\System.Web.Http.dll</HintPath>
+        </Reference>
         <Reference Include="System.Xml" />
         <Reference Include="xunit.abstractions, Version=2.0.0.0, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c">
             <HintPath>..\packages\xunit.abstractions.2.0.0\lib\net35\xunit.abstractions.dll</HintPath>
@@ -62,6 +65,10 @@
       <ProjectReference Include="..\PSD-Project\PSD-Project.csproj">
         <Project>{51bb651e-ac37-47ae-b881-216a767bc7a1}</Project>
         <Name>PSD-Project</Name>
+      </ProjectReference>
+      <ProjectReference Include="..\Util\Util.csproj">
+        <Project>{15059755-f497-427f-bee1-b9fb3288f82b}</Project>
+        <Name>Util</Name>
       </ProjectReference>
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -4,7 +4,6 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
-using System.Web.Http.Results;
 using Newtonsoft.Json;
 
 namespace PSD_Project.Features.Register
@@ -14,13 +13,23 @@ namespace PSD_Project.Features.Register
     {
         private readonly Uri usersServiceUri = new Uri("http://localhost:5000/api/users");
 
+        public RegisterController()
+        {
+        }
+
+        public RegisterController(Uri usersServiceUri)
+        {
+            this.usersServiceUri = usersServiceUri;
+        }
+
         [Route]
         [HttpPost]
         public async Task<IHttpActionResult> Register([FromBody] RegistrationFormDetails form)
         {
             if (form == null) return BadRequest();
 
-            var requestForUsersWithSameUsername = await RaamenApp.HttpClient.GetAsync(new Uri(usersServiceUri, $"?username={form.Username}"));
+            var requestForUsersWithSameUsername =
+                await RaamenApp.HttpClient.GetAsync(new Uri(usersServiceUri, $"?username={form.Username}"));
             if (requestForUsersWithSameUsername.StatusCode == HttpStatusCode.NotFound)
             {
                 var userDetailsJson = JsonConvert.SerializeObject(form, Formatting.None);
