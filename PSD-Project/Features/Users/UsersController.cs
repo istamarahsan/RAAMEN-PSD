@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web.Http;
 using Util.Option;
 
@@ -30,19 +32,18 @@ namespace PSD_Project.Features.Users
 
         [Route]
         [HttpGet]
-        public IEnumerable<User> GetAllUsers()
+        public async Task<List<User>> GetAllUsers()
         {
-            return _db.Users
-                .Select(ConvertModel)
-                .ToList();
+            var users = await _db.Users.ToListAsync();
+            return users.Select(ConvertModel).ToList();
         }
         
         [Route("{id}")]
         [HttpGet]
-        public IHttpActionResult GetUser(int id)
+        public async Task<IHttpActionResult> GetUser(int id)
         {
-            return _db.Users
-                .FirstOrDefault(u => u.Id == id)
+            var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == id);
+            return user
                 .ToOption()
                 .Map(ConvertModel)
                 .Map(Ok)
@@ -52,24 +53,25 @@ namespace PSD_Project.Features.Users
 
         [Route]
         [HttpGet]
-        public IEnumerable<User> GetUsersWithRole([FromUri] int roleId)
+        public async Task<List<User>> GetUsersWithRole([FromUri] int roleId)
         {
-            return _db.Roles
+            var users = await _db.Roles
                 .Where(role => role.id == roleId)
                 .Join(_db.Users,
                     role => role.id,
                     user => user.Roleid,
                     (role, user) => user)
-                .AsEnumerable()
+                .ToListAsync();
+            return users
                 .Select(ConvertModel)
                 .ToList();
         }
 
         [Route]
         [HttpGet]
-        public IHttpActionResult GetUsersWithUsername([FromUri] string username)
+        public async Task<IHttpActionResult> GetUsersWithUsername([FromUri] string username)
         {
-            var users = _db.Users.Where(user => user.Username == username).ToList();
+            var users = await _db.Users.Where(user => user.Username == username).ToListAsync();
             return users.Any()
                 ? (IHttpActionResult)Ok(users)
                 : NotFound();
@@ -77,7 +79,7 @@ namespace PSD_Project.Features.Users
         
         [Route]
         [HttpPost]
-        public IHttpActionResult CreateNewUser([FromBody] UserDetails form)
+        public async Task<IHttpActionResult> CreateNewUser([FromBody] UserDetails form)
         {
             if (form == null) return BadRequest();
 
@@ -93,7 +95,7 @@ namespace PSD_Project.Features.Users
 
             try
             {
-                _db.SaveChanges();
+                await _db.SaveChangesAsync();
                 return Ok();
             }
             catch (Exception e)
@@ -105,13 +107,16 @@ namespace PSD_Project.Features.Users
 
         [Route("login")]
         [HttpPost]
-        public IHttpActionResult Login([FromBody] LoginCredentials credentials)
+        public async Task<IHttpActionResult> Login([FromBody] LoginCredentials credentials)
         {
-            var credentialsMatch = _db.Users
-                .FirstOrDefault(user => user.Username == credentials.Username
-                                        && user.Password == credentials.Password) != null;
-
-            return credentialsMatch ? (IHttpActionResult)Ok() : BadRequest();
+            return (await _db.Users
+                .FirstOrDefaultAsync(user =>
+                    user.Username == credentials.Username
+                    && user.Password == credentials.Password))
+                .ToOption()
+                .Map(_ => Ok())
+                .Cast<IHttpActionResult>()
+                .OrElse(BadRequest());
         }
 
         private User ConvertModel(PSD_Project.User user) => new User(user.Id, user.Username, user.Email, user.Gender);
