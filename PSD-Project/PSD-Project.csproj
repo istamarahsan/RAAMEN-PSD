@@ -160,8 +160,9 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Class1.cs" />
     <Compile Include="Detail.cs" />
+    <Compile Include="Features\LogIn\LogInController.cs" />
+    <Compile Include="Features\LogIn\LoginCredentials.cs" />
     <Compile Include="Features\Register\RegisterController.cs" />
-    <Compile Include="Features\Users\LoginCredentials.cs" />
     <Compile Include="Features\Users\User.cs" />
     <Compile Include="Features\Users\UsersController.cs" />
     <Compile Include="global.asax.cs" />

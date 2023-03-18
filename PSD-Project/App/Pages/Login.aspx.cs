@@ -12,7 +12,7 @@ namespace PSD_Project.App.Pages
 {
     public partial class Login : Page
     {
-        private static readonly Uri LoginServiceUri = new Uri("http://localhost:5000/api/users/login");
+        private static readonly Uri LoginServiceUri = new Uri("http://localhost:5000/api/login");
 
         protected void Page_Load(object sender, EventArgs e)
         {

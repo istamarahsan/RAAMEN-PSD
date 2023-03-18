@@ -105,20 +105,6 @@ namespace PSD_Project.Features.Users
             }
         }
 
-        [Route("login")]
-        [HttpPost]
-        public async Task<IHttpActionResult> Login([FromBody] LoginCredentials credentials)
-        {
-            return (await _db.Users
-                .FirstOrDefaultAsync(user =>
-                    user.Username == credentials.Username
-                    && user.Password == credentials.Password))
-                .ToOption()
-                .Map(_ => Ok())
-                .Cast<IHttpActionResult>()
-                .OrElse(BadRequest());
-        }
-
         private User ConvertModel(PSD_Project.User user) => new User(user.Id, user.Username, user.Email, user.Gender);
     }
 }
