@@ -28,7 +28,7 @@ namespace PSD_Project.Features.LogIn
             var requestForUserWithUsername =
                 await RaamenApp.HttpClient.GetAsync(new Uri(usersServiceUri, $"?username={credentials.Username}"));
 
-            if (requestForUserWithUsername.StatusCode == HttpStatusCode.NotFound) BadRequest();
+            if (requestForUserWithUsername.StatusCode == HttpStatusCode.NotFound) return BadRequest();
 
             var responseString = await requestForUserWithUsername.Content.ReadAsStringAsync();
             var user = (User)JsonConvert.DeserializeObject(responseString, typeof(User));
