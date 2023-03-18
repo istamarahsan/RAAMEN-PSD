@@ -196,9 +196,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Util\Util.csproj">
       <Project>{15059755-f497-427f-bee1-b9fb3288f82b}</Project>
       <Name>Util</Name>
