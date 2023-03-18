@@ -51,13 +51,9 @@ namespace PSD_Project.App.Pages
                     r => $"HTTP Error: {r.StatusCode}"))
                 .Map(response => response.Content)
                 .Bind(content => content.TryReadResponseString()
-                    .Match(
-                        some: Try.Of<string, string>,
-                        none: () => Try.Err<string, string>("error converting http response to string")))
+                    .OrErr(() => "error converting http response to string"))
                 .Bind(str => str.TryDeserializeJson<UserSession>()
-                    .Match(
-                        some: Try.Of<UserSession, string>,
-                        none: () => Try.Err<UserSession, string>("error deserializing response")))
+                    .OrErr(() => "error deserializing response"))
                 .Map(s => s.SessionToken)
                 .Match(
                     ok: token =>

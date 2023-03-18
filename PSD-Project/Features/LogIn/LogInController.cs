@@ -39,7 +39,7 @@ namespace PSD_Project.Features.LogIn
 
             return user.Password
                 .Check(password => password == credentials.Password, _ => BadRequest() as IHttpActionResult)
-                .Bind(_ => userSessions.CreateSessionForUser(user).Failed(() => InternalServerError() as IHttpActionResult))
+                .Bind(_ => userSessions.CreateSessionForUser(user).OrErr(() => InternalServerError() as IHttpActionResult))
                 .Map(Ok)
                 .Match(ok => ok, err => err);
         }

@@ -49,7 +49,7 @@ namespace Util.Try
                 : new TryErr<T, TErr>(otherwise(input));
         }
 
-        public static Try<T, TErr> Failed<T, TErr>(this Option<T> option, Func<TErr> otherwise)
+        public static Try<T, TErr> OrErr<T, TErr>(this Option<T> option, Func<TErr> otherwise)
         {
             return option.Match(
                 some: Of<T, TErr>,
