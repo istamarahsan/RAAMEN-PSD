@@ -38,26 +38,17 @@ namespace PSD_Project.Features.Register
 
         [Route]
         [HttpPost]
-        public IHttpActionResult Register([FromBody] RegistrationFormDetails form)
+        public async Task<IHttpActionResult> Register([FromBody] RegistrationFormDetails form)
         {
             if (form == null) return BadRequest();
 
-            var requestForUsersWithSameUsername = RaamenApp.HttpClient.GetAsync(new Uri(usersServiceUri, $"?username={form.Username}"));
-            while (requestForUsersWithSameUsername.Status == TaskStatus.Running)
-            {
-                
-            }
-            if (requestForUsersWithSameUsername.Result.StatusCode == HttpStatusCode.NotFound)
+            var requestForUsersWithSameUsername = await RaamenApp.HttpClient.GetAsync(new Uri(usersServiceUri, $"?username={form.Username}"));
+            if (requestForUsersWithSameUsername.StatusCode == HttpStatusCode.NotFound)
             {
                 var userDetailsJson = JsonConvert.SerializeObject(form, Formatting.None);
                 var userDetailsContent = new StringContent(userDetailsJson, Encoding.UTF8, "application/json");
-                var requestToAddNewUser = RaamenApp.HttpClient.PostAsync(usersServiceUri, userDetailsContent);
-                while (requestToAddNewUser.Status == TaskStatus.Running)
-                {
-                    
-                }
-
-                return requestToAddNewUser.Result.StatusCode == HttpStatusCode.OK
+                var requestToAddNewUser = await RaamenApp.HttpClient.PostAsync(usersServiceUri, userDetailsContent);
+                return requestToAddNewUser.StatusCode == HttpStatusCode.OK
                     ? (IHttpActionResult)Ok()
                     : InternalServerError();
             }
