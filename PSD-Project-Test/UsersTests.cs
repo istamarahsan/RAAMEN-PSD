@@ -159,5 +159,19 @@ namespace PSD_Project_Test
             Assert.Equal(form.Password, returnedUser.Password);
             Assert.Equal(form.RoleId, returnedUser.Role.Id);
         }
+        
+        [Theory]
+        [MemberData(nameof(GenerateNewUserDetails), 20)]
+        public async void CreatingUserStoresUser(NewUserDetails form)
+        {
+            var usersStorage = new Dictionary<int, User>();
+            var controller = new UsersController(new TestRepository(TestRoles, usersStorage));
+            await controller.CreateNewUser(form);
+            Assert.Equal(1, usersStorage.Count);
+            Assert.Contains(usersStorage.Values, user => user.Username == form.Username
+                                                         && user.Email == form.Email
+                                                         && user.Password == form.Password
+                                                         && user.Role.Id == form.RoleId);
+        }
     }
 }
