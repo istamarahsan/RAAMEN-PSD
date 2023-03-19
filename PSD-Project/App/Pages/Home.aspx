@@ -1,4 +1,5 @@
 <%@ Page Language="C#" CodeBehind="Home.aspx.cs" Inherits="PSD_Project.App.Pages.Home" %>
+<%@ Import Namespace="PSD_Project.App.Models" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 

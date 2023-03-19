@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Net;
-using System.Threading.Tasks;
 using System.Web.UI;
 using PSD_Project.App.Common;
-using PSD_Project.Features.LogIn;
+using PSD_Project.App.Models;
 using PSD_Project.Features.Users;
 using Util.Option;
 using Util.Try;
@@ -14,16 +12,9 @@ namespace PSD_Project.App.Pages
     public partial class Home : Page
     {
         private static readonly IAuthService AuthService = new LoginAuthService();
-        private static readonly Uri UsersServiceUri = new Uri("http://localhost:5000/api/users");
+        private static readonly IUsersService UsersService = new UsersService();
 
-        protected enum UserRole
-        {
-            Default,
-            Staff,
-            Admin
-        }
-
-        protected UserRole CurrentUserRole = UserRole.Default;
+        protected UserRole CurrentUserRole = UserRole.Customer;
         protected List<User> Customers = new List<User>();
         protected List<User> Staff = new List<User>();
 
@@ -43,31 +34,30 @@ namespace PSD_Project.App.Pages
                     some: details =>
                     {
                         RoleLabel.Text = details.Role.Name;
-                        CurrentUserRole = details.Role.Id == 1
-                            ? UserRole.Staff
-                            : details.Role.Id == 2
-                                ? UserRole.Admin
-                                : UserRole.Default;
-                        var getStaffDataTask =
-                            RaamenApp.HttpClient.GetAsync(new Uri(UsersServiceUri, "?roleId=1"));
-                        var getCustomersDataTask =
-                            RaamenApp.HttpClient.GetAsync(new Uri(UsersServiceUri, "?roleId=0"));
-                        getCustomersDataTask.Wait();
-                        getStaffDataTask.Wait();
-
-                        Customers = getCustomersDataTask.Result.Content
-                            .TryReadResponseString()
-                            .Bind(str => str.TryDeserializeJson<List<User>>())
-                            .Ok()
-                            .OrElse(new List<User>());
-
-                        Staff = getStaffDataTask.Result.Content
-                            .TryReadResponseString()
-                            .Bind(str => str.TryDeserializeJson<List<User>>())
-                            .Ok()
-                            .OrElse(new List<User>());
+                        var staffDataTask = UsersService.TryGetUsersWithRoleAsync(1);
+                        var customersDataTask = UsersService.TryGetUsersWithRoleAsync(0);
+                        customersDataTask.Wait();
+                        staffDataTask.Wait();
+                        CurrentUserRole = RoleById(details.Role.Id).Ok().OrElse(UserRole.Customer);
+                        Customers = customersDataTask.Result.Ok().OrElse(new List<User>());
+                        Staff = staffDataTask.Result.Ok().OrElse(new List<User>());
                     },
                     none: () => Response.Redirect("Login.aspx"));
+        }
+        
+        private Try<UserRole, Exception> RoleById(int roleId)
+        {
+            switch (roleId)
+            {
+                case 0:
+                    return Try.Of<UserRole, Exception>(UserRole.Customer);
+                case 1:
+                    return Try.Of<UserRole, Exception>(UserRole.Staff);
+                case 2:
+                    return Try.Of<UserRole, Exception>(UserRole.Admin);
+                default:
+                    return Try.Err<UserRole, Exception>(new ArgumentOutOfRangeException());
+            }
         }
     }
 }
