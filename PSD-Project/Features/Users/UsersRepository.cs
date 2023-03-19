@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using PSD_Project.EntityFramework;
 using Util.Option;
+using Util.Try;
 
 namespace PSD_Project.Features.Users
 {
@@ -42,14 +43,19 @@ namespace PSD_Project.Features.Users
                 .Map(ConvertModel);
         }
 
-        public async Task AddNewUserAsync(string username, string email, string password, string gender, int roleId)
+        public async Task<Try<User, Exception>> AddNewUserAsync(string username, string email, string password, string gender, int roleId)
         {
-            if (!await db.Roles.Select(role => role.id).ContainsAsync(roleId)) 
-                throw new ArgumentException("Role with that id does not exist");
+            var foundRole = await db.Roles.Where(role => role.id == roleId).FirstOrDefaultAsync();
             
+            if (foundRole == null) 
+                return Try.Err<User, Exception>(new ArgumentException("Role with that id does not exist"));
+            
+            var newId = await db.Users.Select(users => users.Id).DefaultIfEmpty(0).MaxAsync() + 1;
+            
+
             db.Users.Add(new PSD_Project.EntityFramework.User
             {
-                Id = db.Users.Select(users => users.Id).DefaultIfEmpty(0).Max() + 1,
+                Id = newId,
                 Username = username,
                 Email = email,
                 Gender = gender,
@@ -57,7 +63,16 @@ namespace PSD_Project.Features.Users
                 Roleid = roleId
             });
 
-            await db.SaveChangesAsync();
+            try
+            {
+                await db.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                return Try.Err<User, Exception>(e);
+            }
+
+            return Try.Of<User, Exception>(new User(newId, username, email, password, gender, new Role(foundRole.id, foundRole.name)));
         }
 
         private User ConvertModel(PSD_Project.EntityFramework.User user) => 

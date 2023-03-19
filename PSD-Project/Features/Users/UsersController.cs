@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.Web.Http.Results;
 using Util.Option;
 
 namespace PSD_Project.Features.Users
@@ -63,23 +64,21 @@ namespace PSD_Project.Features.Users
         [HttpPost]
         public async Task<IHttpActionResult> CreateNewUser([FromBody] NewUserDetails form)
         {
+            IHttpActionResult HandleAddException(Exception e)
+            {
+                switch (e)
+                {
+                    case ArgumentException _:
+                        return BadRequest();
+                    default:
+                        return InternalServerError();
+                }
+            }
+            
             if (form == null) return BadRequest();
-
-            try
-            {
-                await usersRepository.AddNewUserAsync(username: form.Username, email: form.Email,
-                    password: form.Password, gender: form.Gender, roleId: form.RoleId);
-                return Ok();
-            }
-            catch (ArgumentException e)
-            {
-                Console.WriteLine(e);
-                return BadRequest();
-            }
-            catch (Exception e)
-            {
-                return InternalServerError();
-            }
+            var userTry = await usersRepository.AddNewUserAsync(username: form.Username, email: form.Email,
+                password: form.Password, gender: form.Gender, roleId: form.RoleId);
+            return userTry.Match(Ok, HandleAddException);
         }
     }
 }

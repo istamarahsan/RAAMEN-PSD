@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using PSD_Project.Features.Users;
 using Util.Option;
+using Util.Try;
 
 namespace PSD_Project.Features
 {
@@ -12,6 +13,6 @@ namespace PSD_Project.Features
         Task<List<User>> GetUsersAsync();
         Task<List<User>> GetUsersWithRoleAsync(int roleId);
         Task<Option<User>> GetUserWithUsernameAsync(string username);
-        Task AddNewUserAsync(string username, string email, string password, string gender, int roleId);
+        Task<Try<User, Exception>> AddNewUserAsync(string username, string email, string password, string gender, int roleId);
     }
 }

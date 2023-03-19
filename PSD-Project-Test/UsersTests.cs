@@ -10,6 +10,7 @@ using PSD_Project.Features;
 using PSD_Project.Features.Users;
 using Util.Option;
 using Util.Collections;
+using Util.Try;
 using Xunit;
 
 namespace PSD_Project_Test
@@ -89,27 +90,33 @@ namespace PSD_Project_Test
                 return Task.FromResult(users.Values.FirstOrDefault(user => user.Username == username).ToOption());
             }
 
-            public Task AddNewUserAsync(string username, string email, string password, string gender, int roleId)
+            public Task<Try<User, Exception>> AddNewUserAsync(string username, string email, string password, string gender, int roleId)
             {
                 var nextId = users.Keys.DefaultIfEmpty(0).Max() + 1;
-                return roles.Get(roleId)
+                var result = roles.Get(roleId)
                     .Map(role =>
                     {
                         var user = new User(nextId, username, email, password, gender, role);
                         users[nextId] = user;
-                        return Task.CompletedTask;
+                        return user;
                     })
-                    .OrElse(Task.FromException(new ArgumentException("Role with that ID does not exist")));
-                
+                    .OrErr(() => new ArgumentException("Role with that ID does not exist"))
+                    .MapErr(err => err as Exception);
+                return Task.FromResult(result);
             }
         }
 
         [Fact]
         public async void GetAllUsersReturnsAllUsers()
         {
-            var controller = new UsersController(new TestRepository(TestRoles, TestUsers));
+            var generatedUsers = UserDetailsGenerator()
+                .Take(20)
+                .Select((gen, i) =>
+                    new User(i, gen.Username, gen.Email, gen.Password, gen.Gender, TestRoles[gen.RoleId]))
+                .ToList();
+            var controller = new UsersController(new TestRepository(TestRoles, generatedUsers.ToDictionary(u => u.Id)));
             var users = await controller.GetAllUsers();
-            Assert.True(users.OrderBy(user => user.Id).SequenceEqual(TestUsers.Values.OrderBy(user => user.Id).ToList()));
+            Assert.True(users.OrderBy(user => user.Id).SequenceEqual(generatedUsers.OrderBy(user => user.Id).ToList()));
         }
 
         [Theory]
@@ -118,7 +125,7 @@ namespace PSD_Project_Test
         {
             var controller = new UsersController(new TestRepository(TestRoles, new Dictionary<int, User>()));
             var response = await controller.CreateNewUser(form);
-            Assert.IsAssignableFrom<OkResult>(response);
+            Assert.IsAssignableFrom<OkNegotiatedContentResult<User>>(response);
             var users = await controller.GetAllUsers();
             Assert.Equal(1, users.Count);
             var user = users.FirstOrDefault();
@@ -137,6 +144,20 @@ namespace PSD_Project_Test
             var controller = new UsersController(new TestRepository(new Dictionary<int, Role>(), new Dictionary<int, User>()));
             var response = await controller.CreateNewUser(form);
             Assert.IsAssignableFrom<BadRequestResult>(response);
+        }
+
+        [Theory]
+        [MemberData(nameof(GenerateNewUserDetails), 20)]
+        public async void CreatingUserReturnsUser(NewUserDetails form)
+        {
+            var controller = new UsersController(new TestRepository(TestRoles, new Dictionary<int, User>()));
+            var response = await controller.CreateNewUser(form);
+            Assert.IsAssignableFrom<OkNegotiatedContentResult<User>>(response);
+            var returnedUser = ((OkNegotiatedContentResult<User>)response).Content;
+            Assert.Equal(form.Username, returnedUser.Username);
+            Assert.Equal(form.Email, returnedUser.Email);
+            Assert.Equal(form.Password, returnedUser.Password);
+            Assert.Equal(form.RoleId, returnedUser.Role.Id);
         }
     }
 }
