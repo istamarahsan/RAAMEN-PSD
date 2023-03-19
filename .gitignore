@@ -365,3 +365,5 @@ FodyWeavers.xsd
 .idea/
 
 config.xml
+
+PSD-Project/Web.config
