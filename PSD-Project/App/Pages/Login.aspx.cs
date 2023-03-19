@@ -20,7 +20,7 @@ namespace PSD_Project.App.Pages
         protected void Page_Load(object sender, EventArgs e)
         {
 
-            var sessionTokenCookie = Request.Cookies["raamen-session"].ToOption();
+            var sessionTokenCookie = Request.Cookies[Globals.SessionCookieName].ToOption();
             sessionTokenCookie.Map(cookie => cookie.Value)
                 .Bind(val => Try.OfFallible<string, int>(int.Parse)(val).Ok())
                 .Match(
@@ -46,21 +46,19 @@ namespace PSD_Project.App.Pages
             loginResponseTask.Wait();
             loginResponseTask.Check(task => task.Status == TaskStatus.RanToCompletion, _ => "error sending http request")
                 .Map(task => task.Result)
-                .Bind(response => response.Check(
-                    r => r.StatusCode == HttpStatusCode.OK, 
-                    r => $"HTTP Error: {r.StatusCode}"))
-                .Map(response => response.Content)
+                .Bind(response => response.TryGetContent()
+                    .MapErr(exc => $"http error: {exc.Message}"))
                 .Bind(content => content.TryReadResponseString()
-                    .OrErr(() => "error converting http response to string"))
+                    .MapErr(exc => $"error converting http response to string: {exc.Message}"))
                 .Bind(str => str.TryDeserializeJson<UserSession>()
-                    .OrErr(() => "error deserializing response"))
+                    .MapErr(exc => $"error deserializing response: {exc.Message}"))
                 .Map(s => s.SessionToken)
                 .Match(
                     ok: token =>
                     {
                         LoginResultLabel.Text = "Login successful!";
                         
-                        var tokenCookie = new HttpCookie("raamen-session")
+                        var tokenCookie = new HttpCookie(Globals.SessionCookieName)
                         {
                             Value = token.ToString(),
                             Expires = DateTime.Now.AddDays(1)
@@ -69,12 +67,12 @@ namespace PSD_Project.App.Pages
 
                         if (RememberMeCheckBox.Checked)
                         {
-                            var usernameCookie = new HttpCookie("raamen-username")
+                            var usernameCookie = new HttpCookie(Globals.SavedUsernameCookieName)
                             {
                                 Value = credentials.Username,
                                 Expires = DateTime.Now.AddDays(1)
                             };
-                            var passwordCookie = new HttpCookie("raamen-password")
+                            var passwordCookie = new HttpCookie(Globals.SavedPasswordCookieName)
                             {
                                 Value = credentials.Password,
                                 Expires = DateTime.Now.AddDays(1)
@@ -105,8 +103,8 @@ namespace PSD_Project.App.Pages
 
         private void TryFillRememberedCredentials()
         {
-            var usernameCookie = Request.Cookies["raamen-username"].ToOption();
-            var passwordCookie = Request.Cookies["raamen-password"].ToOption();
+            var usernameCookie = Request.Cookies[Globals.SavedUsernameCookieName].ToOption();
+            var passwordCookie = Request.Cookies[Globals.SavedPasswordCookieName].ToOption();
 
             usernameCookie.Map(cookie => cookie.Value)
                 .Bind(username => passwordCookie.Map(cookie => cookie.Value)

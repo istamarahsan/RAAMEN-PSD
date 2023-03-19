@@ -84,9 +84,10 @@ namespace PSD_Project.App.Pages
                     GenderRadioButtons.SelectedItem.Value);
                 var json = JsonConvert.SerializeObject(formDetails, Formatting.None);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
-                var post = RaamenApp.HttpClient.PostAsync(UsersServiceUri, content);
-                while (post.Status == TaskStatus.Running) {}
-                switch (post.Result.StatusCode)
+                var postTask = RaamenApp.HttpClient.PostAsync(UsersServiceUri, content);
+                postTask.Wait();
+                var post = postTask.Result;
+                switch (post.StatusCode)
                 {
                     case HttpStatusCode.OK:
                         RegisterResultLabel.Text = "User Successfully Created";
@@ -95,7 +96,7 @@ namespace PSD_Project.App.Pages
                         UsernameErrorLabel.Text = "It seems this username already exists";
                         break;
                     default:
-                        RegisterResultLabel.Text = $"Oops. Something went wrong :( - {post.Result.StatusCode}";
+                        RegisterResultLabel.Text = $"Oops. Something went wrong :( - {post.StatusCode}";
                         break;
                 }
             }

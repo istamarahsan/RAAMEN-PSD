@@ -28,7 +28,7 @@ namespace PSD_Project.App.Pages
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            Request.Cookies["raamen-session"]
+            Request.Cookies[Globals.SessionCookieName]
                 .ToOption()
                 .Map(cookie => cookie.Value)
                 .Match(
@@ -39,10 +39,9 @@ namespace PSD_Project.App.Pages
                         sessionTask.Wait();
                         sessionTask.Check(task => task.Status == TaskStatus.RanToCompletion)
                             .Map(task => task.Result)
-                            .Bind(result => result.Check(r => r.StatusCode == HttpStatusCode.OK))
-                            .Map(s => s.Content)
-                            .Bind(content => content.TryReadResponseString())
-                            .Bind(str => str.TryDeserializeJson<UserSessionDetails>())
+                            .Bind(response => response.TryGetContent().Ok())
+                            .Bind(content => content.TryReadResponseString().Ok())
+                            .Bind(str => str.TryDeserializeJson<UserSessionDetails>().Ok())
                             .Match(
                                 details =>
                                 {
@@ -56,19 +55,19 @@ namespace PSD_Project.App.Pages
                                         RaamenApp.HttpClient.GetAsync(new Uri(UsersServiceUri, "?roleId=1"));
                                     var getCustomersDataTask =
                                         RaamenApp.HttpClient.GetAsync(new Uri(UsersServiceUri, "?roleId=0"));
-                                    while (getStaffDataTask.Status == TaskStatus.Running || getCustomersDataTask.Status == TaskStatus.Running)
-                                    {
-                                        
-                                    }
+                                    getCustomersDataTask.Wait();
+                                    getStaffDataTask.Wait();
 
                                     Customers = getCustomersDataTask.Result.Content
                                         .TryReadResponseString()
                                         .Bind(str => str.TryDeserializeJson<List<User>>())
+                                        .Ok()
                                         .OrElse(new List<User>());
 
                                     Staff = getStaffDataTask.Result.Content
                                         .TryReadResponseString()
                                         .Bind(str => str.TryDeserializeJson<List<User>>())
+                                        .Ok()
                                         .OrElse(new List<User>());
                                 },
                                 () => { Response.Redirect("Login.aspx"); });
