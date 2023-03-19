@@ -138,6 +138,7 @@
   <ItemGroup>
     <Content Include="App\Pages\Home.aspx" />
     <Content Include="App\Pages\Login.aspx" />
+    <Content Include="App\Pages\Profile.aspx" />
     <Content Include="App\Pages\Register.aspx" />
     <Content Include="global.asax" />
     <Content Include="TEST\WebForm1.aspx" />
@@ -146,8 +147,10 @@
   <ItemGroup>
     <Compile Include="App\Common\Globals.cs" />
     <Compile Include="App\Common\SerDe.cs" />
+    <Compile Include="App\Common\FalliblesExtensions.cs" />
     <Compile Include="App\Models\RegistrationFormDetails.cs" />
     <Compile Include="App\Models\UserCredentials.cs" />
+    <Compile Include="App\Models\UserProfileUpdateForm.cs" />
     <Compile Include="App\Models\UserRole.cs" />
     <Compile Include="App\Pages\Home.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
@@ -162,6 +165,13 @@
     </Compile>
     <Compile Include="App\Pages\Login.aspx.designer.cs">
       <DependentUpon>Login.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="App\Pages\Profile.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+      <DependentUpon>Profile.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="App\Pages\Profile.aspx.designer.cs">
+      <DependentUpon>Profile.aspx</DependentUpon>
     </Compile>
     <Compile Include="App\Pages\Register.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>

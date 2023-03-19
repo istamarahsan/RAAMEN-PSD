@@ -19,5 +19,8 @@ namespace Util.Option
 
         public override Option<TOut> Cast<TOut>() => data is TOut d ? new Some<TOut>(d) : Option.None<TOut>();
         public override T OrElse(T value) => data;
+        public override bool IsSome() => true;
+
+        public override bool IsNone() => false;
     }
 }

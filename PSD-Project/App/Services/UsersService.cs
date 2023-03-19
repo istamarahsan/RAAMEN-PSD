@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 using PSD_Project.App.Common;
 using PSD_Project.App.Models;
@@ -18,6 +19,11 @@ namespace PSD_Project.App
             return response.TryGetContent()
                 .Bind(r => r.TryReadResponseString())
                 .Bind(str => str.TryDeserializeJson<List<User>>());
+        }
+
+        public Task<HttpStatusCode> TryUpdateUser(UserProfileUpdateForm form)
+        {
+            return Task.FromResult(HttpStatusCode.NotImplemented);
         }
     }
 }

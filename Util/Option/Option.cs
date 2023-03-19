@@ -10,6 +10,8 @@ namespace Util.Option
         public abstract Option<TOut> Bind<TOut>(Func<T, Option<TOut>> func);
         public abstract Option<TOut> Cast<TOut>() where TOut : class;
         public abstract T OrElse(T value);
+        public abstract bool IsSome();
+        public abstract bool IsNone();
     }
 
     public static class Option
