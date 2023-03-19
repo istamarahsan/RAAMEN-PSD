@@ -21,8 +21,8 @@ namespace PSD_Project.Features.Users
 
         public async Task<List<User>> GetUsersAsync()
         {
-            await db.Users.LoadAsync();
-            return db.Users.Select(ConvertModel).ToList();
+            var users = await db.Users.ToListAsync();
+            return users.Select(ConvertModel).ToList();
         }
 
         public async Task<List<User>> GetUsersWithRoleAsync(int roleId)
