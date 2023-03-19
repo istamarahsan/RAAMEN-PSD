@@ -12,6 +12,6 @@ namespace PSD_Project.App
     public interface IUsersService
     {
         Task<Try<List<User>, Exception>> TryGetUsersWithRoleAsync(int roleId);
-        Task<HttpStatusCode> TryUpdateUser(UserProfileUpdateForm form);
+        Task<HttpStatusCode> TryUpdateUser(int userId, UserUpdateDetails form);
     }
 }

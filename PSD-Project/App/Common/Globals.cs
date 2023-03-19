@@ -5,5 +5,6 @@ namespace PSD_Project.App.Common
         public static readonly string SavedUsernameCookieName = "raamen-username";
         public static readonly string SavedPasswordCookieName = "raamen-password";
         public static readonly string SessionCookieName = "raamen-session";
+        public static readonly string SavedSessionName = "raamen-session";
     }
 }

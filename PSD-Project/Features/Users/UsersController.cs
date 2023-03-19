@@ -77,7 +77,7 @@ namespace PSD_Project.Features.Users
         }
 
         [Route("{id}")]
-        [HttpPatch]
+        [HttpPut]
         public async Task<IHttpActionResult> UpdateUser(int id, [FromBody] UserUpdateDetails form)
         {
             IHttpActionResult HandleUpdateException(Exception e)

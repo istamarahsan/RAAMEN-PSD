@@ -5,6 +5,7 @@ using System.Web.UI;
 using PSD_Project.App.Common;
 using PSD_Project.App.Models;
 using PSD_Project.Features.LogIn;
+using PSD_Project.Features.Users;
 using Util.Option;
 using Util.Try;
 
@@ -19,6 +20,10 @@ namespace PSD_Project.App.Pages
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            userSession = Session[Globals.SavedSessionName].ToOption().Cast<UserSessionDetails>();
+            if (userSession.IsSome()) 
+                return;
+
             userSession = Request.Cookies[Globals.SessionCookieName].ToOption()
                 .Map(cookie => cookie.Value)
                 .Bind(str => str.TryParseInt().Ok())
@@ -29,7 +34,12 @@ namespace PSD_Project.App.Pages
                     return authTask.Result.Ok();
                 });
 
-            if (userSession.IsNone()) Response.Redirect("Login.aspx");
+            userSession.Match(
+                some: details =>
+                {
+                    Session[Globals.SavedSessionName] = details;
+                },
+                none: () => Response.Redirect("Login.aspx"));
         }
 
         protected void OnSubmitButtonClicked(object sender, EventArgs e)
@@ -54,13 +64,14 @@ namespace PSD_Project.App.Pages
                     _ => "must be chosen")
                 .Map(item => item.Text);
 
+            UsernameErrorLabel.Text = usernameValidation.Err().OrElse("");
+            EmailErrorLabel.Text = emailValidation.Err().OrElse("");
+            GenderErrorLabel.Text = genderValidation.Err().OrElse("");
+            
             if (usernameValidation.IsErr()
                 || emailValidation.IsErr()
                 || genderValidation.IsErr())
             {
-                UsernameErrorLabel.Text = usernameValidation.Err().OrElse("");
-                EmailErrorLabel.Text = emailValidation.Err().OrElse("");
-                GenderErrorLabel.Text = genderValidation.Err().OrElse("");
                 return;
             }
 
@@ -73,8 +84,10 @@ namespace PSD_Project.App.Pages
                     return authTask.Result.Ok();
                 })
                 .OrErr(() => "please check your password and try again");
-
-            if (passwordValidation.IsErr()) PasswordErrorLabel.Text = passwordValidation.Err().OrElse("");
+            
+            PasswordErrorLabel.Text = passwordValidation.Err().OrElse("");
+            
+            if (passwordValidation.IsErr()) return;
 
             usernameValidation.Ok()
                 .Bind(username =>
@@ -82,10 +95,11 @@ namespace PSD_Project.App.Pages
                         .Map(email => (username, email)))
                 .Bind(tuple =>
                     genderValidation.Ok()
-                        .Map(gender => new UserProfileUpdateForm(tuple.username, tuple.email, gender)))
-                .Map(form =>
+                        .Map(gender => new UserUpdateDetails(tuple.username, tuple.email, gender)))
+                .Bind(form => userSession.Map(s => s.Id).Map(id => (id, form)))
+                .Map(tuple =>
                 {
-                    var updateTask = UsersService.TryUpdateUser(form);
+                    var updateTask = UsersService.TryUpdateUser(tuple.id, tuple.form);
                     updateTask.Wait();
                     return updateTask.Result;
                 })

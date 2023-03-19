@@ -12,6 +12,7 @@ namespace PSD_Project
         {
             var config = GlobalConfiguration.Configuration;
             config.RegisterRoutes();
+            config.EnableSystemDiagnosticsTracing();
             config.EnsureInitialized();
         }
     }

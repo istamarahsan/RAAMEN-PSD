@@ -1,7 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using PSD_Project.App.Common;
 using PSD_Project.App.Models;
 using PSD_Project.Features.Users;
@@ -21,9 +25,12 @@ namespace PSD_Project.App
                 .Bind(str => str.TryDeserializeJson<List<User>>());
         }
 
-        public Task<HttpStatusCode> TryUpdateUser(UserProfileUpdateForm form)
+        public async Task<HttpStatusCode> TryUpdateUser(int userId, UserUpdateDetails form)
         {
-            return Task.FromResult(HttpStatusCode.NotImplemented);
+            var jsonString = JsonConvert.SerializeObject(form, Formatting.None);
+            var content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+            var response = await RaamenApp.HttpClient.PutAsync(new Uri(UsersServiceUri + $"/{userId}"), content);
+            return response.StatusCode;
         }
     }
 }

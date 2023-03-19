@@ -113,6 +113,9 @@
     <Reference Include="System.Web.Http, Version=5.2.9.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.9\lib\net45\System.Web.Http.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web.Http.Tracing, Version=5.2.9.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Tracing.5.2.9\lib\net45\System.Web.Http.Tracing.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.Http.WebHost, Version=5.2.9.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.9\lib\net45\System.Web.Http.WebHost.dll</HintPath>
     </Reference>
@@ -150,7 +153,6 @@
     <Compile Include="App\Common\FalliblesExtensions.cs" />
     <Compile Include="App\Models\RegistrationFormDetails.cs" />
     <Compile Include="App\Models\UserCredentials.cs" />
-    <Compile Include="App\Models\UserProfileUpdateForm.cs" />
     <Compile Include="App\Models\UserRole.cs" />
     <Compile Include="App\Pages\Home.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
