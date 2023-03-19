@@ -35,8 +35,7 @@ namespace PSD_Project.Features.Users
 
         public async Task<Option<User>> GetUserWithUsernameAsync(string username)
         {
-            var usersWithUsername = db.Users.Where(user => user.Username == username);
-            await usersWithUsername.LoadAsync();
+            var usersWithUsername = await db.Users.Where(user => user.Username == username).ToListAsync();
             return usersWithUsername.AsEnumerable()
                 .FirstOrDefault()
                 .ToOption()
