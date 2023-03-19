@@ -68,7 +68,7 @@ namespace PSD_Project.App.Pages
                 switch (statusCode)
                 {
                     case HttpStatusCode.OK:
-                        RegisterResultLabel.Text = "User Successfully Created";
+                        Response.Redirect("Login.aspx");
                         break;
                     case HttpStatusCode.Conflict:
                         UsernameErrorLabel.Text = "It seems this username already exists";
