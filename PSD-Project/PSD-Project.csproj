@@ -209,6 +209,7 @@
     <Compile Include="Features\Users\NewUserDetails.cs" />
     <Compile Include="Features\Users\UsersController.cs" />
     <Compile Include="Features\Users\UsersRepository.cs" />
+    <Compile Include="Features\Users\UserUpdateDetails.cs" />
     <Compile Include="global.asax.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TEST\WebForm1.aspx.cs">

@@ -6,6 +6,7 @@ using System.Web.Http.Results;
 using Bogus;
 using Bogus.DataSets;
 using PSD_Project;
+using PSD_Project.App.Models;
 using PSD_Project.Features;
 using PSD_Project.Features.Users;
 using Util.Option;
@@ -54,9 +55,10 @@ namespace PSD_Project_Test
             }
         }
         
-        private static IEnumerable<object[]> GenerateNewUserDetails(int quantity)
+        public static IEnumerable<object[]> GenerateNewUserDetails(int quantity, int numberAtATime)
         {
-            return UserDetailsGenerator().Take(quantity).Select(f => new[] {f as object}).ToArray();
+            return Enumerable.Range(0, quantity)
+                .Select(_ => UserDetailsGenerator().Take(numberAtATime).Cast<object>().ToArray()).ToList();
         }
 
         private class TestRepository : IUsersRepository
@@ -104,6 +106,15 @@ namespace PSD_Project_Test
                     .MapErr(err => err as Exception);
                 return Task.FromResult(result);
             }
+
+            public Task<Try<User, Exception>> UpdateUserAsync(int userId, string username, string email, string gender)
+            {
+                if (!users.ContainsKey(userId)) return Task.FromResult(Try.Err<User, Exception>(new ArgumentException("User does not exist"))) ;
+
+                var existingUser = users[userId];
+                users[userId] = new User(userId, username, email, existingUser.Password, gender, existingUser.Role);
+                return Task.FromResult(Try.Of<User, Exception>(users[userId]));
+            }
         }
 
         [Fact]
@@ -120,7 +131,7 @@ namespace PSD_Project_Test
         }
 
         [Theory]
-        [MemberData(nameof(GenerateNewUserDetails), 20)]
+        [MemberData(nameof(GenerateNewUserDetails), 20, 1)]
         public async void NewUserAddedIsRetrievable(NewUserDetails form)
         {
             var controller = new UsersController(new TestRepository(TestRoles, new Dictionary<int, User>()));
@@ -138,7 +149,7 @@ namespace PSD_Project_Test
         }
         
         [Theory]
-        [MemberData(nameof(GenerateNewUserDetails), 20)]
+        [MemberData(nameof(GenerateNewUserDetails), 20, 1)]
         public async void TryingToAddUserWithNonexistentRoleReturnsBadRequest(NewUserDetails form)
         {
             var controller = new UsersController(new TestRepository(new Dictionary<int, Role>(), new Dictionary<int, User>()));
@@ -147,7 +158,7 @@ namespace PSD_Project_Test
         }
 
         [Theory]
-        [MemberData(nameof(GenerateNewUserDetails), 20)]
+        [MemberData(nameof(GenerateNewUserDetails), 20, 1)]
         public async void CreatingUserReturnsUser(NewUserDetails form)
         {
             var controller = new UsersController(new TestRepository(TestRoles, new Dictionary<int, User>()));
@@ -161,7 +172,7 @@ namespace PSD_Project_Test
         }
         
         [Theory]
-        [MemberData(nameof(GenerateNewUserDetails), 20)]
+        [MemberData(nameof(GenerateNewUserDetails), 20, 1)]
         public async void CreatingUserStoresUser(NewUserDetails form)
         {
             var usersStorage = new Dictionary<int, User>();
@@ -172,6 +183,40 @@ namespace PSD_Project_Test
                                                          && user.Email == form.Email
                                                          && user.Password == form.Password
                                                          && user.Role.Id == form.RoleId);
+        }
+
+        [Theory]
+        [MemberData(nameof(GenerateNewUserDetails), 20, 2)]
+        public async void UpdatingUserUpdatesStoredUser(NewUserDetails initialDetails, NewUserDetails newDetails)
+        {
+            var usersStorage = new Dictionary<int, User>
+            {
+                [0] = new User(0, initialDetails.Username, initialDetails.Email, initialDetails.Password, initialDetails.Gender, TestRoles[initialDetails.RoleId])
+            };
+            var controller = new UsersController(new TestRepository(TestRoles, usersStorage));
+            await controller.UpdateUser(0, new UserUpdateDetails(newDetails.Username, newDetails.Email, newDetails.Gender));
+            Assert.Equal(1, usersStorage.Count);
+            Assert.Contains(usersStorage.Values, user => user.Username == newDetails.Username 
+                                                         && user.Email == newDetails.Email 
+                                                         && user.Gender == newDetails.Gender);
+        }
+        
+        [Theory]
+        [MemberData(nameof(GenerateNewUserDetails), 20, 2)]
+        public async void UpdatingUserReturnsUpdatedUser(NewUserDetails initialDetails, NewUserDetails newDetails)
+        {
+            var usersStorage = new Dictionary<int, User>
+            {
+                [0] = new User(0, initialDetails.Username, initialDetails.Email, initialDetails.Password, initialDetails.Gender, TestRoles[initialDetails.RoleId])
+            };
+            var controller = new UsersController(new TestRepository(TestRoles, usersStorage));
+            var response = await controller.UpdateUser(0, new UserUpdateDetails(newDetails.Username, newDetails.Email, newDetails.Gender));
+            var returnedUser = ((OkNegotiatedContentResult<User>)response).Content;
+            Assert.Equal(0, returnedUser.Id);
+            Assert.Equal(initialDetails.Password, returnedUser.Password);
+            Assert.Equal(newDetails.Username, returnedUser.Username);
+            Assert.Equal(newDetails.Email, returnedUser.Email);
+            Assert.Equal(newDetails.Gender, returnedUser.Gender);
         }
     }
 }

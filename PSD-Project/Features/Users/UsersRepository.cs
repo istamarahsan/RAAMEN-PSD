@@ -75,6 +75,24 @@ namespace PSD_Project.Features.Users
             return Try.Of<User, Exception>(new User(newId, username, email, password, gender, new Role(foundRole.id, foundRole.name)));
         }
 
+        public async Task<Try<User, Exception>> UpdateUserAsync(int userId, string username, string email, string gender)
+        {
+            var user = await db.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (user == null) return Try.Err<User, Exception>(new ArgumentException());
+            user.Username = username;
+            user.Email = email;
+            user.Gender = gender;
+            try
+            {
+                await db.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                return Try.Err<User, Exception>(e);
+            }
+            return Try.Of<User, Exception>(ConvertModel(user));
+        }
+
         private User ConvertModel(PSD_Project.EntityFramework.User user) => 
             new User(
                 user.Id, 
