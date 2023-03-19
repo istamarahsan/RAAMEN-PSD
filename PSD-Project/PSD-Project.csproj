@@ -143,9 +143,7 @@
     <Content Include="App\Pages\Login.aspx" />
     <Content Include="App\Pages\Profile.aspx" />
     <Content Include="App\Pages\Register.aspx" />
-    <Content Include="config.xml" />
     <Content Include="global.asax" />
-    <Content Include="NAnt.build" />
     <Content Include="TEST\WebForm1.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
