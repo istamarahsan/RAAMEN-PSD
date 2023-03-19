@@ -20,7 +20,7 @@ namespace PSD_Project.App.Pages
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            userSession = Session[Globals.SavedSessionName].ToOption().Cast<UserSessionDetails>();
+            userSession = Session.GetUserSession();
             if (userSession.IsSome()) 
                 return;
 

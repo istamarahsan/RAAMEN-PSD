@@ -151,6 +151,7 @@
     <Compile Include="App\Common\Globals.cs" />
     <Compile Include="App\Common\SerDe.cs" />
     <Compile Include="App\Common\FalliblesExtensions.cs" />
+    <Compile Include="App\Common\Session.cs" />
     <Compile Include="App\Models\RegistrationFormDetails.cs" />
     <Compile Include="App\Models\UserCredentials.cs" />
     <Compile Include="App\Models\UserRole.cs" />

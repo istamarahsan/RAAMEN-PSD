@@ -1,11 +1,6 @@
 using System;
-using System.Net;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web;
 using System.Web.UI;
-using Newtonsoft.Json;
 using PSD_Project.App.Common;
 using PSD_Project.Features.LogIn;
 using Util.Option;
@@ -20,17 +15,15 @@ namespace PSD_Project.App.Pages
 
         protected void Page_Load(object sender, EventArgs e)
         {
-
             var sessionTokenCookie = Request.Cookies[Globals.SessionCookieName].ToOption();
             sessionTokenCookie.Map(cookie => cookie.Value)
-                .Bind(val => Try.OfFallible<string, int>(int.Parse)(val).Ok())
+                .Bind(val => val.TryParseInt().Ok())
+                .Bind(token => AuthenticateSession(token).Ok())
                 .Match(
-                    some: token =>
+                    some: sessionDetails =>
                     {
-                        if (ValidateSession(token))
-                        {
-                            Response.Redirect("Home.aspx");
-                        }
+                        Session[Globals.SavedSessionName] = sessionDetails;
+                        Response.Redirect("Home.aspx");
                     },
                     none: TryFillRememberedCredentials);
         }
@@ -82,12 +75,11 @@ namespace PSD_Project.App.Pages
             
         }
 
-        private bool ValidateSession(int token)
+        private Try<UserSessionDetails, Exception> AuthenticateSession(int token)
         {
             var authTask = AuthService.Authenticate(token);
             authTask.Wait();
-
-            return authTask.Result.IsOk();
+            return authTask.Result;
         }
 
         private void TryFillRememberedCredentials()

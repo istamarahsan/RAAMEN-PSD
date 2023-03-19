@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Web.UI;
 using PSD_Project.App.Common;
 using PSD_Project.App.Models;
+using PSD_Project.Features.LogIn;
 using PSD_Project.Features.Users;
 using Util.Option;
 using Util.Try;
@@ -20,16 +21,7 @@ namespace PSD_Project.App.Pages
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            Request.Cookies[Globals.SessionCookieName]
-                .ToOption()
-                .Map(cookie => cookie.Value)
-                .Bind(val => Try.Of<int, Exception, Exception>(() => int.Parse(val), exc => exc).Ok())
-                .Bind(token =>
-                {
-                    var authTask = AuthService.Authenticate(token);
-                    authTask.Wait();
-                    return authTask.Result.Ok();
-                })
+            Session.GetUserSession()
                 .Match(
                     some: details =>
                     {
