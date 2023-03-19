@@ -132,7 +132,7 @@ namespace PSD_Project_Test
         
         [Theory]
         [MemberData(nameof(GenerateNewUserDetails), 20)]
-        public async void AddingNonexistentRoleReturnsBadRequest(NewUserDetails form)
+        public async void TryingToAddUserWithNonexistentRoleReturnsBadRequest(NewUserDetails form)
         {
             var controller = new UsersController(new TestRepository(new Dictionary<int, Role>(), new Dictionary<int, User>()));
             var response = await controller.CreateNewUser(form);
