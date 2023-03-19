@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<raamenDatabase>
+    <providerName>MySql.Data.MySqlClient</providerName>
+    <connectionString>server=host.com;port=xxxx;database=databaseName;uid=userId;password=aPassword</connectionString>
+</raamenDatabase>

@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+    <project name="PSD-Project" default="config" basedir=".">
+        <description>Raamen</description>
+        <property name="configFile" value="config.xml" overwrite="false" />
+        <property name="webConfigFile" value="PSD-Project/Web.config" overwrite="false" />
+        <property name="databaseProviderName" value=""/>
+        <property name="databaseConnectionString" value=""/>
+        <target name="config" description="inject config into Web.config">
+            <xmlpeek 
+                file="${configFile}" 
+                failonerror="true"
+                property="databaseProviderName"
+                xpath="/raamenDatabase/providerName" 
+                />
+            <xmlpeek 
+                file="${configFile}" 
+                failonerror="true"
+                property="databaseConnectionString"
+                xpath="/raamenDatabase/connectionString" 
+                />
+            <xmlpoke
+                file="${webConfigFile}"
+                failonerror="true"
+                xpath="/configuration/connectionStrings/add[@name = 'Raamen']/@providerName"
+                value="${databaseProviderName}"
+            />
+            <xmlpoke
+                file="${webConfigFile}"
+                failonerror="true"
+                xpath="/configuration/connectionStrings/add[@name = 'Raamen']/@connectionString"
+                value="${databaseConnectionString}"
+            />
+        </target>
+        <target name="clean" description="erase config from Web.config">
+            <xmlpoke
+                file="${webConfigFile}"
+                failonerror="true"
+                xpath="/configuration/connectionStrings/add[@name = 'Raamen']/@providerName"
+                value=""
+            />
+            <xmlpoke
+                file="${webConfigFile}"
+                failonerror="true"
+                xpath="/configuration/connectionStrings/add[@name = 'Raamen']/@connectionString"
+                value=""
+            />
+        </target>
+    </project>
