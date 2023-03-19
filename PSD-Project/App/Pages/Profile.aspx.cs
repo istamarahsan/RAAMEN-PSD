@@ -3,7 +3,6 @@ using System.Linq;
 using System.Net;
 using System.Web.UI;
 using PSD_Project.App.Common;
-using PSD_Project.App.Models;
 using PSD_Project.Features.LogIn;
 using PSD_Project.Features.Users;
 using Util.Option;
@@ -21,25 +20,16 @@ namespace PSD_Project.App.Pages
         protected void Page_Load(object sender, EventArgs e)
         {
             userSession = Session.GetUserSession();
-            if (userSession.IsSome()) 
+            if (userSession.IsSome())
                 return;
 
-            userSession = Request.Cookies[Globals.SessionCookieName].ToOption()
+            Request.Cookies[Globals.SessionCookieName].ToOption()
                 .Map(cookie => cookie.Value)
                 .Bind(str => str.TryParseInt().Ok())
-                .Bind(token =>
-                {
-                    var authTask = AuthService.Authenticate(token);
-                    authTask.Wait();
-                    return authTask.Result.Ok();
-                });
-
-            userSession.Match(
-                some: details =>
-                {
-                    Session[Globals.SavedSessionName] = details;
-                },
-                none: () => Response.Redirect("Login.aspx"));
+                .Bind(AuthenticateToken)
+                .Match(
+                    details => Session[Globals.SavedSessionName] = details,
+                    () => Response.Redirect("Login.aspx"));
         }
 
         protected void OnSubmitButtonClicked(object sender, EventArgs e)
@@ -67,13 +57,11 @@ namespace PSD_Project.App.Pages
             UsernameErrorLabel.Text = usernameValidation.Err().OrElse("");
             EmailErrorLabel.Text = emailValidation.Err().OrElse("");
             GenderErrorLabel.Text = genderValidation.Err().OrElse("");
-            
+
             if (usernameValidation.IsErr()
                 || emailValidation.IsErr()
                 || genderValidation.IsErr())
-            {
                 return;
-            }
 
             var passwordValidation = userSession
                 .Map(session => new UserCredentials(session.Username, PasswordTextBox.Text))
@@ -84,9 +72,9 @@ namespace PSD_Project.App.Pages
                     return authTask.Result.Ok();
                 })
                 .OrErr(() => "please check your password and try again");
-            
+
             PasswordErrorLabel.Text = passwordValidation.Err().OrElse("");
-            
+
             if (passwordValidation.IsErr()) return;
 
             usernameValidation.Ok()
@@ -117,6 +105,13 @@ namespace PSD_Project.App.Pages
                         }
                     },
                     () => { });
+        }
+        
+        private Option<UserSessionDetails> AuthenticateToken(int token)
+        {
+            var authTask = AuthService.Authenticate(token);
+            authTask.Wait();
+            return authTask.Result.Ok();
         }
 
         private bool IsBetween5And15Characters(string str)
