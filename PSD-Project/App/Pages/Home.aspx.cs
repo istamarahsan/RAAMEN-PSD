@@ -7,12 +7,13 @@ using PSD_Project.App.Common;
 using PSD_Project.Features.LogIn;
 using PSD_Project.Features.Users;
 using Util.Option;
+using Util.Try;
 
 namespace PSD_Project.App.Pages
 {
     public partial class Home : Page
     {
-        private static readonly Uri LoginServiceUri = new Uri("http://localhost:5000/api/login");
+        private static readonly IAuthService AuthService = new LoginAuthService();
         private static readonly Uri UsersServiceUri = new Uri("http://localhost:5000/api/users");
 
         protected enum UserRole
@@ -31,48 +32,42 @@ namespace PSD_Project.App.Pages
             Request.Cookies[Globals.SessionCookieName]
                 .ToOption()
                 .Map(cookie => cookie.Value)
+                .Bind(val => Try.Of<int, Exception, Exception>(() => int.Parse(val), exc => exc).Ok())
+                .Bind(token =>
+                {
+                    var authTask = AuthService.Authenticate(token);
+                    authTask.Wait();
+                    return authTask.Result.Ok();
+                })
                 .Match(
-                    token =>
+                    some: details =>
                     {
-                        var sessionTask =
-                            RaamenApp.HttpClient.GetAsync(new Uri(LoginServiceUri, $"?SessionToken={token}"));
-                        sessionTask.Wait();
-                        sessionTask.Check(task => task.Status == TaskStatus.RanToCompletion)
-                            .Map(task => task.Result)
-                            .Bind(response => response.TryGetContent().Ok())
-                            .Bind(content => content.TryReadResponseString().Ok())
-                            .Bind(str => str.TryDeserializeJson<UserSessionDetails>().Ok())
-                            .Match(
-                                details =>
-                                {
-                                    RoleLabel.Text = details.Role.Name;
-                                    CurrentUserRole = details.Role.Id == 1
-                                        ? UserRole.Staff
-                                        : details.Role.Id == 2
-                                            ? UserRole.Admin
-                                            : UserRole.Default;
-                                    var getStaffDataTask =
-                                        RaamenApp.HttpClient.GetAsync(new Uri(UsersServiceUri, "?roleId=1"));
-                                    var getCustomersDataTask =
-                                        RaamenApp.HttpClient.GetAsync(new Uri(UsersServiceUri, "?roleId=0"));
-                                    getCustomersDataTask.Wait();
-                                    getStaffDataTask.Wait();
+                        RoleLabel.Text = details.Role.Name;
+                        CurrentUserRole = details.Role.Id == 1
+                            ? UserRole.Staff
+                            : details.Role.Id == 2
+                                ? UserRole.Admin
+                                : UserRole.Default;
+                        var getStaffDataTask =
+                            RaamenApp.HttpClient.GetAsync(new Uri(UsersServiceUri, "?roleId=1"));
+                        var getCustomersDataTask =
+                            RaamenApp.HttpClient.GetAsync(new Uri(UsersServiceUri, "?roleId=0"));
+                        getCustomersDataTask.Wait();
+                        getStaffDataTask.Wait();
 
-                                    Customers = getCustomersDataTask.Result.Content
-                                        .TryReadResponseString()
-                                        .Bind(str => str.TryDeserializeJson<List<User>>())
-                                        .Ok()
-                                        .OrElse(new List<User>());
+                        Customers = getCustomersDataTask.Result.Content
+                            .TryReadResponseString()
+                            .Bind(str => str.TryDeserializeJson<List<User>>())
+                            .Ok()
+                            .OrElse(new List<User>());
 
-                                    Staff = getStaffDataTask.Result.Content
-                                        .TryReadResponseString()
-                                        .Bind(str => str.TryDeserializeJson<List<User>>())
-                                        .Ok()
-                                        .OrElse(new List<User>());
-                                },
-                                () => { Response.Redirect("Login.aspx"); });
+                        Staff = getStaffDataTask.Result.Content
+                            .TryReadResponseString()
+                            .Bind(str => str.TryDeserializeJson<List<User>>())
+                            .Ok()
+                            .OrElse(new List<User>());
                     },
-                    () => { Response.Redirect("Login.aspx"); });
+                    none: () => Response.Redirect("Login.aspx"));
         }
     }
 }

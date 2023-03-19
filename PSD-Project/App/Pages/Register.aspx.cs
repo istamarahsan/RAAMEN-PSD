@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Web.UI;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using PSD_Project.App.Models;
 using Util.Option;
 using Util.Try;
 
@@ -15,28 +16,7 @@ namespace PSD_Project.App.Pages
 {
     public partial class Register : Page
     {
-        [DataContract]
-        private class RegistrationFormDetails
-        {
-            [DataMember]
-            public readonly string Username;
-            [DataMember]
-            public readonly string Email;
-            [DataMember]
-            public readonly string Password;
-            [DataMember]
-            public readonly string Gender;
-
-            public RegistrationFormDetails(string username, string email, string password, string gender)
-            {
-                Username = username;
-                Email = email;
-                Password = password;
-                Gender = gender;
-            }
-        }
-        
-        private static readonly Uri UsersServiceUri = new Uri("http://localhost:5000/api/register");
+        private readonly IRegisterService registerService = new RegisterService();
         protected void Page_Load(object sender, EventArgs e)
         {
             
@@ -82,12 +62,10 @@ namespace PSD_Project.App.Pages
                     EmailTextBox.Text,
                     PasswordTextBox.Text,
                     GenderRadioButtons.SelectedItem.Value);
-                var json = JsonConvert.SerializeObject(formDetails, Formatting.None);
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
-                var postTask = RaamenApp.HttpClient.PostAsync(UsersServiceUri, content);
-                postTask.Wait();
-                var post = postTask.Result;
-                switch (post.StatusCode)
+                var registerTask = registerService.RegisterNewUserAsync(formDetails);
+                registerTask.Wait();
+                var statusCode = registerTask.Result;
+                switch (statusCode)
                 {
                     case HttpStatusCode.OK:
                         RegisterResultLabel.Text = "User Successfully Created";
@@ -96,7 +74,7 @@ namespace PSD_Project.App.Pages
                         UsernameErrorLabel.Text = "It seems this username already exists";
                         break;
                     default:
-                        RegisterResultLabel.Text = $"Oops. Something went wrong :( - {post.StatusCode}";
+                        RegisterResultLabel.Text = $"Oops. Something went wrong :( - {statusCode}";
                         break;
                 }
             }

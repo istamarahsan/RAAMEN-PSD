@@ -15,7 +15,8 @@ namespace PSD_Project.App.Pages
 {
     public partial class Login : Page
     {
-        private static readonly Uri LoginServiceUri = new Uri("http://localhost:5000/api/login");
+        private static readonly ILoginService LoginService = new LoginAuthService();
+        private static readonly IAuthService AuthService = new LoginAuthService();
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -40,18 +41,9 @@ namespace PSD_Project.App.Pages
                 UsernameTextBox.Text,
                 PasswordTextBox.Text);
 
-            var credentialsAsJson = JsonConvert.SerializeObject(credentials, Formatting.None);
-            var credentialsAsContent = new StringContent(credentialsAsJson, Encoding.UTF8, "application/json");
-            var loginResponseTask = RaamenApp.HttpClient.PostAsync(LoginServiceUri, credentialsAsContent);
-            loginResponseTask.Wait();
-            loginResponseTask.Check(task => task.Status == TaskStatus.RanToCompletion, _ => "error sending http request")
-                .Map(task => task.Result)
-                .Bind(response => response.TryGetContent()
-                    .MapErr(exc => $"http error: {exc.Message}"))
-                .Bind(content => content.TryReadResponseString()
-                    .MapErr(exc => $"error converting http response to string: {exc.Message}"))
-                .Bind(str => str.TryDeserializeJson<UserSession>()
-                    .MapErr(exc => $"error deserializing response: {exc.Message}"))
+            var loginTask = LoginService.Login(credentials);
+            loginTask.Wait();
+            loginTask.Result
                 .Map(s => s.SessionToken)
                 .Match(
                     ok: token =>
@@ -83,22 +75,19 @@ namespace PSD_Project.App.Pages
                         
                         Response.Redirect("Home.aspx");
                     },
-                    err: errorMessage =>
+                    err: exception =>
                     {
-                        LoginResultLabel.Text = errorMessage;
+                        LoginResultLabel.Text = exception.Message;
                     });
             
         }
 
         private bool ValidateSession(int token)
         {
-            var responseTask = RaamenApp.HttpClient.GetAsync(new Uri(LoginServiceUri, $"?sessionToken={token}"));
-            while (responseTask.Status == TaskStatus.Running)
-            {
-            }
-            var response = responseTask.Result;
+            var authTask = AuthService.Authenticate(token);
+            authTask.Wait();
 
-            return response.StatusCode == HttpStatusCode.OK;
+            return authTask.Result.IsOk();
         }
 
         private void TryFillRememberedCredentials()

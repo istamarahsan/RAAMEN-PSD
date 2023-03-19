@@ -144,8 +144,14 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App\IAuthService.cs" />
+    <Compile Include="App\ILoginService.cs" />
+    <Compile Include="App\LoginAuthService.cs" />
     <Compile Include="App\Common\Globals.cs" />
     <Compile Include="App\Common\SerDe.cs" />
+    <Compile Include="App\IRegisterService.cs" />
+    <Compile Include="App\Models\RegistrationFormDetails.cs" />
+    <Compile Include="App\Models\UserCredentials.cs" />
     <Compile Include="App\Pages\Home.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
       <DependentUpon>Home.aspx</DependentUpon>
@@ -167,7 +173,7 @@
     <Compile Include="App\Pages\Register.aspx.designer.cs">
       <DependentUpon>Register.aspx</DependentUpon>
     </Compile>
-    <Compile Include="App\Pages\UserCredentials.cs" />
+    <Compile Include="App\RegisterService.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="EntityFramework\Detail.cs" />
     <Compile Include="EntityFramework\Header.cs" />
