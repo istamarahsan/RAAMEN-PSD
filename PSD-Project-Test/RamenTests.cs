@@ -33,9 +33,14 @@ namespace PSD_Project_Test
                 this.ramen = ramen;
             }
 
-            public Task<Try<List<Ramen>, Exception>> GetAllRamenAsync()
+            public Task<Try<List<Ramen>, Exception>> GetRamenAsync()
             {
                 return Task.FromResult(Try.Of<List<Ramen>, Exception>(ramen.Values.ToList()));
+            }
+
+            public Task<Option<Ramen>> GetRamenAsync(int ramenId)
+            {
+                throw new NotImplementedException();
             }
 
             public Task<Try<Ramen, Exception>> AddRamenAsync(string name, string borth, string price, int meatId)

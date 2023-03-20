@@ -13,7 +13,7 @@ namespace PSD_Project.Features.Ramen
     {
         private readonly Raamen db = new Raamen();
         
-        public async Task<Try<List<Ramen>, Exception>> GetAllRamenAsync()
+        public async Task<Try<List<Ramen>, Exception>> GetRamenAsync()
         {
             try
             {
@@ -24,6 +24,14 @@ namespace PSD_Project.Features.Ramen
             {
                 return Try.Err<List<Ramen>, Exception>(e);
             }
+        }
+
+        public async Task<Option<Ramen>> GetRamenAsync(int ramenId)
+        {
+            var ramen = await db.Ramen.FindAsync(ramenId);
+            return ramen == null 
+                ? Option.None<Ramen>() : 
+                Option.Some(ConvertModel(ramen));
         }
 
         public async Task<Try<Ramen, Exception>> AddRamenAsync(string name, string borth, string price, int meatId)

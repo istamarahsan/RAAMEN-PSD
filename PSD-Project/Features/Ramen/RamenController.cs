@@ -24,8 +24,16 @@ namespace PSD_Project.Features.Ramen
         [HttpGet]
         public async Task<IHttpActionResult> GetAllRamen()
         {
-            var ramen = await ramenRepository.GetAllRamenAsync();
+            var ramen = await ramenRepository.GetRamenAsync();
             return ramen.Match<IHttpActionResult>(Ok, InternalServerError);
+        }
+
+        [Route("{id}")]
+        [HttpGet]
+        public async Task<IHttpActionResult> GetRamen(int id)
+        {
+            var ramen = await ramenRepository.GetRamenAsync(id);
+            return ramen.Match<IHttpActionResult>(Ok, NotFound);
         }
 
         [Route]
