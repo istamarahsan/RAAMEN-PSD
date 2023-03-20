@@ -10,7 +10,7 @@ using PSD_Project.App.Pages;
 using PSD_Project.Features.LogIn;
 using Util.Try;
 
-namespace PSD_Project.App
+namespace PSD_Project.Services
 {
     public class LoginAuthService : ILoginService, IAuthService
     {

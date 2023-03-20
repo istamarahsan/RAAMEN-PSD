@@ -10,7 +10,7 @@ using PSD_Project.Features.Register;
 using Util.Option;
 using Util.Try;
 
-namespace PSD_Project.App
+namespace PSD_Project.Services
 {
     public class RegisterService : IRegisterService
     {

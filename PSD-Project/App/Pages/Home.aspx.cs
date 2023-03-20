@@ -5,6 +5,7 @@ using PSD_Project.App.Common;
 using PSD_Project.App.Models;
 using PSD_Project.Features.LogIn;
 using PSD_Project.Features.Users;
+using PSD_Project.Services;
 using Util.Option;
 using Util.Try;
 
@@ -26,8 +27,8 @@ namespace PSD_Project.App.Pages
                     some: details =>
                     {
                         RoleLabel.Text = details.Role.Name;
-                        var staffDataTask = UsersService.TryGetUsersWithRoleAsync(1);
-                        var customersDataTask = UsersService.TryGetUsersWithRoleAsync(0);
+                        var staffDataTask = UsersService.GetUsersWithRoleAsync(1);
+                        var customersDataTask = UsersService.GetUsersWithRoleAsync(0);
                         customersDataTask.Wait();
                         staffDataTask.Wait();
                         CurrentUserRole = RoleById(details.Role.Id).Ok().OrElse(UserRole.Customer);

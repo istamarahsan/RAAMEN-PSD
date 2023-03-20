@@ -1,52 +1,73 @@
 using System;
+using System.Threading.Tasks;
 using Util.Option;
 
 namespace Util.Try
 {
     public sealed class TryOk<T, TErr> : Try<T, TErr>
     {
-        private readonly T _data;
+        public readonly T Value;
 
-        internal TryOk(T data)
+        internal TryOk(T value)
         {
-            _data = data;
+            Value = value;
         }
 
         public override void Match(Action<T> ok, Action<TErr> err)
         {
-            ok(_data);
+            ok(Value);
         }
 
         public override TOut Match<TOut>(Func<T, TOut> ok, Func<TErr, TOut> err)
         {
-            return ok(_data);
+            return ok(Value);
+        }
+
+        public override async Task<TOut> Match<TOut>(Func<T, Task<TOut>> ok, Func<TErr, Task<TOut>> err)
+        {
+            return await ok(Value);
         }
 
         public override Try<TOut, TErr> Map<TOut>(Func<T, TOut> f)
         {
-            return new TryOk<TOut, TErr>(f(_data));
+            return new TryOk<TOut, TErr>(f(Value));
+        }
+
+        public override async Task<Try<TOut, TErr>> Map<TOut>(Func<T, Task<TOut>> f)
+        {
+            return new TryOk<TOut, TErr>(await f(Value));
         }
 
         public override Try<T, TOut> MapErr<TOut>(Func<TErr, TOut> f)
         {
-            return new TryOk<T, TOut>(_data);
+            return new TryOk<T, TOut>(Value);
+        }
+
+        public override Task<Try<T, TOut>> MapErr<TOut>(Func<TErr, Task<TOut>> f)
+        {
+            return Task.FromResult(new TryOk<T, TOut>(Value) as Try<T, TOut>);
         }
 
         public override Try<TOut, TErr> Cast<TOut>(Func<TErr> @catch)
         {
-            return _data is TOut @out 
+            return Value is TOut @out 
                 ? new TryOk<TOut, TErr>(@out) as Try<TOut, TErr>
                 : new TryErr<TOut, TErr>(@catch());
         }
 
         public override Try<TOut, TErr> Bind<TOut>(Func<T, Try<TOut, TErr>> f)
         {
-            return f(_data);
+            return f(Value);
+        }
+
+        public override async Task<Try<TOut, TErr>> Bind<TOut>(Func<T, Task<Try<TOut, TErr>>> f)
+        {
+            return await f(Value);
         }
 
         public override Option<T> Ok()
         {
-            return Option.Option.Some(_data);
+            return Option.Option.Some(Value);
         }
 
         public override Option<TErr> Err()

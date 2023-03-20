@@ -11,13 +11,13 @@ using PSD_Project.App.Models;
 using PSD_Project.Features.Users;
 using Util.Try;
 
-namespace PSD_Project.App
+namespace PSD_Project.Services
 {
     public class UsersService : IUsersService
     {
         private static readonly Uri UsersServiceUri = new Uri("http://localhost:5000/api/users");
         
-        public async Task<Try<List<User>, Exception>> TryGetUsersWithRoleAsync(int roleId)
+        public async Task<Try<List<User>, Exception>> GetUsersWithRoleAsync(int roleId)
         {
             var response = await RaamenApp.HttpClient.GetAsync(new Uri(UsersServiceUri, $"?roleId={roleId}"));
             return response.TryGetContent()
@@ -25,12 +25,20 @@ namespace PSD_Project.App
                 .Bind(str => str.TryDeserializeJson<List<User>>());
         }
 
-        public async Task<HttpStatusCode> TryUpdateUser(int userId, UserUpdateDetails form)
+        public async Task<HttpStatusCode> UpdateUserAsync(int userId, UserUpdateDetails form)
         {
             var jsonString = JsonConvert.SerializeObject(form, Formatting.None);
             var content = new StringContent(jsonString, Encoding.UTF8, "application/json");
             var response = await RaamenApp.HttpClient.PutAsync(new Uri(UsersServiceUri + $"/{userId}"), content);
             return response.StatusCode;
+        }
+
+        public async Task<Try<User, Exception>> GetUserAsync(int userId)
+        {
+            var response = await RaamenApp.HttpClient.GetAsync(new Uri(UsersServiceUri + $"/{userId}"));
+            return response.TryGetContent()
+                .Bind(r => r.TryReadResponseString())
+                .Bind(str => str.TryDeserializeJson<User>());
         }
     }
 }

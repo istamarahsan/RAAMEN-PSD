@@ -5,7 +5,7 @@ using PSD_Project.App.Common;
 using PSD_Project.Features.Ramen;
 using Util.Try;
 
-namespace PSD_Project.App
+namespace PSD_Project.Services
 {
     public sealed class RamenService
     {

@@ -5,6 +5,7 @@ using System.Web.UI;
 using PSD_Project.App.Common;
 using PSD_Project.Features.LogIn;
 using PSD_Project.Features.Users;
+using PSD_Project.Services;
 using Util.Option;
 using Util.Try;
 
@@ -87,7 +88,7 @@ namespace PSD_Project.App.Pages
                 .Bind(form => userSession.Map(s => s.Id).Map(id => (id, form)))
                 .Map(tuple =>
                 {
-                    var updateTask = UsersService.TryUpdateUser(tuple.id, tuple.form);
+                    var updateTask = UsersService.UpdateUserAsync(tuple.id, tuple.form);
                     updateTask.Wait();
                     return updateTask.Result;
                 })
