@@ -188,6 +188,7 @@
     <Compile Include="App\Services\IRegisterService.cs" />
     <Compile Include="App\Services\IUsersService.cs" />
     <Compile Include="App\Services\LoginAuthService.cs" />
+    <Compile Include="App\Services\RamenService.cs" />
     <Compile Include="App\Services\RegisterService.cs" />
     <Compile Include="App\Services\UsersService.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
@@ -204,6 +205,12 @@
     <Compile Include="Features\LogIn\UserSession.cs" />
     <Compile Include="Features\LogIn\UserSessionDetails.cs" />
     <Compile Include="Features\LogIn\UserSessions.cs" />
+    <Compile Include="Features\Ramen\IRamenRepository.cs" />
+    <Compile Include="Features\Ramen\Meat.cs" />
+    <Compile Include="Features\Ramen\NewRamenDetails.cs" />
+    <Compile Include="Features\Ramen\Ramen.cs" />
+    <Compile Include="Features\Ramen\RamenController.cs" />
+    <Compile Include="Features\Ramen\RamenRepository.cs" />
     <Compile Include="Features\Register\RegisterController.cs" />
     <Compile Include="Features\Register\RegistrationFormDetails.cs" />
     <Compile Include="Features\Users\IUserRepository.cs" />
