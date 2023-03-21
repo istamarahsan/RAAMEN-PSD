@@ -4,7 +4,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using PSD_Project.EntityFramework;
-using PSD_Project.Services.Sql;
+using PSD_Project.Service.Sql;
 using Util.Try;
 
 namespace PSD_Project.API.Features.Commerce.Transactions
@@ -17,7 +17,7 @@ namespace PSD_Project.API.Features.Commerce.Transactions
         {
             var db = new Raamen();
             var transaction = db.Database.BeginTransaction();
-            var stringBuilder = Services.Services.GetQueryStringBuilder(Services.Services.GetConfiguredDialect());
+            var stringBuilder = Service.Services.GetQueryStringBuilder(Service.Services.GetConfiguredDialect());
             try
             {
                 var headerId = await db.Headers.Select(h => h.id).DefaultIfEmpty(1).MaxAsync() + 1;

@@ -4,7 +4,8 @@ using System.Web.UI;
 using PSD_Project.API.Features.Users;
 using PSD_Project.App.Common;
 using PSD_Project.App.Models;
-using PSD_Project.Services;
+using PSD_Project.Service;
+using PSD_Project.Service.Http;
 using Util.Option;
 using Util.Try;
 
@@ -12,8 +13,8 @@ namespace PSD_Project.App.Pages
 {
     public partial class Home : Page
     {
-        private static readonly IAuthService AuthService = new AuthService();
-        private static readonly IUsersService UsersService = new UsersService();
+        private static readonly IAuthService AuthService = Services.GetAuthService();
+        private static readonly IUsersService UsersService = Services.GetUsersService();
 
         protected UserRole CurrentUserRole = UserRole.Customer;
         protected List<User> Customers = new List<User>();

@@ -4,7 +4,7 @@ using PSD_Project.API.Features.LogIn;
 using PSD_Project.App.Pages;
 using Util.Try;
 
-namespace PSD_Project.Services
+namespace PSD_Project.Service
 {
     public interface IAuthService
     {

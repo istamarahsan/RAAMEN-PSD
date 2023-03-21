@@ -11,15 +11,23 @@ using PSD_Project.App.Common;
 using PSD_Project.App.Models;
 using Util.Try;
 
-namespace PSD_Project.Services
+namespace PSD_Project.Service.Http
 {
-    public class UsersService : IUsersService
+    public class HttpUsersService : IUsersService
     {
-        private static readonly Uri UsersServiceUri = new Uri("http://localhost:5000/api/users");
-        
+        private readonly Uri usersServiceUri;
+        private readonly HttpClient httpClient;
+
+        public HttpUsersService(Uri usersServiceUri, HttpClient httpClient)
+        {
+            this.usersServiceUri = usersServiceUri;
+            this.httpClient = httpClient;
+        }
+
+
         public async Task<Try<List<User>, Exception>> GetUsersWithRole(int roleId)
         {
-            var response = await RaamenApp.HttpClient.GetAsync(new Uri(UsersServiceUri, $"?roleId={roleId}"));
+            var response = await httpClient.GetAsync(new Uri(usersServiceUri, $"?roleId={roleId}"));
             return response.TryGetContent()
                 .Bind(r => r.TryReadResponseString())
                 .Bind(str => str.TryDeserializeJson<List<User>>());
@@ -29,13 +37,13 @@ namespace PSD_Project.Services
         {
             var jsonString = JsonConvert.SerializeObject(form, Formatting.None);
             var content = new StringContent(jsonString, Encoding.UTF8, "application/json");
-            var response = await RaamenApp.HttpClient.PutAsync(new Uri(UsersServiceUri + $"/{userId}"), content);
+            var response = await httpClient.PutAsync(new Uri(usersServiceUri + $"/{userId}"), content);
             return response.StatusCode;
         }
 
         public async Task<Try<User, Exception>> GetUser(int userId)
         {
-            var response = await RaamenApp.HttpClient.GetAsync(new Uri(UsersServiceUri + $"/{userId}"));
+            var response = await httpClient.GetAsync(new Uri(usersServiceUri + $"/{userId}"));
             return response.TryGetContent()
                 .Bind(r => r.TryReadResponseString())
                 .Bind(str => str.TryDeserializeJson<User>());

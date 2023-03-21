@@ -10,15 +10,22 @@ using PSD_Project.App.Common;
 using PSD_Project.App.Pages;
 using Util.Try;
 
-namespace PSD_Project.Services
+namespace PSD_Project.Service.Http
 {
-    public class AuthService : IAuthService
+    public class HttpAuthService : IAuthService
     {
-        private static readonly Uri ServiceUri = new Uri("http://localhost:5000/api/login");
+        private readonly Uri serviceUri;
+        private readonly HttpClient httpClient;
+
+        public HttpAuthService(Uri serviceUri, HttpClient httpClient)
+        {
+            this.serviceUri = serviceUri;
+            this.httpClient = httpClient;
+        }
 
         public async Task<Try<UserSessionDetails, Exception>> GetSession(int token)
         {
-            var response = await RaamenApp.HttpClient.GetAsync(new Uri(ServiceUri, $"?sessionToken={token}"));
+            var response = await httpClient.GetAsync(new Uri(serviceUri, $"?sessionToken={token}"));
             return response.TryGetContent()
                 .Bind(content => content.TryReadResponseString())
                 .Bind(str => str.TryDeserializeJson<UserSessionDetails>());
@@ -28,7 +35,7 @@ namespace PSD_Project.Services
         {
             var credentialsAsJson = JsonConvert.SerializeObject(credentials, Formatting.None);
             var credentialsAsContent = new StringContent(credentialsAsJson, Encoding.UTF8, "application/json");
-            var response = await RaamenApp.HttpClient.PostAsync(ServiceUri, credentialsAsContent);
+            var response = await httpClient.PostAsync(serviceUri, credentialsAsContent);
             return response.Check(
                     r => r.StatusCode == HttpStatusCode.OK,
                     r => new HttpException(r.StatusCode.ToString()))

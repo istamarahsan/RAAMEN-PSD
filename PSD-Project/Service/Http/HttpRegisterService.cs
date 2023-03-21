@@ -9,17 +9,24 @@ using PSD_Project.App.Models;
 using Util.Option;
 using Util.Try;
 
-namespace PSD_Project.Services
+namespace PSD_Project.Service.Http
 {
-    public class RegisterService : IRegisterService
+    public class HttpRegisterService : IRegisterService
     {
-        private static readonly Uri RegisterServiceUri = new Uri("http://localhost:5000/api/register");
-        
+        private readonly Uri registerServiceUri;
+        private readonly HttpClient httpClient;
+
+        public HttpRegisterService(Uri registerServiceUri, HttpClient httpClient)
+        {
+            this.registerServiceUri = registerServiceUri;
+            this.httpClient = httpClient;
+        }
+
         public async Task<HttpStatusCode> RegisterNewUser(RegistrationFormDetails form)
         {
             var json = JsonConvert.SerializeObject(form, Formatting.None);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-            var response = await RaamenApp.HttpClient.PostAsync(RegisterServiceUri, content);
+            var response = await httpClient.PostAsync(registerServiceUri, content);
             return response.StatusCode;
         }
     }

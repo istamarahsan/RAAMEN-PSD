@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 using PSD_Project.API.Features.Commerce.Orders;
 using PSD_Project.API.Features.Commerce.Transactions;
 using PSD_Project.API.Features.Users;
-using PSD_Project.Services;
+using PSD_Project.Service;
+using PSD_Project.Service.Http;
 using Util.Collections;
 using Util.Try;
 
@@ -14,7 +15,7 @@ namespace PSD_Project.API.Features.Commerce.Orders
     public class OrdersHandler : IOrdersHandler
     {
         private static readonly Dictionary<int, Order> Orders = new Dictionary<int, Order>();
-        private static readonly IUsersService UsersService = new UsersService();
+        private static readonly IUsersService UsersService = Services.GetUsersService();
 
         private static readonly ITransactionsRepository TransactionsRepository = new TransactionsRepository();
 

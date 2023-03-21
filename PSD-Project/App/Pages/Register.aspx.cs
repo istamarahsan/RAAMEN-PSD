@@ -9,7 +9,8 @@ using System.Web.UI;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using PSD_Project.App.Models;
-using PSD_Project.Services;
+using PSD_Project.Service;
+using PSD_Project.Service.Http;
 using Util.Option;
 using Util.Try;
 
@@ -17,7 +18,7 @@ namespace PSD_Project.App.Pages
 {
     public partial class Register : Page
     {
-        private readonly IRegisterService registerService = new RegisterService();
+        private readonly IRegisterService registerService = Services.GetRegisterService();
         protected void Page_Load(object sender, EventArgs e)
         {
             

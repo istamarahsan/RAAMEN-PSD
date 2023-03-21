@@ -5,7 +5,8 @@ using System.Web.UI;
 using PSD_Project.API.Features.LogIn;
 using PSD_Project.API.Features.Users;
 using PSD_Project.App.Common;
-using PSD_Project.Services;
+using PSD_Project.Service;
+using PSD_Project.Service.Http;
 using Util.Option;
 using Util.Try;
 
@@ -13,8 +14,8 @@ namespace PSD_Project.App.Pages
 {
     public partial class Profile : Page
     {
-        private static readonly IAuthService AuthService = new AuthService();
-        private static readonly IUsersService UsersService = new UsersService();
+        private static readonly IAuthService AuthService = Services.GetAuthService();
+        private static readonly IUsersService UsersService = Services.GetUsersService();
         private Option<UserSessionDetails> userSession = Option.None<UserSessionDetails>();
 
         protected void Page_Load(object sender, EventArgs e)

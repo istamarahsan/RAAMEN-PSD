@@ -226,18 +226,19 @@
     <Compile Include="EntityFramework\User.cs" />
     <Compile Include="global.asax.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\IAuthService.cs" />
-    <Compile Include="Services\IRegisterService.cs" />
-    <Compile Include="Services\IUsersService.cs" />
-    <Compile Include="Services\AuthService.cs" />
-    <Compile Include="Services\RamenService.cs" />
-    <Compile Include="Services\RegisterService.cs" />
-    <Compile Include="Services\Services.cs" />
-    <Compile Include="Services\Sql\QueryStrings\MySqlQueryStringBuilder.cs" />
-    <Compile Include="Services\Sql\QueryStrings\QueryStringBuilder.cs" />
-    <Compile Include="Services\Sql\QueryStrings\SqlServerQueryStringBuilder.cs" />
-    <Compile Include="Services\Sql\SqlDialect.cs" />
-    <Compile Include="Services\UsersService.cs" />
+    <Compile Include="Service\Http\HttpAuthService.cs" />
+    <Compile Include="Service\Http\HttpRamenService.cs" />
+    <Compile Include="Service\Http\HttpRegisterService.cs" />
+    <Compile Include="Service\Http\HttpUsersService.cs" />
+    <Compile Include="Service\IAuthService.cs" />
+    <Compile Include="Service\IRamenService.cs" />
+    <Compile Include="Service\IRegisterService.cs" />
+    <Compile Include="Service\IUsersService.cs" />
+    <Compile Include="Service\Services.cs" />
+    <Compile Include="Service\Sql\QueryStrings\MySqlQueryStringBuilder.cs" />
+    <Compile Include="Service\Sql\QueryStrings\QueryStringBuilder.cs" />
+    <Compile Include="Service\Sql\QueryStrings\SqlServerQueryStringBuilder.cs" />
+    <Compile Include="Service\Sql\SqlDialect.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

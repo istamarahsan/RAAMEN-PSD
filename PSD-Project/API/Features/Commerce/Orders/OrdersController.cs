@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using System.Web.Http;
-using PSD_Project.Services;
+using PSD_Project.Service;
 
 namespace PSD_Project.API.Features.Commerce.Orders
 {
@@ -14,7 +14,7 @@ namespace PSD_Project.API.Features.Commerce.Orders
         public OrdersController()
         {
             ordersHandler = new OrdersHandler();
-            authService = new AuthService();
+            authService = Services.GetAuthService();
         }
 
         public OrdersController(IOrdersHandler ordersHandler, IAuthService authService)

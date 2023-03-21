@@ -2,7 +2,7 @@ using System.Net;
 using System.Threading.Tasks;
 using PSD_Project.App.Models;
 
-namespace PSD_Project.Services
+namespace PSD_Project.Service
 {
     public interface IRegisterService
     {

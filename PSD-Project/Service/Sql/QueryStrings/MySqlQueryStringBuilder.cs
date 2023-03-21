@@ -1,6 +1,6 @@
 using System;
 
-namespace PSD_Project.Services.Sql.QueryStrings
+namespace PSD_Project.Service.Sql.QueryStrings
 {
     public class MySqlQueryStringBuilder : QueryStringBuilder
     {

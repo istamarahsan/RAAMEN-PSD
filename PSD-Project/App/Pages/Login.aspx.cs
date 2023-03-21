@@ -3,7 +3,8 @@ using System.Web;
 using System.Web.UI;
 using PSD_Project.API.Features.LogIn;
 using PSD_Project.App.Common;
-using PSD_Project.Services;
+using PSD_Project.Service;
+using PSD_Project.Service.Http;
 using Util.Option;
 using Util.Try;
 
@@ -11,7 +12,7 @@ namespace PSD_Project.App.Pages
 {
     public partial class Login : Page
     {
-        private static readonly IAuthService AuthService = new AuthService();
+        private static readonly IAuthService AuthService = Services.GetAuthService();
 
         protected void Page_Load(object sender, EventArgs e)
         {
