@@ -1,7 +1,8 @@
 using System;
 using System.Threading.Tasks;
 using System.Web.Http;
-using PSD_Project.Service;
+using PSD_Project.API.Features.LogIn;
+using PSD_Project.API.Service;
 
 namespace PSD_Project.API.Features.Commerce.Orders
 {
@@ -25,34 +26,34 @@ namespace PSD_Project.API.Features.Commerce.Orders
 
         [Route]
         [HttpGet]
-        public async Task<IHttpActionResult> GetOrders()
+        public IHttpActionResult GetOrders()
         {
-            var orders = await ordersService.GetOrders();
+            var orders = ordersService.GetOrders();
             return orders.Match(Ok, HandleError);
         }
         
         [Route("{id}")]
         [HttpGet]
-        public async Task<IHttpActionResult> GetOrder(int id)
+        public IHttpActionResult GetOrder(int id)
         {
-            var order = await ordersService.GetOrder(id);
+            var order = ordersService.GetOrder(id);
             return order.Match(Ok, HandleError);
         }
 
         [Route]
         [HttpPost]
-        public async Task<IHttpActionResult> CreateOrder([FromBody] NewOrderDetails newOrderDetails)
+        public IHttpActionResult CreateOrder([FromBody] NewOrderDetails newOrderDetails)
         {
-            var error = await ordersService.QueueOrder(newOrderDetails);
+            var error = ordersService.QueueOrder(newOrderDetails);
             return error.Match(Ok, HandleError);
         }
 
         [Route("{id}")]
         [HttpPost]
-        public async Task<IHttpActionResult> HandleOrder(int id, [FromUri] int token)
+        public IHttpActionResult HandleOrder(int id, [FromUri] int token)
         {
-            var auth = await authService.GetSession(token);
-            var handleOrder = await auth.Bind(userSession => ordersService.HandleOrder(id, userSession.Id));
+            var auth = authService.GetSession(token);
+            var handleOrder = auth.Bind(userSession => ordersService.HandleOrder(id, userSession.Id));
             return handleOrder.Match(Ok, HandleError);
         }
         

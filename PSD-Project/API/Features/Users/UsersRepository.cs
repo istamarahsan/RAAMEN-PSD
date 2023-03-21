@@ -9,48 +9,80 @@ using Util.Try;
 
 namespace PSD_Project.API.Features.Users
 {
-    public class UsersRepository : IUsersRepository
+    public class UserRepository : IUserRepository
     {
         private readonly Raamen db = new Raamen();
         
-        public async Task<Option<User>> GetUser(int userId)
+        public Try<User, Exception> GetUser(int userId)
         {
-            return (await db.Users.Where(user => user.Id == userId).FirstOrDefaultAsync())
-                .ToOption()
-                .Map(ConvertModel);
+            try
+            {
+                return db.Users.FirstOrDefault(u => u.Id == userId)
+                    .ToOption()
+                    .OrErr(() => new Exception())
+                    .Map(ConvertModel);
+            }
+            catch (Exception e)
+            {
+                return Try.Err<User, Exception>(e);
+            }
+            
         }
 
-        public async Task<List<User>> GetUsers()
+        public Try<List<User>, Exception> GetUsers()
         {
-            var users = await db.Users.ToListAsync();
-            return users.Select(ConvertModel).ToList();
+            try
+            {
+                var users = db.Users.Select(ConvertModel).ToList();
+                return Try.Of<List<User>, Exception>(users);
+            }
+            catch (Exception e)
+            {
+                return Try.Err<List<User>, Exception>(e);
+            }
+            
         }
 
-        public async Task<List<User>> GetUsersWithRole(int roleId)
+        public Try<List<User>, Exception> GetUsersWithRole(int roleId)
         {
-            var usersWithRoleId = await db.Users.Where(user => user.Roleid == roleId).ToListAsync();
-            return usersWithRoleId.AsEnumerable()
-                .Select(ConvertModel)
-                .ToList();
+            try
+            {
+                var users = db.Users.Where(user => user.Roleid == roleId)
+                    .AsEnumerable()
+                    .Select(ConvertModel)
+                    .ToList();
+                return Try.Of<List<User>, Exception>(users);
+            }
+            catch (Exception e)
+            {
+                return Try.Err<List<User>, Exception>(e);
+            }
         }
 
-        public async Task<Option<User>> GetUserWithUsername(string username)
+        public Try<List<User>, Exception> GetUsersWithUsername(string username)
         {
-            var usersWithUsername = await db.Users.Where(user => user.Username == username).ToListAsync();
-            return usersWithUsername.AsEnumerable()
-                .FirstOrDefault()
-                .ToOption()
-                .Map(ConvertModel);
+            try
+            {
+                var users = db.Users.Where(user => user.Username == username)
+                    .AsEnumerable()
+                    .Select(ConvertModel)
+                    .ToList();
+                return Try.Of<List<User>, Exception>(users);
+            }
+            catch (Exception e)
+            {
+                return Try.Err<List<User>, Exception>(e);
+            }
         }
 
-        public async Task<Try<User, Exception>> AddNewUser(string username, string email, string password, string gender, int roleId)
+        public Try<User, Exception> AddNewUser(string username, string email, string password, string gender, int roleId)
         {
-            var foundRole = await db.Roles.Where(role => role.id == roleId).FirstOrDefaultAsync();
+            var foundRole = db.Roles.FirstOrDefault(role => role.id == roleId);
             
             if (foundRole == null) 
                 return Try.Err<User, Exception>(new ArgumentException("Role with that id does not exist"));
             
-            var newId = await db.Users.Select(users => users.Id).DefaultIfEmpty(0).MaxAsync() + 1;
+            var newId = db.Users.Select(users => users.Id).DefaultIfEmpty(0).Max() + 1;
             
 
             db.Users.Add(new PSD_Project.EntityFramework.User
@@ -65,7 +97,7 @@ namespace PSD_Project.API.Features.Users
 
             try
             {
-                await db.SaveChangesAsync();
+                db.SaveChanges();
             }
             catch (Exception e)
             {
@@ -75,16 +107,16 @@ namespace PSD_Project.API.Features.Users
             return Try.Of<User, Exception>(new User(newId, username, email, password, gender, new Role(foundRole.id, foundRole.name)));
         }
 
-        public async Task<Try<User, Exception>> UpdateUser(int userId, string username, string email, string gender)
+        public Try<User, Exception> UpdateUser(int userId, string username, string email, string gender)
         {
-            var user = await db.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            var user = db.Users.FirstOrDefault(u => u.Id == userId);
             if (user == null) return Try.Err<User, Exception>(new ArgumentException());
             user.Username = username;
             user.Email = email;
             user.Gender = gender;
             try
             {
-                await db.SaveChangesAsync();
+                db.SaveChanges();
             }
             catch (Exception e)
             {

@@ -1,17 +1,10 @@
 using System;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web.UI;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+using PSD_Project.API.Features.Register;
+using PSD_Project.API.Service;
 using PSD_Project.App.Models;
-using PSD_Project.Service;
-using PSD_Project.Service.Http;
-using Util.Option;
 using Util.Try;
 
 namespace PSD_Project.App.Pages
@@ -64,21 +57,10 @@ namespace PSD_Project.App.Pages
                     EmailTextBox.Text,
                     PasswordTextBox.Text,
                     GenderRadioButtons.SelectedItem.Value);
-                var registerTask = registerService.RegisterNewUser(formDetails);
-                registerTask.Wait();
-                var statusCode = registerTask.Result;
-                switch (statusCode)
-                {
-                    case HttpStatusCode.OK:
-                        Response.Redirect("Login.aspx");
-                        break;
-                    case HttpStatusCode.Conflict:
-                        UsernameErrorLabel.Text = "It seems this username already exists";
-                        break;
-                    default:
-                        RegisterResultLabel.Text = $"Oops. Something went wrong :( - {statusCode}";
-                        break;
-                }
+                registerService.RegisterNewUser(formDetails)
+                    .Match(
+                        ok: _ => Response.Redirect("Login.aspx"),
+                        err: _ => RegisterResultLabel.Text = $"Oops. Something went wrong :(");
             }
         }
 

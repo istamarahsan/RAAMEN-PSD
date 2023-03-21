@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using Newtonsoft.Json;
 using PSD_Project.API.Features.Users;
-using PSD_Project.Service;
+using PSD_Project.API.Service;
 using Util.Try;
 
 namespace PSD_Project.API.Features.Register
@@ -28,14 +28,14 @@ namespace PSD_Project.API.Features.Register
 
         [Route]
         [HttpPost]
-        public async Task<IHttpActionResult> Register([FromBody] RegistrationFormDetails form)
+        public IHttpActionResult Register([FromBody] RegistrationFormDetails form)
         {
             if (form == null) return BadRequest();
 
-            var newUserDetails = new NewUserDetails(username: form.Username, email: form.Email, password: form.Password, gender: form.Gender, 0);
+            var newUserDetails = new UserDetails(username: form.Username, email: form.Email, password: form.Password, gender: form.Gender, 0);
             
-            var requestForUsersWithSameUsername = await usersService.GetUserWithUsername(form.Username);
-            var createUser = await requestForUsersWithSameUsername.Err()
+            var requestForUsersWithSameUsername = usersService.GetUserWithUsername(form.Username);
+            var createUser = requestForUsersWithSameUsername.Err()
                 .OrErr(() => new Exception("username already exists"))
                 .Bind(_ => usersService.CreateUser(newUserDetails));
 

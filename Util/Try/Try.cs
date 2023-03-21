@@ -9,14 +9,10 @@ namespace Util.Try
     {
         public abstract void Match(Action<T> ok, Action<TErr> err);
         public abstract TOut Match<TOut>(Func<T, TOut> ok, Func<TErr, TOut> err);
-        public abstract Task<TOut> Match<TOut>(Func<T, Task<TOut>> ok, Func<TErr, Task<TOut>> err);
         public abstract Try<TOut, TErr> Map<TOut>(Func<T, TOut> f);
-        public abstract Task<Try<TOut, TErr>> Map<TOut>(Func<T, Task<TOut>> f);
         public abstract Try<T, TOut> MapErr<TOut>(Func<TErr, TOut> f);
-        public abstract Task<Try<T, TOut>> MapErr<TOut>(Func<TErr, Task<TOut>> f);
         public abstract Try<TOut, TErr> Cast<TOut>(Func<TErr> @catch);
         public abstract Try<TOut, TErr> Bind<TOut>(Func<T, Try<TOut, TErr>> f);
-        public abstract Task<Try<TOut, TErr>> Bind<TOut>(Func<T, Task<Try<TOut, TErr>>> f);
         public abstract Option<T> Ok();
         public abstract Option<TErr> Err();
         public abstract bool IsOk();

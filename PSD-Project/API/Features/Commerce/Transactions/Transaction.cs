@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 namespace PSD_Project.API.Features.Commerce.Transactions
 {
     [DataContract]
-    public class TransactionRecord
+    public class Transaction
     {
         [DataMember] public readonly int Id;
         [DataMember] public readonly int CustomerId;
@@ -13,7 +13,7 @@ namespace PSD_Project.API.Features.Commerce.Transactions
         [DataMember] public readonly DateTime? Date;
         [DataMember] public readonly List<TransactionEntry> Details;
 
-        public TransactionRecord(int id, int customerId, int staffId, List<TransactionEntry> details, DateTime? date)
+        public Transaction(int id, int customerId, int staffId, List<TransactionEntry> details, DateTime? date)
         {
             Id = id;
             CustomerId = customerId;
@@ -22,7 +22,7 @@ namespace PSD_Project.API.Features.Commerce.Transactions
             Details = details;
         }
         
-        public TransactionRecord(int id, int customerId, int staffId, List<TransactionEntry> details)
+        public Transaction(int id, int customerId, int staffId, List<TransactionEntry> details)
         {
             Id = id;
             CustomerId = customerId;

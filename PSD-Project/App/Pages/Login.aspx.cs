@@ -2,9 +2,8 @@ using System;
 using System.Web;
 using System.Web.UI;
 using PSD_Project.API.Features.LogIn;
+using PSD_Project.API.Service;
 using PSD_Project.App.Common;
-using PSD_Project.Service;
-using PSD_Project.Service.Http;
 using Util.Option;
 using Util.Try;
 
@@ -35,10 +34,8 @@ namespace PSD_Project.App.Pages
                 UsernameTextBox.Text,
                 PasswordTextBox.Text);
 
-            var loginTask = AuthService.Authenticate(credentials);
-            loginTask.Wait();
-            loginTask.Result
-                .Map(s => s.SessionToken)
+            var auth = AuthService.Authenticate(credentials);
+            auth.Map(s => s.SessionToken)
                 .Match(
                     ok: token =>
                     {
@@ -78,9 +75,7 @@ namespace PSD_Project.App.Pages
 
         private Try<UserSessionDetails, Exception> AuthenticateSession(int token)
         {
-            var authTask = AuthService.GetSession(token);
-            authTask.Wait();
-            return authTask.Result;
+            return AuthService.GetSession(token);
         }
 
         private void TryFillRememberedCredentials()

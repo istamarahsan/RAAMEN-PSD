@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Util.Try;
 
 namespace PSD_Project.API.Features.Commerce.Transactions
 {
-    public interface ITransactionsRepository
+    public interface ITransactionsService
     {
         Try<Transaction, Exception> CreateTransaction(
             int customerId, 

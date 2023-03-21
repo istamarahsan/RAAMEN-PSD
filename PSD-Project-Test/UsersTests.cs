@@ -41,7 +41,7 @@ namespace PSD_Project_Test
 
         private static readonly Faker Faker = new Faker();
 
-        private static IEnumerable<NewUserDetails> UserDetailsGenerator()
+        private static IEnumerable<UserDetails> UserDetailsGenerator()
         {
             while (true)
             {
@@ -50,7 +50,7 @@ namespace PSD_Project_Test
                 var password = Faker.Internet.Password();
                 var gender = Faker.PickRandom(Name.Gender.Female.ToString(), Name.Gender.Male.ToString());
                 var roleId = Faker.PickRandom(TestRoles.Values).Id;
-                yield return new NewUserDetails(username, email, password, gender, roleId);
+                yield return new UserDetails(username, email, password, gender, roleId);
             }
         }
         
@@ -60,38 +60,61 @@ namespace PSD_Project_Test
                 .Select(_ => UserDetailsGenerator().Take(numberAtATime).Cast<object>().ToArray()).ToList();
         }
 
-        private class TestRepository : IUsersRepository
+        private class TestUsersService : IUsersService, IUserRepository
         {
             private readonly IDictionary<int, Role> roles;
             private readonly IDictionary<int, User> users;
 
-            public TestRepository(IDictionary<int, Role> roles, IDictionary<int, User> users)
+            public TestUsersService(IDictionary<int, Role> roles, IDictionary<int, User> users)
             {
                 this.roles = roles;
                 this.users = users;
             }
 
-            public Task<Option<User>> GetUser(int userId)
+            public Try<User, Exception> GetUser(int userId)
             {
-                return Task.FromResult(users.Get(userId));
+                return users.Get(userId).OrErr(() => new Exception());
             }
 
-            public Task<List<User>> GetUsers()
+            public Try<List<User>, Exception> GetUsers()
             {
-                return Task.FromResult(users.Values.ToList());
+                return Try.Of<List<User>, Exception>(users.Values.ToList());
             }
 
-            public Task<List<User>> GetUsersWithRole(int roleId)
+            public Try<List<User>, Exception> GetUsersWithRole(int roleId)
             {
-                return Task.FromResult(users.Values.Where(user => user.Role.Id == roleId).ToList());
+                return Try.Of<List<User>, Exception>(users.Values.Where(user => user.Role.Id == roleId).ToList());
             }
 
-            public Task<Option<User>> GetUserWithUsername(string username)
+            public Try<List<User>, Exception> GetUsersWithUsername(string username)
             {
-                return Task.FromResult(users.Values.FirstOrDefault(user => user.Username == username).ToOption());
+                return Try.Of<List<User>, Exception>(users.Values.Where(u => u.Username == username).ToList());
             }
 
-            public Task<Try<User, Exception>> AddNewUser(string username, string email, string password, string gender, int roleId)
+            public Try<User, Exception> GetUserWithUsername(string username)
+            {
+                return users.Values
+                    .FirstOrDefault(user => user.Username == username)
+                    .ToOption()
+                    .OrErr(() => new Exception());
+            }
+
+            public Try<User, Exception> CreateUser(UserDetails userDetails)
+            {
+                return AddNewUser(
+                    userDetails.Username, 
+                    userDetails.Email, 
+                    userDetails.Password, 
+                    userDetails.Gender,
+                    userDetails.RoleId);
+            }
+
+            public Try<User, Exception> UpdateUser(int userId, UserUpdateDetails form)
+            {
+                return UpdateUser(userId, form.Username, form.Email, form.Gender);
+            }
+
+            public Try<User, Exception> AddNewUser(string username, string email, string password, string gender, int roleId)
             {
                 var nextId = users.Keys.DefaultIfEmpty(0).Max() + 1;
                 var result = roles.Get(roleId)
@@ -103,40 +126,40 @@ namespace PSD_Project_Test
                     })
                     .OrErr(() => new ArgumentException("Role with that ID does not exist"))
                     .MapErr(err => err as Exception);
-                return Task.FromResult(result);
+                return result;
             }
 
-            public Task<Try<User, Exception>> UpdateUser(int userId, string username, string email, string gender)
+            public Try<User, Exception> UpdateUser(int userId, string username, string email, string gender)
             {
-                if (!users.ContainsKey(userId)) return Task.FromResult(Try.Err<User, Exception>(new ArgumentException("User does not exist"))) ;
+                if (!users.ContainsKey(userId)) return Try.Err<User, Exception>(new ArgumentException("User does not exist"));
 
                 var existingUser = users[userId];
                 users[userId] = new User(userId, username, email, existingUser.Password, gender, existingUser.Role);
-                return Task.FromResult(Try.Of<User, Exception>(users[userId]));
+                return Try.Of<User, Exception>(users[userId]);
             }
         }
 
         [Fact]
-        public async void GetAllUsersReturnsAllUsers()
+        public void GetAllUsersReturnsAllUsers()
         {
             var generatedUsers = UserDetailsGenerator()
                 .Take(20)
                 .Select((gen, i) =>
                     new User(i, gen.Username, gen.Email, gen.Password, gen.Gender, TestRoles[gen.RoleId]))
                 .ToList();
-            var controller = new UsersController(new TestRepository(TestRoles, generatedUsers.ToDictionary(u => u.Id)));
-            var users = await controller.GetAllUsers();
+            var controller = new UsersController(new TestUsersService(TestRoles, generatedUsers.ToDictionary(u => u.Id)));
+            var users = ((OkNegotiatedContentResult<List<User>>)controller.GetAllUsers()).Content;
             Assert.True(users.OrderBy(user => user.Id).SequenceEqual(generatedUsers.OrderBy(user => user.Id).ToList()));
         }
 
         [Theory]
         [MemberData(nameof(GenerateNewUserDetails), 20, 1)]
-        public async void NewUserAddedIsRetrievable(NewUserDetails form)
+        public void NewUserAddedIsRetrievable(UserDetails form)
         {
-            var controller = new UsersController(new TestRepository(TestRoles, new Dictionary<int, User>()));
-            var response = await controller.CreateNewUser(form);
+            var controller = new UsersController(new TestUsersService(TestRoles, new Dictionary<int, User>()));
+            var response = controller.CreateNewUser(form);
             Assert.IsAssignableFrom<OkNegotiatedContentResult<User>>(response);
-            var users = await controller.GetAllUsers();
+            var users = ((OkNegotiatedContentResult<List<User>>)controller.GetAllUsers()).Content;
             Assert.Equal(1, users.Count);
             var user = users.FirstOrDefault();
             Assert.NotNull(user);
@@ -149,19 +172,19 @@ namespace PSD_Project_Test
         
         [Theory]
         [MemberData(nameof(GenerateNewUserDetails), 20, 1)]
-        public async void TryingToAddUserWithNonexistentRoleReturnsBadRequest(NewUserDetails form)
+        public void TryingToAddUserWithNonexistentRoleReturnsBadRequest(UserDetails form)
         {
-            var controller = new UsersController(new TestRepository(new Dictionary<int, Role>(), new Dictionary<int, User>()));
-            var response = await controller.CreateNewUser(form);
+            var controller = new UsersController(new TestUsersService(new Dictionary<int, Role>(), new Dictionary<int, User>()));
+            var response = controller.CreateNewUser(form);
             Assert.IsAssignableFrom<BadRequestResult>(response);
         }
 
         [Theory]
         [MemberData(nameof(GenerateNewUserDetails), 20, 1)]
-        public async void CreatingUserReturnsUser(NewUserDetails form)
+        public void CreatingUserReturnsUser(UserDetails form)
         {
-            var controller = new UsersController(new TestRepository(TestRoles, new Dictionary<int, User>()));
-            var response = await controller.CreateNewUser(form);
+            var controller = new UsersController(new TestUsersService(TestRoles, new Dictionary<int, User>()));
+            var response = controller.CreateNewUser(form);
             Assert.IsAssignableFrom<OkNegotiatedContentResult<User>>(response);
             var returnedUser = ((OkNegotiatedContentResult<User>)response).Content;
             Assert.Equal(form.Username, returnedUser.Username);
@@ -172,11 +195,11 @@ namespace PSD_Project_Test
         
         [Theory]
         [MemberData(nameof(GenerateNewUserDetails), 20, 1)]
-        public async void CreatingUserStoresUser(NewUserDetails form)
+        public void CreatingUserStoresUser(UserDetails form)
         {
             var usersStorage = new Dictionary<int, User>();
-            var controller = new UsersController(new TestRepository(TestRoles, usersStorage));
-            await controller.CreateNewUser(form);
+            var controller = new UsersController(new TestUsersService(TestRoles, usersStorage));
+            controller.CreateNewUser(form);
             Assert.Equal(1, usersStorage.Count);
             Assert.Contains(usersStorage.Values, user => user.Username == form.Username
                                                          && user.Email == form.Email
@@ -186,36 +209,36 @@ namespace PSD_Project_Test
 
         [Theory]
         [MemberData(nameof(GenerateNewUserDetails), 20, 2)]
-        public async void UpdatingUserUpdatesStoredUser(NewUserDetails initialDetails, NewUserDetails newDetails)
+        public void UpdatingUserUpdatesStoredUser(UserDetails initialDetails, UserDetails details)
         {
             var usersStorage = new Dictionary<int, User>
             {
                 [0] = new User(0, initialDetails.Username, initialDetails.Email, initialDetails.Password, initialDetails.Gender, TestRoles[initialDetails.RoleId])
             };
-            var controller = new UsersController(new TestRepository(TestRoles, usersStorage));
-            await controller.UpdateUser(0, new UserUpdateDetails(newDetails.Username, newDetails.Email, newDetails.Gender));
+            var controller = new UsersController(new TestUsersService(TestRoles, usersStorage));
+            controller.UpdateUser(0, new UserUpdateDetails(details.Username, details.Email, details.Gender));
             Assert.Equal(1, usersStorage.Count);
-            Assert.Contains(usersStorage.Values, user => user.Username == newDetails.Username 
-                                                         && user.Email == newDetails.Email 
-                                                         && user.Gender == newDetails.Gender);
+            Assert.Contains(usersStorage.Values, user => user.Username == details.Username 
+                                                         && user.Email == details.Email 
+                                                         && user.Gender == details.Gender);
         }
         
         [Theory]
         [MemberData(nameof(GenerateNewUserDetails), 20, 2)]
-        public async void UpdatingUserReturnsUpdatedUser(NewUserDetails initialDetails, NewUserDetails newDetails)
+        public void UpdatingUserReturnsUpdatedUser(UserDetails initialDetails, UserDetails details)
         {
             var usersStorage = new Dictionary<int, User>
             {
                 [0] = new User(0, initialDetails.Username, initialDetails.Email, initialDetails.Password, initialDetails.Gender, TestRoles[initialDetails.RoleId])
             };
-            var controller = new UsersController(new TestRepository(TestRoles, usersStorage));
-            var response = await controller.UpdateUser(0, new UserUpdateDetails(newDetails.Username, newDetails.Email, newDetails.Gender));
+            var controller = new UsersController(new TestUsersService(TestRoles, usersStorage));
+            var response = controller.UpdateUser(0, new UserUpdateDetails(details.Username, details.Email, details.Gender));
             var returnedUser = ((OkNegotiatedContentResult<User>)response).Content;
             Assert.Equal(0, returnedUser.Id);
             Assert.Equal(initialDetails.Password, returnedUser.Password);
-            Assert.Equal(newDetails.Username, returnedUser.Username);
-            Assert.Equal(newDetails.Email, returnedUser.Email);
-            Assert.Equal(newDetails.Gender, returnedUser.Gender);
+            Assert.Equal(details.Username, returnedUser.Username);
+            Assert.Equal(details.Email, returnedUser.Email);
+            Assert.Equal(details.Gender, returnedUser.Gender);
         }
     }
 }

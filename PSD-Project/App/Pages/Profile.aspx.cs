@@ -4,9 +4,8 @@ using System.Net;
 using System.Web.UI;
 using PSD_Project.API.Features.LogIn;
 using PSD_Project.API.Features.Users;
+using PSD_Project.API.Service;
 using PSD_Project.App.Common;
-using PSD_Project.Service;
-using PSD_Project.Service.Http;
 using Util.Option;
 using Util.Try;
 
@@ -27,7 +26,7 @@ namespace PSD_Project.App.Pages
             Request.Cookies[Globals.SessionCookieName].ToOption()
                 .Map(cookie => cookie.Value)
                 .Bind(str => str.TryParseInt().Ok())
-                .Bind(AuthenticateToken)
+                .Bind(token => AuthService.GetSession(token).Ok())
                 .Match(
                     details => Session[Globals.SavedSessionName] = details,
                     () => Response.Redirect("Login.aspx"));
@@ -66,12 +65,7 @@ namespace PSD_Project.App.Pages
 
             var passwordValidation = userSession
                 .Map(session => new UserCredentials(session.Username, PasswordTextBox.Text))
-                .Bind(credentials =>
-                {
-                    var authTask = AuthService.Authenticate(credentials);
-                    authTask.Wait();
-                    return authTask.Result.Ok();
-                })
+                .Bind(credentials =>  AuthService.Authenticate(credentials).Ok())
                 .OrErr(() => "please check your password and try again");
 
             PasswordErrorLabel.Text = passwordValidation.Err().OrElse("");
@@ -86,33 +80,10 @@ namespace PSD_Project.App.Pages
                     genderValidation.Ok()
                         .Map(gender => new UserUpdateDetails(tuple.username, tuple.email, gender)))
                 .Bind(form => userSession.Map(s => s.Id).Map(id => (id, form)))
-                .Map(tuple =>
-                {
-                    var updateTask = UsersService.UpdateUser(tuple.id, tuple.form);
-                    updateTask.Wait();
-                    return updateTask.Result;
-                })
+                .Bind(tuple => UsersService.UpdateUser(tuple.id, tuple.form).Ok())
                 .Match(
-                    statusCode =>
-                    {
-                        switch (statusCode)
-                        {
-                            case HttpStatusCode.OK:
-                                UpdateProfileResultLabel.Text = "Profile Updated!";
-                                break;
-                            default:
-                                UpdateProfileResultLabel.Text = $"Error: {statusCode}";
-                                break;
-                        }
-                    },
-                    () => { });
-        }
-        
-        private Option<UserSessionDetails> AuthenticateToken(int token)
-        {
-            var authTask = AuthService.GetSession(token);
-            authTask.Wait();
-            return authTask.Result.Ok();
+                    user => UpdateProfileResultLabel.Text = "Profile Updated!",
+                    () => UpdateProfileResultLabel.Text = $"Error");
         }
 
         private bool IsBetween5And15Characters(string str)

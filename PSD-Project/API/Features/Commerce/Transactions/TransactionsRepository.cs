@@ -4,34 +4,33 @@ using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using PSD_Project.EntityFramework;
-using PSD_Project.Service.Sql;
 using Util.Try;
 
 namespace PSD_Project.API.Features.Commerce.Transactions
 {
-    public class TransactionsRepository : ITransactionsRepository
+    public class TransactionsRepository : ITransactionsRepository, ITransactionsService
     {
         private readonly Raamen readOnlyDbContext = new Raamen();
         
-        public async Task<Try<TransactionRecord, Exception>> CreateTransaction(int customerId, int staffId, DateTime date, List<TransactionEntry> entries)
+        public Try<Transaction, Exception> CreateTransaction(int customerId, int staffId, DateTime date, List<TransactionEntry> entries)
         {
             var db = new Raamen();
             var transaction = db.Database.BeginTransaction();
             var stringBuilder = Service.Services.GetQueryStringBuilder(Service.Services.GetConfiguredDialect());
             try
             {
-                var headerId = await db.Headers.Select(h => h.id).DefaultIfEmpty(1).MaxAsync() + 1;
+                var headerId = db.Headers.Select(h => h.id).DefaultIfEmpty(1).Max() + 1;
                 
-                var headersAdded = await db.Database.ExecuteSqlCommandAsync(stringBuilder.StringForAddHeader(headerId, customerId, staffId, date));
+                var headersAdded = db.Database.ExecuteSqlCommand(stringBuilder.StringForAddHeader(headerId, customerId, staffId, date));
                 if (headersAdded != 1) throw new Exception();
-                if (entries.Count == 0) return Try.Of<TransactionRecord, Exception>(new TransactionRecord(headerId, customerId, staffId, new List<TransactionEntry>()));
+                if (entries.Count == 0) return Try.Of<Transaction, Exception>(new Transaction(headerId, customerId, staffId, new List<TransactionEntry>()));
                 foreach (var entry in entries)
                 {
-                    var detailsAdded = await db.Database.ExecuteSqlCommandAsync(stringBuilder.StringForAddDetails(headerId, entry.RamenId, entry.Quantity));
+                    var detailsAdded = db.Database.ExecuteSqlCommand(stringBuilder.StringForAddDetails(headerId, entry.RamenId, entry.Quantity));
                     if (detailsAdded != 1) throw new Exception();
                 }
                 transaction.Commit();
-                return Try.Of<TransactionRecord, Exception>(new TransactionRecord(
+                return Try.Of<Transaction, Exception>(new Transaction(
                     headerId, 
                     customerId, 
                     staffId,
@@ -41,7 +40,7 @@ namespace PSD_Project.API.Features.Commerce.Transactions
             catch (Exception e)
             {
                 transaction.Rollback();
-                return Try.Err<TransactionRecord, Exception>(e);
+                return Try.Err<Transaction, Exception>(e);
             }
             finally
             {
@@ -50,38 +49,38 @@ namespace PSD_Project.API.Features.Commerce.Transactions
             }
         }
 
-        public async Task<Try<List<TransactionRecord>, Exception>> GetTransactions()
+        public Try<List<Transaction>, Exception> GetTransactions()
         {
             try
             {
-                var headers = await readOnlyDbContext.Headers.ToListAsync();
+                var headers = readOnlyDbContext.Headers.ToList();
                 var transactions = headers.Select(ConvertModel).ToList();
-                return Try.Of<List<TransactionRecord>, Exception>(transactions);
+                return Try.Of<List<Transaction>, Exception>(transactions);
             }
             catch (Exception e)
             {
-                return Try.Err<List<TransactionRecord>, Exception>(e);
+                return Try.Err<List<Transaction>, Exception>(e);
             }
         }
 
-        public async Task<Try<TransactionRecord, Exception>> GetTransaction(int transactionId)
+        public Try<Transaction, Exception> GetTransaction(int transactionId)
         {
             try
             {
-                var header = await readOnlyDbContext.Headers.FindAsync(transactionId);
+                var header = readOnlyDbContext.Headers.Find(transactionId);
                 if (header == null) throw new Exception();
                 var transaction = ConvertModel(header);
-                return Try.Of<TransactionRecord, Exception>(transaction);
+                return Try.Of<Transaction, Exception>(transaction);
             }
             catch (Exception e)
             {
-                return Try.Err<TransactionRecord, Exception>(e);
+                return Try.Err<Transaction, Exception>(e);
             }
         }
 
-        private TransactionRecord ConvertModel(Header header)
+        private Transaction ConvertModel(Header header)
         {
-            return new TransactionRecord(
+            return new Transaction(
                 header.id,
                 header.CustomerId ?? 0,
                 header.Staffid ?? 0,

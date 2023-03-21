@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using Newtonsoft.Json;
 using PSD_Project.API.Features.Users;
-using PSD_Project.Service;
+using PSD_Project.API.Service;
 using Util.Try;
 
 namespace PSD_Project.API.Features.LogIn
@@ -29,9 +29,9 @@ namespace PSD_Project.API.Features.LogIn
 
         [Route]
         [HttpPost]
-        public async Task<IHttpActionResult> Authenticate([FromBody] LoginCredentials credentials)
+        public IHttpActionResult Authenticate([FromBody] LoginCredentials credentials)
         {
-            var user = await usersService.GetUserWithUsername(credentials.Username);
+            var user = usersService.GetUserWithUsername(credentials.Username);
 
             return user
                 .MapErr(_ => BadRequest() as IHttpActionResult)
@@ -43,13 +43,12 @@ namespace PSD_Project.API.Features.LogIn
 
         [Route]
         [HttpGet]
-        public Task<IHttpActionResult> GetSession([FromUri] int sessionToken)
+        public IHttpActionResult GetSession([FromUri] int sessionToken)
         {
-            return Task.FromResult(
-                userSessionsService.GetSession(sessionToken)
+            return userSessionsService.GetSession(sessionToken)
                     .Map(Ok)
                     .Cast<IHttpActionResult>()
-                    .OrElse(NotFound()));
+                    .OrElse(NotFound());
         }
     }
 }

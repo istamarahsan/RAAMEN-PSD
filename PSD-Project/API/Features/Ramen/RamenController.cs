@@ -1,99 +1,77 @@
 using System;
-using System.Threading.Tasks;
 using System.Web.Http;
+using PSD_Project.API.Service;
 
 namespace PSD_Project.API.Features.Ramen
 {
     [RoutePrefix("api/ramen")]
     public class RamenController : ApiController
     {
-        private readonly IRamenRepository ramenRepository = new RamenRepository();
+        private readonly IRamenService ramenService = Services.GetRamenService();
         
         public RamenController()
         {
             
         }
 
-        public RamenController(IRamenRepository ramenRepository)
+        public RamenController(IRamenService ramenService)
         {
-            this.ramenRepository = ramenRepository;
+            this.ramenService = ramenService;
         }
 
         [Route]
         [HttpGet]
-        public async Task<IHttpActionResult> GetAllRamen()
+        public IHttpActionResult GetAllRamen()
         {
-            var ramen = await ramenRepository.GetRamen();
-            return ramen.Match<IHttpActionResult>(Ok, InternalServerError);
+            var ramen = ramenService.GetRamen();
+            return ramen.Match(Ok, HandleError);
         }
 
         [Route("{id}")]
         [HttpGet]
-        public async Task<IHttpActionResult> GetRamen(int id)
+        public IHttpActionResult GetRamen(int id)
         {
-            var ramen = await ramenRepository.GetRamen(id);
-            return ramen.Match<IHttpActionResult>(Ok, NotFound);
+            var ramen = ramenService.GetRamen(id);
+            return ramen.Match(Ok, HandleError);
         }
 
         [Route]
         [HttpPost]
-        public async Task<IHttpActionResult> AddRamen([FromBody] NewRamenDetails form)
+        public IHttpActionResult AddRamen([FromBody] RamenDetails form)
         {
             if (form == null) return BadRequest();
-            
-            IHttpActionResult HandleAddRamenError(Exception exception)
-            {
-                switch (exception)
-                {
-                    case ArgumentException _:
-                        return BadRequest();
-                    default:
-                        return InternalServerError();
-                }
-            }
-            
-            var result = await ramenRepository.AddRamen(form.Name, form.Borth, form.Price, form.MeatId);
-            return result.Match(Ok, HandleAddRamenError);
+
+            var result = ramenService.CreateRamen(form);
+            return result.Match(Ok, HandleError);
         }
 
         [Route("{id}")]
         [HttpPut]
-        public async Task<IHttpActionResult> UpdateRamen(int id, [FromBody] NewRamenDetails form)
+        public IHttpActionResult UpdateRamen(int id, [FromBody] RamenDetails form)
         {
             if (form == null) return BadRequest();
-            
-            IHttpActionResult HandleUpdateRamenError(Exception exception)
-            {
-                switch (exception)
-                {
-                    case ArgumentException _:
-                        return NotFound();
-                    default:
-                        return InternalServerError();
-                }
-            }
-            
-            var result = await ramenRepository.UpdateRamen(id, form.Name, form.Borth, form.Price, form.MeatId);
-            return result.Match(Ok, HandleUpdateRamenError);
+
+            var result = ramenService.UpdateRamen(id, form);
+            return result.Match(Ok, HandleError);
         }
 
         [Route("{id}")]
         [HttpDelete]
-        public async Task<IHttpActionResult> DeleteRamen(int id)
+        public IHttpActionResult DeleteRamen(int id)
         {
-            IHttpActionResult HandleUpdateRamenError(Exception exception)
+            var error = ramenService.DeleteRamen(id);
+            return error.Match(HandleError, Ok);
+        }
+        
+        private IHttpActionResult HandleError(Exception exception)
+        {
+            switch (exception)
             {
-                switch (exception)
-                {
-                    case ArgumentException _:
-                        return NotFound();
-                    default:
-                        return InternalServerError();
-                }
+                case ArgumentException _:
+                    return BadRequest();
+                default:
+                    return InternalServerError(exception);
             }
-
-            var error = await ramenRepository.DeleteRamen(id);
-            return error.Match(HandleUpdateRamenError, Ok);
         }
     }
 }

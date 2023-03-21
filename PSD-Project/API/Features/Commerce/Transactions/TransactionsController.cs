@@ -1,60 +1,61 @@
 using System;
 using System.Threading.Tasks;
 using System.Web.Http;
+using PSD_Project.API.Service;
 
 namespace PSD_Project.API.Features.Commerce.Transactions
 {
     [RoutePrefix("api/transactions")]
     public class TransactionsController : ApiController
     {
-        private readonly ITransactionsRepository transactionsRepository;
+        private readonly ITransactionsService transactionsService;
 
         public TransactionsController()
         {
-            transactionsRepository = new TransactionsRepository();
+            transactionsService = Services.GetTransactionsService();
         }
 
-        public TransactionsController(ITransactionsRepository transactionsRepository)
+        public TransactionsController(ITransactionsService transactionsService)
         {
-            this.transactionsRepository = transactionsRepository;
+            this.transactionsService = transactionsService;
         }
 
         [Route]
         [HttpGet]
-        public async Task<IHttpActionResult> GetTransactions()
+        public IHttpActionResult GetTransactions()
         {
-            var transactions = await transactionsRepository.GetTransactions();
+            var transactions = transactionsService.GetTransactions();
             return transactions.Match(Ok, HandleError);
         }
 
         [Route("{id}")]
         [HttpGet]
-        public async Task<IHttpActionResult> GetTransaction(int transactionId)
+        public IHttpActionResult GetTransaction(int transactionId)
         {
-            var transaction = await transactionsRepository.GetTransaction(transactionId);
+            var transaction = transactionsService.GetTransaction(transactionId);
             return transaction.Match(Ok, HandleError);
         }
 
         [Route]
         [HttpPost]
-        public async Task<IHttpActionResult> CreateTransaction([FromBody] NewTransactionDetails form)
+        public IHttpActionResult CreateTransaction([FromBody] TransactionDetails form)
         {
-            var record = await transactionsRepository.CreateTransaction(
+            var record = transactionsService.CreateTransaction(
                 form.CustomerId,
                 form.StaffId,
                 form.Date,
-                form.Details);
+                form.Entries);
             return record.Match(Ok, HandleError);
         }
         
-        private IHttpActionResult HandleError(Exception e)
+        private IHttpActionResult HandleError(Exception exception)
         {
-            switch (e)
+            switch (exception)
             {
                 case ArgumentException _ :
                     return NotFound();
                 default:
-                    return InternalServerError();
+                    return InternalServerError(exception);
             }
         }
     }

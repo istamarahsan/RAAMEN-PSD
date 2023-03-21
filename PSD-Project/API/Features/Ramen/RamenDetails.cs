@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 namespace PSD_Project.API.Features.Ramen
 {
     [DataContract]
-    public class NewRamenDetails
+    public class RamenDetails
     {
         [DataMember]
         public readonly string Name;
@@ -14,7 +14,7 @@ namespace PSD_Project.API.Features.Ramen
         [DataMember] 
         public readonly int MeatId;
 
-        public NewRamenDetails(string name, string borth, string price, int meatId)
+        public RamenDetails(string name, string borth, string price, int meatId)
         {
             Name = name;
             Borth = borth;

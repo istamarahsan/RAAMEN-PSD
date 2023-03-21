@@ -1,21 +1,25 @@
-using System;
 using System.Configuration;
 using PSD_Project.API.Features.Commerce.Orders;
+using PSD_Project.API.Features.Commerce.Transactions;
 using PSD_Project.API.Features.LogIn;
-using PSD_Project.Service.Http;
-using PSD_Project.Service.Sql;
-using PSD_Project.Service.Sql.QueryStrings;
+using PSD_Project.API.Features.Ramen;
+using PSD_Project.API.Features.Register;
+using PSD_Project.API.Features.Users;
+using PSD_Project.API.Service.Sql;
+using PSD_Project.API.Service.Sql.QueryStrings;
 
-namespace PSD_Project.Service
+namespace PSD_Project.API.Service
 {
     public static class Services
     {
-        private static readonly IAuthService AuthService = new HttpAuthService(new Uri("http://localhost:5000/api/login"), RaamenApp.HttpClient);
-        private static readonly IUsersService UsersService = new HttpUsersService(new Uri("http://localhost:5000/api/users"), RaamenApp.HttpClient);
-        private static readonly IRegisterService RegisterService = new HttpRegisterService(new Uri("http://localhost:5000/api/register"), RaamenApp.HttpClient);
-        private static readonly IRamenService RamenService = new HttpRamenService(new Uri("http://localhost:5000/ramen"), RaamenApp.HttpClient);
+        private static readonly IUserRepository UserRepository = new UserRepository();
+        private static readonly IUsersService UsersService = new UsersService(UserRepository);
+        private static readonly IRegisterService RegisterService = new RegisterService(UsersService);
+        private static readonly IRamenService RamenService = new RamenRepository();
         private static readonly IOrdersService OrdersService = new OrdersService();
         private static readonly IUserSessionsService UserSessionsService = new UserSessionsService();
+        private static readonly IAuthService AuthService = new AuthService(UserSessionsService, UsersService);
+        private static readonly ITransactionsService TransactionsService = new TransactionsRepository();
         
         public static IAuthService GetAuthService() => AuthService;
 
@@ -28,6 +32,8 @@ namespace PSD_Project.Service
         public static IOrdersService GetOrdersService() => OrdersService;
 
         public static IUserSessionsService GetUserSessionsService() => UserSessionsService;
+
+        public static ITransactionsService GetTransactionsService() => TransactionsService;
 
         public static SqlDialect GetConfiguredDialect()
         {

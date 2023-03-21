@@ -2,98 +2,86 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web.Http;
+using PSD_Project.API.Service;
+using Util.Option;
+using Util.Try;
 
 namespace PSD_Project.API.Features.Users
 {
     [RoutePrefix("api/users")]
     public class UsersController : ApiController
     {
-        private readonly IUsersRepository usersRepository;
+        private readonly IUsersService usersService;
 
         public UsersController()
         {
-            usersRepository = new UsersRepository();
+            usersService = Services.GetUsersService();
         }
 
-        public UsersController(IUsersRepository usersRepository)
+        public UsersController(IUsersService usersService)
         {
-            this.usersRepository = usersRepository;
+            this.usersService = usersService;
         }
 
         [Route]
         [HttpGet]
-        public async Task<List<User>> GetAllUsers()
+        public IHttpActionResult GetAllUsers()
         {
-            return await usersRepository.GetUsers();
+            return usersService.GetUsers().Match(Ok, HandleException);
         }
         
         [Route("{id}")]
         [HttpGet]
-        public async Task<IHttpActionResult> GetUser(int id)
+        public IHttpActionResult GetUser(int id)
         {
-            var user = await usersRepository.GetUser(id);
-            return user
-                .Map(Ok)
-                .Cast<IHttpActionResult>()
-                .OrElse(NotFound());
+            var user = usersService.GetUser(id);
+            return user.Match(Ok, HandleException);
         }
 
         [Route]
         [HttpGet]
-        public async Task<List<User>> GetUsersWithRole([FromUri] int roleId)
+        public IHttpActionResult GetUsersWithRole([FromUri] int roleId)
         {
-            return await usersRepository.GetUsersWithRole(roleId);
+            var users = usersService.GetUsersWithRole(roleId);
+            return users.Match(Ok, HandleException);
         }
 
         [Route]
         [HttpGet]
-        public async Task<IHttpActionResult> GetUserWithUsername([FromUri] string username)
+        public IHttpActionResult GetUserWithUsername([FromUri] string username)
         {
-            var user = await usersRepository.GetUserWithUsername(username);
-            return user.Map(Ok)
-                .Cast<IHttpActionResult>()
-                .OrElse(NotFound());
+            var user = usersService.GetUserWithUsername(username);
+            return user.Match(Ok, HandleException);
         }
         
         [Route]
         [HttpPost]
-        public async Task<IHttpActionResult> CreateNewUser([FromBody] NewUserDetails form)
+        public IHttpActionResult CreateNewUser([FromBody] UserDetails form)
         {
-            IHttpActionResult HandleAddException(Exception e)
-            {
-                switch (e)
-                {
-                    case ArgumentException _:
-                        return BadRequest();
-                    default:
-                        return InternalServerError();
-                }
-            }
-            
-            if (form == null) return BadRequest();
-            var userTry = await usersRepository.AddNewUser(username: form.Username, email: form.Email,
-                password: form.Password, gender: form.Gender, roleId: form.RoleId);
-            return userTry.Match(Ok, HandleAddException);
+            return form.ToOption()
+                .OrErr<UserDetails, IHttpActionResult>(BadRequest)
+                .Bind(u => usersService.CreateUser(u).MapErr(HandleException))
+                .Match(Ok, err => err);
         }
 
         [Route("{id}")]
         [HttpPut]
-        public async Task<IHttpActionResult> UpdateUser(int id, [FromBody] UserUpdateDetails form)
+        public IHttpActionResult UpdateUser(int id, [FromBody] UserUpdateDetails form)
         {
-            IHttpActionResult HandleUpdateException(Exception e)
-            {
-                switch (e)
-                {
-                    case ArgumentException _:
-                        return BadRequest();
-                    default:
-                        return InternalServerError();
-                }
-            }
-            
             if (form == null) return BadRequest();
-            var updateTry = await usersRepository.UpdateUser(id, form.Username, form.Email, form.Gender);
-            return updateTry.Match(Ok, HandleUpdateException);
+            var updateTry = usersService.UpdateUser(id, form);
+            return updateTry.Match(Ok, HandleException);
+        }
+        
+        private IHttpActionResult HandleException(Exception exception)
+        {
+            switch (exception)
+            {
+                case ArgumentException _:
+                    return BadRequest();
+                default:
+                    return InternalServerError(exception);
+            }
         }
     }
 }

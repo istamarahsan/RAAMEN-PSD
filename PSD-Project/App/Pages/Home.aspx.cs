@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Web.UI;
+using PSD_Project.API.Features.LogIn;
 using PSD_Project.API.Features.Users;
+using PSD_Project.API.Service;
 using PSD_Project.App.Common;
 using PSD_Project.App.Models;
-using PSD_Project.Service;
-using PSD_Project.Service.Http;
-using Util.Option;
 using Util.Try;
 
 namespace PSD_Project.App.Pages
@@ -27,13 +26,11 @@ namespace PSD_Project.App.Pages
                     some: details =>
                     {
                         RoleLabel.Text = details.Role.Name;
-                        var staffDataTask = UsersService.GetUsersWithRole(1);
-                        var customersDataTask = UsersService.GetUsersWithRole(0);
-                        customersDataTask.Wait();
-                        staffDataTask.Wait();
+                        var staff = UsersService.GetUsersWithRole(1);
+                        var customers = UsersService.GetUsersWithRole(0);
                         CurrentUserRole = RoleById(details.Role.Id).Ok().OrElse(UserRole.Customer);
-                        Customers = customersDataTask.Result.Ok().OrElse(new List<User>());
-                        Staff = staffDataTask.Result.Ok().OrElse(new List<User>());
+                        Customers = customers.Ok().OrElse(new List<User>());
+                        Staff = staff.Ok().OrElse(new List<User>());
                     },
                     none: () => Response.Redirect("Login.aspx"));
         }

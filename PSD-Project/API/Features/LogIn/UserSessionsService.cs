@@ -1,11 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
-using PSD_Project.API.Features.LogIn;
 using PSD_Project.API.Features.Users;
 using Util.Collections;
 using Util.Option;
 
-namespace PSD_Project.Service
+namespace PSD_Project.API.Features.LogIn
 {
     public class UserSessionsService : IUserSessionsService
     {

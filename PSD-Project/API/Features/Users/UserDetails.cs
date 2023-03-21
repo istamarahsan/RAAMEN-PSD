@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 namespace PSD_Project.API.Features.Users
 {
     [DataContract]
-    public class NewUserDetails
+    public class UserDetails
     {
         [DataMember]
         public readonly string Username;
@@ -16,7 +16,7 @@ namespace PSD_Project.API.Features.Users
         [DataMember]
         public readonly int RoleId;
 
-        public NewUserDetails(string username, string email, string password, string gender, int roleId)
+        public UserDetails(string username, string email, string password, string gender, int roleId)
         {
             Username = username;
             Email = email;

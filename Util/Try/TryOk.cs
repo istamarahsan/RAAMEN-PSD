@@ -22,32 +22,17 @@ namespace Util.Try
         {
             return ok(Value);
         }
-
-        public override async Task<TOut> Match<TOut>(Func<T, Task<TOut>> ok, Func<TErr, Task<TOut>> err)
-        {
-            return await ok(Value);
-        }
-
+        
         public override Try<TOut, TErr> Map<TOut>(Func<T, TOut> f)
         {
             return new TryOk<TOut, TErr>(f(Value));
-        }
-
-        public override async Task<Try<TOut, TErr>> Map<TOut>(Func<T, Task<TOut>> f)
-        {
-            return new TryOk<TOut, TErr>(await f(Value));
         }
 
         public override Try<T, TOut> MapErr<TOut>(Func<TErr, TOut> f)
         {
             return new TryOk<T, TOut>(Value);
         }
-
-        public override Task<Try<T, TOut>> MapErr<TOut>(Func<TErr, Task<TOut>> f)
-        {
-            return Task.FromResult(new TryOk<T, TOut>(Value) as Try<T, TOut>);
-        }
-
+        
         public override Try<TOut, TErr> Cast<TOut>(Func<TErr> @catch)
         {
             return Value is TOut @out 
@@ -58,11 +43,6 @@ namespace Util.Try
         public override Try<TOut, TErr> Bind<TOut>(Func<T, Try<TOut, TErr>> f)
         {
             return f(Value);
-        }
-
-        public override async Task<Try<TOut, TErr>> Bind<TOut>(Func<T, Task<Try<TOut, TErr>>> f)
-        {
-            return await f(Value);
         }
 
         public override Option<T> Ok()

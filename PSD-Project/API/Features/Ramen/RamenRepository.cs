@@ -1,23 +1,21 @@
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
-using System.Threading.Tasks;
 using PSD_Project.EntityFramework;
 using Util.Option;
 using Util.Try;
 
 namespace PSD_Project.API.Features.Ramen
 {
-    public class RamenRepository : IRamenRepository
+    public class RamenRepository : IRamenRepository, IRamenService
     {
         private readonly Raamen db = new Raamen();
         
-        public async Task<Try<List<Ramen>, Exception>> GetRamen()
+        public Try<List<Ramen>, Exception> GetRamen()
         {
             try
             {
-                var ramen = await db.Ramen.ToListAsync();
+                var ramen = db.Ramen.ToList();
                 return Try.Of<List<Ramen>, Exception>(ramen.Select(ConvertModel).ToList());
             }
             catch (Exception e)
@@ -26,18 +24,28 @@ namespace PSD_Project.API.Features.Ramen
             }
         }
 
-        public async Task<Option<Ramen>> GetRamen(int ramenId)
+        public Try<Ramen, Exception> CreateRamen(RamenDetails ramenDetails)
         {
-            var ramen = await db.Ramen.FindAsync(ramenId);
-            return ramen == null 
-                ? Option.None<Ramen>() : 
-                Option.Some(ConvertModel(ramen));
+            return CreateRamen(ramenDetails.Name, ramenDetails.Borth, ramenDetails.Price, ramenDetails.MeatId);
         }
 
-        public async Task<Try<Ramen, Exception>> AddRamen(string name, string borth, string price, int meatId)
+        public Try<Ramen, Exception> UpdateRamen(int id, RamenDetails ramenDetails)
         {
-            var nextId = await db.Ramen.Select(ramen => ramen.id).MaxAsync() + 1;
-            var meat = await db.Meats.FindAsync(meatId);
+            return UpdateRamen(id, ramenDetails.Name, ramenDetails.Borth, ramenDetails.Price, ramenDetails.MeatId);
+        }
+
+        public Try<Ramen, Exception> GetRamen(int ramenId)
+        {
+            var ramen = db.Ramen.Find(ramenId);
+            return ramen.ToOption()
+                .OrErr(() => new Exception("Ramen not found"))
+                .Map(ConvertModel);
+        }
+
+        public Try<Ramen, Exception> CreateRamen(string name, string borth, string price, int meatId)
+        {
+            var nextId = db.Ramen.Select(ramen => ramen.id).Max() + 1;
+            var meat = db.Meats.Find(meatId);
 
             if (meat == null) return Try.Err<Ramen, Exception>(new ArgumentException());
 
@@ -53,7 +61,7 @@ namespace PSD_Project.API.Features.Ramen
             try
             {
                 db.Ramen.Add(newRamen);
-                await db.SaveChangesAsync();
+                db.SaveChanges();
                 return Try.Of<Ramen, Exception>(ConvertModel(newRamen));
             }
             catch (Exception e)
@@ -62,10 +70,10 @@ namespace PSD_Project.API.Features.Ramen
             }
         }
 
-        public async Task<Try<Ramen, Exception>> UpdateRamen(int ramenId, string name, string borth, string price, int meatId)
+        public Try<Ramen, Exception> UpdateRamen(int ramenId, string name, string borth, string price, int meatId)
         {
-            var ramen = await db.Ramen.FindAsync(ramenId);
-            var meat = await db.Meats.FindAsync(meatId);
+            var ramen = db.Ramen.Find(ramenId);
+            var meat = db.Meats.Find(meatId);
             
             if (ramen == null || meat == null)
                 return Try.Err<Ramen, Exception>(new ArgumentException());
@@ -76,7 +84,7 @@ namespace PSD_Project.API.Features.Ramen
             ramen.Meat = meat;
             try
             {
-                await db.SaveChangesAsync();
+                db.SaveChangesAsync();
                 return Try.Of<Ramen, Exception>(ConvertModel(ramen));
             }
             catch (Exception e)
@@ -85,15 +93,15 @@ namespace PSD_Project.API.Features.Ramen
             }
         }
 
-        public async Task<Option<Exception>> DeleteRamen(int ramenId)
+        public Option<Exception> DeleteRamen(int ramenId)
         {
-            var ramen = await db.Ramen.FindAsync(ramenId);
+            var ramen = db.Ramen.Find(ramenId);
             if (ramen == null)
                 return Option.Some<Exception>(new ArgumentException());
             try
             {
                 db.Ramen.Remove(ramen);
-                await db.SaveChangesAsync();
+                db.SaveChanges();
                 return Option.None<Exception>();
             }
             catch (Exception e)
