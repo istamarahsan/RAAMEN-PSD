@@ -2,22 +2,34 @@
     <project name="PSD-Project" default="config" basedir=".">
         <description>Raamen</description>
         <property name="configFile" value="config.xml" overwrite="false" />
+        <property name="baseWebConfigFile" value="PSD-Project/Base-Web.config" overwrite="false" />
         <property name="webConfigFile" value="PSD-Project/Web.config" overwrite="false" />
+        <property name="sqlDialect" value="" />
         <property name="databaseProviderName" value=""/>
         <property name="databaseConnectionString" value=""/>
         <target name="config" description="inject config into Web.config">
+            <copy 
+                file="${baseWebConfigFile}"
+                tofile="${webConfigFile}"   
+            />
             <xmlpeek 
                 file="${configFile}" 
                 failonerror="true"
                 property="databaseProviderName"
                 xpath="/raamenDatabase/providerName" 
-                />
+            />
             <xmlpeek 
                 file="${configFile}" 
                 failonerror="true"
                 property="databaseConnectionString"
                 xpath="/raamenDatabase/connectionString" 
-                />
+            />
+            <xmlpeek
+                file="${configFile}"
+                failonerror="true"
+                property="sqlDialect"
+                xpath="/raamenDatabase/sqlDialect"
+            />
             <xmlpoke
                 file="${webConfigFile}"
                 failonerror="true"
@@ -30,8 +42,17 @@
                 xpath="/configuration/connectionStrings/add[@name = 'Raamen']/@connectionString"
                 value="${databaseConnectionString}"
             />
+            <xmlpoke
+                file="${webConfigFile}"
+                failonerror="true"
+                xpath="/configuration/appSettings/add[@key = 'sql-dialect']/@value"
+                value="${sqlDialect}"
+            />
         </target>
         <target name="clean" description="erase config from Web.config">
+            <delete
+                file="${webConfigFile}"
+            />
             <xmlpoke
                 file="${webConfigFile}"
                 failonerror="true"
