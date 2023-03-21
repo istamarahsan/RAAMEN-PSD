@@ -52,9 +52,9 @@ namespace PSD_Project.API.Features.Commerce.Orders
         [HttpPost]
         public IHttpActionResult HandleOrder(int id, [FromUri] int token)
         {
-            var auth = authService.GetSession(token);
-            var handleOrder = auth.Bind(userSession => ordersService.HandleOrder(id, userSession.Id));
-            return handleOrder.Match(Ok, HandleError);
+            return authService.GetSession(token)
+                .Bind(userSession => ordersService.HandleOrder(id, userSession.Id))
+                .Match(Ok, HandleError);
         }
         
         private IHttpActionResult HandleError(Exception e)

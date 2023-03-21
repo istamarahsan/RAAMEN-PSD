@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using PSD_Project.API.Features.Commerce.Transactions;
+using PSD_Project.API.Features.Ramen;
 using PSD_Project.API.Features.Users;
 using Util.Collections;
 using Util.Try;
@@ -10,78 +11,105 @@ namespace PSD_Project.API.Features.Commerce.Orders
 {
     public class OrdersService : IOrdersService
     {
-        private static readonly Dictionary<int, Order> Orders = new Dictionary<int, Order>();
+        private static readonly Dictionary<int, Order> OrdersQueue = new Dictionary<int, Order>();
         private readonly IUsersService usersService;
         private readonly ITransactionsService transactionsService;
+        private readonly IRamenService ramenService;
         
-        public OrdersService(IUsersService usersService, ITransactionsService transactionsService)
+        public OrdersService(IUsersService usersService, ITransactionsService transactionsService, IRamenService ramenService)
         {
             this.usersService = usersService;
             this.transactionsService = transactionsService;
+            this.ramenService = ramenService;
         }
 
         public Try<Order, Exception> QueueOrder(NewOrderDetails newOrderDetails)
         {
-            var transaction =
-                new Order(Orders.Keys.DefaultIfEmpty(0).Max() + 1, newOrderDetails.CustomerId, DateTime.Now, newOrderDetails.Cart);
-            Orders[transaction.Id] = transaction;
-            var result = Try.Of<Order, Exception>(transaction);
-            return result;
+            return VerifyUserCanPlaceOrder(newOrderDetails)
+                .Bind(VerifyCartItemsExist)
+                .Map(CreateOrderAndAddToQueue);
         }
 
         Try<List<Order>, Exception> IOrdersService.GetOrders()
         {
-            return Try.Of<List<Order>, Exception>(Orders.Values.ToList());
+            return Try.Of<List<Order>, Exception>(OrdersQueue.Values.ToList());
         }
 
         public Try<Order, Exception> GetOrder(int id)
         {
-            var result = Orders.Get(id).OrErr(() => new Exception());
+            var result = OrdersQueue.Get(id).OrErr(() => new Exception());
             return result;
         }
         
-        public Try<Transaction, Exception> HandleOrder(int unhandledTransactionId, int staffHandlerId)
+        public Try<Transaction, Exception> HandleOrder(int unhandledTransactionId, int orderHandlerId)
         {
-            var staff = usersService.GetUser(staffHandlerId);
-
-            var transactionProcessAttempt = staff
+            var orderProcessResult = usersService.GetUser(orderHandlerId)
                 .Bind(VerifyUserCanHandleTransaction)
                 .Bind(u => PairWithUnhandledTransaction(u, unhandledTransactionId))
-                .Bind(TryAddToRepository);
+                .Bind(AddToRepository);
 
-            if (transactionProcessAttempt.IsOk())
+            if (orderProcessResult.IsOk())
             {
-                Orders.Remove(unhandledTransactionId);
+                OrdersQueue.Remove(unhandledTransactionId);
             }
 
-            return transactionProcessAttempt;
+            return orderProcessResult;
         }
 
-        private Try<Transaction, Exception> TryAddToRepository((int StaffId, Order Transaction) pair)
+        private Try<Transaction, Exception> AddToRepository((int HandlerId, Order Transaction) pair)
         {
             return transactionsService.CreateTransaction(new TransactionDetails(
                 pair.Transaction.CustomerId,
-                pair.StaffId,
+                pair.HandlerId,
                 DateTime.Now,
                 pair.Transaction.Items.Select(i => new TransactionEntry(i.RamenId, i.Quantity)).ToList()));
         }
 
         private Try<(int StaffId, Order Transaction), Exception> PairWithUnhandledTransaction(User u, int unhandledTransactionId)
         {
-            return Orders.Get(unhandledTransactionId)
+            return OrdersQueue.Get(unhandledTransactionId)
                 .Map(t => (StaffId: u.Id, Transaction: t))
                 .OrErr(() => new Exception());
         }
 
-        private Try<User, Exception> VerifyUserCanHandleTransaction(User u)
+        private Order CreateOrderAndAddToQueue(NewOrderDetails orderDetails)
         {
-            return u.Check(CanHandleTransactions, _ => new Exception());
+            var nextId = OrdersQueue.Keys.DefaultIfEmpty(0).Max() + 1;
+            OrdersQueue[nextId] = new Order(nextId, orderDetails.CustomerId, DateTime.Now, orderDetails.Cart);
+            return OrdersQueue[nextId];
         }
 
-
-        private bool CanHandleTransactions(User user)
+        private Try<NewOrderDetails, Exception> VerifyUserCanPlaceOrder(NewOrderDetails orderDetails)
         {
-            return user.Role.Id == 1 || user.Role.Id == 2;
+            return usersService.GetUser(orderDetails.CustomerId)
+                .Bind(user => user.Role.Check(RoleCanPlaceOrder, _ => new Exception()))
+                .Map(_ => orderDetails);
+        }
+        
+        private Try<NewOrderDetails, Exception> VerifyCartItemsExist(NewOrderDetails orderDetails)
+        {
+            return orderDetails.Check(details => CartItemsExist(details.Cart), _ => new Exception());
+        }
+        
+        private Try<User, Exception> VerifyUserCanHandleTransaction(User user)
+        {
+            return user.Check(u => RoleCanHandleTransactions(u.Role), _ => new Exception());
+        }
+        
+        private bool CartItemsExist(List<CartItem> cart)
+        {
+            return cart.Select(item => item.RamenId)
+                .All(ramenId => ramenService.GetRamen(ramenId).IsOk());
+        }
+
+        private bool RoleCanPlaceOrder(Role role)
+        {
+            return role.Id == 0;
+        }
+
+        private bool RoleCanHandleTransactions(Role role)
+        {
+            return role.Id == 1 || role.Id == 2;
         }
     }
 }

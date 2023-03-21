@@ -10,6 +10,6 @@ namespace PSD_Project.API.Features.Commerce.Orders
         Try<Order, Exception> QueueOrder(NewOrderDetails newOrderDetails);
         Try<List<Order>, Exception> GetOrders();
         Try<Order, Exception> GetOrder(int id);
-        Try<Transaction, Exception> HandleOrder(int unhandledTransactionId, int staffId);
+        Try<Transaction, Exception> HandleOrder(int unhandledTransactionId, int orderHandlerId);
     }
 }
