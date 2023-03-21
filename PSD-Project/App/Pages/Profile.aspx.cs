@@ -35,21 +35,21 @@ namespace PSD_Project.App.Pages
         protected void OnSubmitButtonClicked(object sender, EventArgs e)
         {
             var usernameValidation = UsernameTextBox.Text
-                .Check(
+                .Assert(
                     IsBetween5And15Characters,
                     _ => "must be between 5 and 15 characters")
                 .Bind(
-                    username => username.Check(
+                    username => username.Assert(
                         IsAlphabetOrWhiteSpace,
                         _ => "can only contain alphabets and spaces"));
 
             var emailValidation = EmailTextBox.Text
-                .Check(
+                .Assert(
                     EndsWithDotCom,
                     _ => "must end with '.com'");
 
             var genderValidation = GenderRadioButtons.SelectedItem
-                .Check(
+                .Assert(
                     item => item != null,
                     _ => "must be chosen")
                 .Map(item => item.Text);

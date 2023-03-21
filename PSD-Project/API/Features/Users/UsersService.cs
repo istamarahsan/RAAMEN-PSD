@@ -49,7 +49,7 @@ namespace PSD_Project.API.Features.Users
 
         private Try<User, Exception> VerifyUniqueUsername(List<User> usersList)
         {
-            return usersList.Check(l => l.Count <= 1, _ => new Exception("Duplicate usernames"))
+            return usersList.Assert(l => l.Count <= 1, _ => new Exception("Duplicate usernames"))
                 .Bind(l => l.FirstOrDefault().ToOption().OrErr(() => new Exception("User not found")));
         }
     }

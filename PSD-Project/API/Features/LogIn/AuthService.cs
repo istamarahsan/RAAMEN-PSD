@@ -36,7 +36,7 @@ namespace PSD_Project.API.Features.LogIn
 
         private Try<User, Exception> ValidatePassword(User user, string truePassword)
         {
-            return user.Check(
+            return user.Assert(
                 u => truePassword == u.Password,
                 _ => new Exception("Invalid password"));
         }

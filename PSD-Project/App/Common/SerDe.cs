@@ -15,7 +15,7 @@ namespace PSD_Project.App.Common
         
         public static Try<HttpContent, Exception> TryGetContent(this HttpResponseMessage response)
         {
-            return response.Check(
+            return response.Assert(
                     r => r.StatusCode == HttpStatusCode.OK,
                     r => new HttpException(r.StatusCode.ToString()))
                 .Map(r => r.Content)

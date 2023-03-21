@@ -82,18 +82,18 @@ namespace PSD_Project.API.Features.Commerce.Orders
         private Try<NewOrderDetails, Exception> VerifyUserCanPlaceOrder(NewOrderDetails orderDetails)
         {
             return usersService.GetUser(orderDetails.CustomerId)
-                .Bind(user => user.Role.Check(RoleCanPlaceOrder, _ => new Exception()))
+                .Bind(user => user.Role.Assert(RoleCanPlaceOrder, _ => new Exception()))
                 .Map(_ => orderDetails);
         }
         
         private Try<NewOrderDetails, Exception> VerifyCartItemsExist(NewOrderDetails orderDetails)
         {
-            return orderDetails.Check(details => CartItemsExist(details.Cart), _ => new Exception());
+            return orderDetails.Assert(details => CartItemsExist(details.Cart), _ => new Exception());
         }
         
         private Try<User, Exception> VerifyUserCanHandleTransaction(User user)
         {
-            return user.Check(u => RoleCanHandleTransactions(u.Role), _ => new Exception());
+            return user.Assert(u => RoleCanHandleTransactions(u.Role), _ => new Exception());
         }
         
         private bool CartItemsExist(List<CartItem> cart)

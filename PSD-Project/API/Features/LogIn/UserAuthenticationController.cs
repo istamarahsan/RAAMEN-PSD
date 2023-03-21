@@ -35,7 +35,7 @@ namespace PSD_Project.API.Features.LogIn
 
             return user
                 .MapErr(_ => BadRequest() as IHttpActionResult)
-                .Bind(u => u.Check(password => u.Password == credentials.Password, _ => BadRequest() as IHttpActionResult))
+                .Bind(u => u.Assert(password => u.Password == credentials.Password, _ => BadRequest() as IHttpActionResult))
                 .Bind(u => userSessionsService.CreateSessionForUser(u).OrErr(() => InternalServerError() as IHttpActionResult))
                 .Map(Ok)
                 .Match(ok => ok, err => err);

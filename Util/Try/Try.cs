@@ -43,13 +43,20 @@ namespace Util.Try
             }
         }
 
-        public static Try<T, TErr> Check<T, TErr>(this T input, Func<T, bool> check, Func<T, TErr> otherwise)
+        public static Try<T, TErr> Assert<T, TErr>(this T @object, Func<T, bool> assertion, Func<T, TErr> otherwise)
         {
-            return check(input) 
-                ? new TryOk<T, TErr>(input) as Try<T, TErr>
-                : new TryErr<T, TErr>(otherwise(input));
+            return assertion(@object) 
+                ? new TryOk<T, TErr>(@object) as Try<T, TErr>
+                : new TryErr<T, TErr>(otherwise(@object));
         }
 
+        public static Try<T, TErr> Assert<T, TErr>(this bool statement, bool expected, Func<T> @true, Func<TErr> @false)
+        {
+            return statement == expected
+                ? new TryOk<T, TErr>(@true()) as Try<T, TErr>
+                : new TryErr<T, TErr>(@false());
+        }
+ 
         public static Try<T, TErr> OrErr<T, TErr>(this Option<T> option, Func<TErr> otherwise)
         {
             return option.Match(

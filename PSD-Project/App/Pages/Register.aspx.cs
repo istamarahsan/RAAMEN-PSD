@@ -20,25 +20,25 @@ namespace PSD_Project.App.Pages
         protected void OnSubmitButtonClicked(object sender, EventArgs e)
         {
             var usernameValidation = UsernameTextBox.Text
-                .Check(
+                .Assert(
                     IsBetween5And15Characters,
                     otherwise: _ => "must be between 5 and 15 characters")
                 .Bind(
-                    username => username.Check(
+                    username => username.Assert(
                         IsAlphabetOrWhiteSpace,
                         otherwise: _ => "can only contain alphabets and spaces"));
 
             var emailValidation = EmailTextBox.Text
-                .Check(
+                .Assert(
                     EndsWithDotCom,
                     otherwise: _ => "must end with '.com'");
             
-            var passwordValidation = PasswordTextBox.Text.Check(
+            var passwordValidation = PasswordTextBox.Text.Assert(
                 password => password == ConfirmPasswordTextBox.Text,
                 otherwise: _ => "passwords do not match");
 
             var genderValidation = GenderRadioButtons.SelectedItem
-                .Check(
+                .Assert(
                     item => item != null,
                     otherwise: _ => "must be chosen");
             
