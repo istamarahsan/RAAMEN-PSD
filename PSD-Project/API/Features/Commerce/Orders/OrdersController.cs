@@ -9,17 +9,17 @@ namespace PSD_Project.API.Features.Commerce.Orders
     public class OrdersController : ApiController
     {
         private readonly IAuthService authService;
-        private readonly IOrdersHandler ordersHandler;
+        private readonly IOrdersService ordersService;
 
         public OrdersController()
         {
-            ordersHandler = new OrdersHandler();
+            ordersService = Services.GetOrdersService();
             authService = Services.GetAuthService();
         }
 
-        public OrdersController(IOrdersHandler ordersHandler, IAuthService authService)
+        public OrdersController(IOrdersService ordersService, IAuthService authService)
         {
-            this.ordersHandler = ordersHandler;
+            this.ordersService = ordersService;
             this.authService = authService;
         }
 
@@ -27,7 +27,7 @@ namespace PSD_Project.API.Features.Commerce.Orders
         [HttpGet]
         public async Task<IHttpActionResult> GetOrders()
         {
-            var orders = await ordersHandler.GetOrders();
+            var orders = await ordersService.GetOrders();
             return orders.Match(Ok, HandleError);
         }
         
@@ -35,7 +35,7 @@ namespace PSD_Project.API.Features.Commerce.Orders
         [HttpGet]
         public async Task<IHttpActionResult> GetOrder(int id)
         {
-            var order = await ordersHandler.GetOrder(id);
+            var order = await ordersService.GetOrder(id);
             return order.Match(Ok, HandleError);
         }
 
@@ -43,7 +43,7 @@ namespace PSD_Project.API.Features.Commerce.Orders
         [HttpPost]
         public async Task<IHttpActionResult> CreateOrder([FromBody] NewOrderDetails newOrderDetails)
         {
-            var error = await ordersHandler.QueueOrder(newOrderDetails);
+            var error = await ordersService.QueueOrder(newOrderDetails);
             return error.Match(Ok, HandleError);
         }
 
@@ -52,7 +52,7 @@ namespace PSD_Project.API.Features.Commerce.Orders
         public async Task<IHttpActionResult> HandleOrder(int id, [FromUri] int token)
         {
             var auth = await authService.GetSession(token);
-            var handleOrder = await auth.Bind(userSession => ordersHandler.HandleOrder(id, userSession.Id));
+            var handleOrder = await auth.Bind(userSession => ordersService.HandleOrder(id, userSession.Id));
             return handleOrder.Match(Ok, HandleError);
         }
         

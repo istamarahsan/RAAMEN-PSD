@@ -6,13 +6,12 @@ using PSD_Project.API.Features.Commerce.Orders;
 using PSD_Project.API.Features.Commerce.Transactions;
 using PSD_Project.API.Features.Users;
 using PSD_Project.Service;
-using PSD_Project.Service.Http;
 using Util.Collections;
 using Util.Try;
 
-namespace PSD_Project.API.Features.Commerce.Orders
+namespace PSD_Project.Service
 {
-    public class OrdersHandler : IOrdersHandler
+    public class OrdersService : IOrdersService
     {
         private static readonly Dictionary<int, Order> Orders = new Dictionary<int, Order>();
         private static readonly IUsersService UsersService = Services.GetUsersService();
@@ -28,7 +27,7 @@ namespace PSD_Project.API.Features.Commerce.Orders
             return Task.FromResult(result);
         }
 
-        Task<Try<List<Order>, Exception>> IOrdersHandler.GetOrders()
+        Task<Try<List<Order>, Exception>> IOrdersService.GetOrders()
         {
             return Task.FromResult(Try.Of<List<Order>, Exception>(Orders.Values.ToList()));
         }

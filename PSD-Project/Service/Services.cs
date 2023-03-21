@@ -1,5 +1,6 @@
 using System;
 using System.Configuration;
+using PSD_Project.API.Features.Commerce.Orders;
 using PSD_Project.Service.Http;
 using PSD_Project.Service.Sql;
 using PSD_Project.Service.Sql.QueryStrings;
@@ -12,7 +13,8 @@ namespace PSD_Project.Service
         private static readonly IUsersService UsersService = new HttpUsersService(new Uri("http://localhost:5000/api/users"), RaamenApp.HttpClient);
         private static readonly IRegisterService RegisterService = new HttpRegisterService(new Uri("http://localhost:5000/api/register"), RaamenApp.HttpClient);
         private static readonly IRamenService RamenService = new HttpRamenService(new Uri("http://localhost:5000/ramen"), RaamenApp.HttpClient);
-
+        private static readonly IOrdersService OrdersService = new OrdersService();
+        
         public static IAuthService GetAuthService() => AuthService;
 
         public static IRegisterService GetRegisterService() => RegisterService;
@@ -20,6 +22,8 @@ namespace PSD_Project.Service
         public static IUsersService GetUsersService() => UsersService;
 
         public static IRamenService GetRamenService() => RamenService;
+
+        public static IOrdersService GetOrdersService() => OrdersService;
 
         public static SqlDialect GetConfiguredDialect()
         {

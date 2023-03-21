@@ -149,11 +149,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="API\Features\Commerce\Orders\CartItem.cs" />
-    <Compile Include="API\Features\Commerce\Orders\IOrdersHandler.cs" />
     <Compile Include="API\Features\Commerce\Orders\NewOrderDetails.cs" />
     <Compile Include="API\Features\Commerce\Orders\Order.cs" />
     <Compile Include="API\Features\Commerce\Orders\OrdersController.cs" />
-    <Compile Include="API\Features\Commerce\Orders\OrdersHandler.cs" />
     <Compile Include="API\Features\Commerce\Transactions\ITransactionsRepository.cs" />
     <Compile Include="API\Features\Commerce\Transactions\NewTransactionDetails.cs" />
     <Compile Include="API\Features\Commerce\Transactions\TransactionEntry.cs" />
@@ -231,9 +229,11 @@
     <Compile Include="Service\Http\HttpRegisterService.cs" />
     <Compile Include="Service\Http\HttpUsersService.cs" />
     <Compile Include="Service\IAuthService.cs" />
+    <Compile Include="Service\IOrdersService.cs" />
     <Compile Include="Service\IRamenService.cs" />
     <Compile Include="Service\IRegisterService.cs" />
     <Compile Include="Service\IUsersService.cs" />
+    <Compile Include="Service\OrdersService.cs" />
     <Compile Include="Service\Services.cs" />
     <Compile Include="Service\Sql\QueryStrings\MySqlQueryStringBuilder.cs" />
     <Compile Include="Service\Sql\QueryStrings\QueryStringBuilder.cs" />
