@@ -15,7 +15,8 @@ namespace PSD_Project.Features.Commerce.Transactions
         private static readonly Dictionary<int, UnhandledTransaction> UnhandledTransactions = new Dictionary<int, UnhandledTransaction>();
         private static readonly IUsersService UsersService = new UsersService();
 
-        private static readonly ITransactionsRepository TransactionsRepository = new DictTransactionsRepository();
+        private static readonly ITransactionsRepository TransactionsRepository = new RawMySqlTransactionsRepository();
+
         public Task<Try<UnhandledTransaction, Exception>> QueueOrderAsync(Order order)
         {
             var transaction =

@@ -199,10 +199,11 @@
     <Compile Include="Features\Commerce\Transactions\DictTransactionsRepository.cs" />
     <Compile Include="Features\Commerce\Transactions\ITransactionsHandler.cs" />
     <Compile Include="Features\Commerce\Transactions\ITransactionsRepository.cs" />
+    <Compile Include="Features\Commerce\Transactions\RawMySqlTransactionsRepository.cs" />
     <Compile Include="Features\Commerce\Transactions\TransactionEntry.cs" />
     <Compile Include="Features\Commerce\Transactions\TransactionRecord.cs" />
     <Compile Include="Features\Commerce\Transactions\TransactionsController.cs" />
-    <Compile Include="Features\Commerce\Transactions\EFTransactionsRepository.cs" />
+    <Compile Include="Features\Commerce\Transactions\EntityTransactionsRepository.cs" />
     <Compile Include="Features\Commerce\Transactions\UnhandledTransaction.cs" />
     <Compile Include="Features\LogIn\IUserSessions.cs" />
     <Compile Include="Features\LogIn\LogInController.cs" />

@@ -10,7 +10,7 @@ using Util.Try;
 
 namespace PSD_Project.Features.Commerce.Transactions
 {
-    public class EfTransactionsRepository : ITransactionsRepository
+    public class EntityTransactionsRepository : ITransactionsRepository
     {
 
         public async Task<Try<TransactionRecord, Exception>> AddNewTransactionAsync(int customerId, int staffId,
