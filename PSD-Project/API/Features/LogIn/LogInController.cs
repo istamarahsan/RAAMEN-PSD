@@ -12,17 +12,19 @@ namespace PSD_Project.API.Features.LogIn
     [RoutePrefix("api/login")]
     public class LogInController : ApiController
     {
-        private readonly IUserSessions userSessions = new UserSessions();
-        private readonly IUsersService usersService = Services.GetUsersService();
+        private readonly IUserSessionsService userSessionsService;
+        private readonly IUsersService usersService;
 
         public LogInController()
         {
+            userSessionsService = Services.GetUserSessionsService();
+            usersService = Services.GetUsersService();
         }
 
-        public LogInController(IUsersService usersService, IUserSessions userSessions)
+        public LogInController(IUsersService usersService, IUserSessionsService userSessionsService)
         {
             this.usersService = usersService;
-            this.userSessions = userSessions;
+            this.userSessionsService = userSessionsService;
         }
 
         [Route]
@@ -34,7 +36,7 @@ namespace PSD_Project.API.Features.LogIn
             return user
                 .MapErr(_ => BadRequest() as IHttpActionResult)
                 .Bind(u => u.Check(password => u.Password == credentials.Password, _ => BadRequest() as IHttpActionResult))
-                .Bind(u => userSessions.CreateSessionForUser(u).OrErr(() => InternalServerError() as IHttpActionResult))
+                .Bind(u => userSessionsService.CreateSessionForUser(u).OrErr(() => InternalServerError() as IHttpActionResult))
                 .Map(Ok)
                 .Match(ok => ok, err => err);
         }
@@ -44,7 +46,7 @@ namespace PSD_Project.API.Features.LogIn
         public Task<IHttpActionResult> GetSession([FromUri] int sessionToken)
         {
             return Task.FromResult(
-                userSessions.GetSession(sessionToken)
+                userSessionsService.GetSession(sessionToken)
                     .Map(Ok)
                     .Cast<IHttpActionResult>()
                     .OrElse(NotFound()));

@@ -1,12 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
+using PSD_Project.API.Features.LogIn;
 using PSD_Project.API.Features.Users;
 using Util.Collections;
 using Util.Option;
 
-namespace PSD_Project.API.Features.LogIn
+namespace PSD_Project.Service
 {
-    public class UserSessions : IUserSessions
+    public class UserSessionsService : IUserSessionsService
     {
         private const int MaxSessions = 100;
         private const int NoSession = -1;

@@ -158,12 +158,10 @@
     <Compile Include="API\Features\Commerce\Transactions\TransactionRecord.cs" />
     <Compile Include="API\Features\Commerce\Transactions\TransactionsController.cs" />
     <Compile Include="API\Features\Commerce\Transactions\TransactionsRepository.cs" />
-    <Compile Include="API\Features\LogIn\IUserSessions.cs" />
     <Compile Include="API\Features\LogIn\LogInController.cs" />
     <Compile Include="API\Features\LogIn\LoginCredentials.cs" />
     <Compile Include="API\Features\LogIn\UserSession.cs" />
     <Compile Include="API\Features\LogIn\UserSessionDetails.cs" />
-    <Compile Include="API\Features\LogIn\UserSessions.cs" />
     <Compile Include="API\Features\Ramen\IRamenRepository.cs" />
     <Compile Include="API\Features\Ramen\Meat.cs" />
     <Compile Include="API\Features\Ramen\NewRamenDetails.cs" />
@@ -232,6 +230,7 @@
     <Compile Include="Service\IOrdersService.cs" />
     <Compile Include="Service\IRamenService.cs" />
     <Compile Include="Service\IRegisterService.cs" />
+    <Compile Include="Service\IUserSessionsService.cs" />
     <Compile Include="Service\IUsersService.cs" />
     <Compile Include="Service\OrdersService.cs" />
     <Compile Include="Service\Services.cs" />
@@ -239,6 +238,7 @@
     <Compile Include="Service\Sql\QueryStrings\QueryStringBuilder.cs" />
     <Compile Include="Service\Sql\QueryStrings\SqlServerQueryStringBuilder.cs" />
     <Compile Include="Service\Sql\SqlDialect.cs" />
+    <Compile Include="Service\UserSessionsService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
