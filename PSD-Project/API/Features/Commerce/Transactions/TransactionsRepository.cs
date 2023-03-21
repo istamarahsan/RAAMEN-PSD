@@ -49,6 +49,14 @@ namespace PSD_Project.API.Features.Commerce.Transactions
             }
         }
 
+        public Try<Transaction, Exception> CreateTransaction(TransactionDetails transactionDetails)
+        {
+            return CreateTransaction(transactionDetails.CustomerId, 
+                transactionDetails.StaffId, 
+                transactionDetails.Date,
+                transactionDetails.Entries);
+        }
+
         public Try<List<Transaction>, Exception> GetTransactions()
         {
             try

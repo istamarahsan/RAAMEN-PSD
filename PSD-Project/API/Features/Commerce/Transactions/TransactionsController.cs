@@ -40,12 +40,7 @@ namespace PSD_Project.API.Features.Commerce.Transactions
         [HttpPost]
         public IHttpActionResult CreateTransaction([FromBody] TransactionDetails form)
         {
-            var record = transactionsService.CreateTransaction(
-                form.CustomerId,
-                form.StaffId,
-                form.Date,
-                form.Entries);
-            return record.Match(Ok, HandleError);
+            return transactionsService.CreateTransaction(form).Match(Ok, HandleError);
         }
         
         private IHttpActionResult HandleError(Exception exception)

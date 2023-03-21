@@ -6,11 +6,7 @@ namespace PSD_Project.API.Features.Commerce.Transactions
 {
     public interface ITransactionsService
     {
-        Try<Transaction, Exception> CreateTransaction(
-            int customerId, 
-            int staffId,
-            DateTime date,
-            List<TransactionEntry> entries);
+        Try<Transaction, Exception> CreateTransaction(TransactionDetails transactionDetails);
         Try<List<Transaction>, Exception> GetTransactions();
         Try<Transaction, Exception> GetTransaction(int transactionId);
     }

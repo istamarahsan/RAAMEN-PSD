@@ -14,7 +14,12 @@ namespace PSD_Project.API.Features.Commerce.Orders
         private static readonly Dictionary<int, Order> Orders = new Dictionary<int, Order>();
         private static readonly IUsersService UsersService = Services.GetUsersService();
 
-        private static readonly ITransactionsRepository TransactionsRepository = new TransactionsRepository();
+        private readonly ITransactionsService transactionsService;
+        
+        public OrdersService(ITransactionsService transactionsService)
+        {
+            this.transactionsService = transactionsService;
+        }
 
         public Try<Order, Exception> QueueOrder(NewOrderDetails newOrderDetails)
         {
@@ -55,11 +60,11 @@ namespace PSD_Project.API.Features.Commerce.Orders
 
         private Try<Transaction, Exception> TryAddToRepository((int StaffId, Order Transaction) pair)
         {
-            return TransactionsRepository.CreateTransaction(
-                pair.Transaction.CustomerId, 
+            return transactionsService.CreateTransaction(new TransactionDetails(
+                pair.Transaction.CustomerId,
                 pair.StaffId,
                 DateTime.Now,
-                pair.Transaction.Items.Select(i => new TransactionEntry(i.RamenId, i.Quantity)).ToList());
+                pair.Transaction.Items.Select(i => new TransactionEntry(i.RamenId, i.Quantity)).ToList()));
         }
 
         private Try<(int StaffId, Order Transaction), Exception> PairWithUnhandledTransaction(User u, int unhandledTransactionId)
