@@ -227,10 +227,9 @@
     <Compile Include="global.asax.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\IAuthService.cs" />
-    <Compile Include="Services\ILoginService.cs" />
     <Compile Include="Services\IRegisterService.cs" />
     <Compile Include="Services\IUsersService.cs" />
-    <Compile Include="Services\LoginAuthService.cs" />
+    <Compile Include="Services\AuthService.cs" />
     <Compile Include="Services\RamenService.cs" />
     <Compile Include="Services\RegisterService.cs" />
     <Compile Include="Services\Services.cs" />

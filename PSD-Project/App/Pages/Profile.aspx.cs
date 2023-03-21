@@ -13,8 +13,7 @@ namespace PSD_Project.App.Pages
 {
     public partial class Profile : Page
     {
-        private static readonly IAuthService AuthService = new LoginAuthService();
-        private static readonly ILoginService LoginService = new LoginAuthService();
+        private static readonly IAuthService AuthService = new AuthService();
         private static readonly IUsersService UsersService = new UsersService();
         private Option<UserSessionDetails> userSession = Option.None<UserSessionDetails>();
 
@@ -68,7 +67,7 @@ namespace PSD_Project.App.Pages
                 .Map(session => new UserCredentials(session.Username, PasswordTextBox.Text))
                 .Bind(credentials =>
                 {
-                    var authTask = LoginService.Login(credentials);
+                    var authTask = AuthService.Authenticate(credentials);
                     authTask.Wait();
                     return authTask.Result.Ok();
                 })
@@ -110,7 +109,7 @@ namespace PSD_Project.App.Pages
         
         private Option<UserSessionDetails> AuthenticateToken(int token)
         {
-            var authTask = AuthService.Authenticate(token);
+            var authTask = AuthService.GetSession(token);
             authTask.Wait();
             return authTask.Result.Ok();
         }

@@ -12,11 +12,11 @@ using Util.Try;
 
 namespace PSD_Project.Services
 {
-    public class LoginAuthService : ILoginService, IAuthService
+    public class AuthService : IAuthService
     {
         private static readonly Uri ServiceUri = new Uri("http://localhost:5000/api/login");
 
-        public async Task<Try<UserSessionDetails, Exception>> Authenticate(int token)
+        public async Task<Try<UserSessionDetails, Exception>> GetSession(int token)
         {
             var response = await RaamenApp.HttpClient.GetAsync(new Uri(ServiceUri, $"?sessionToken={token}"));
             return response.TryGetContent()
@@ -24,7 +24,7 @@ namespace PSD_Project.Services
                 .Bind(str => str.TryDeserializeJson<UserSessionDetails>());
         }
 
-        public async Task<Try<UserSession, Exception>> Login(UserCredentials credentials)
+        public async Task<Try<UserSession, Exception>> Authenticate(UserCredentials credentials)
         {
             var credentialsAsJson = JsonConvert.SerializeObject(credentials, Formatting.None);
             var credentialsAsContent = new StringContent(credentialsAsJson, Encoding.UTF8, "application/json");

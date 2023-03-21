@@ -14,7 +14,7 @@ namespace PSD_Project.API.Features.Commerce.Orders
         public OrdersController()
         {
             ordersHandler = new OrdersHandler();
-            authService = new LoginAuthService();
+            authService = new AuthService();
         }
 
         public OrdersController(IOrdersHandler ordersHandler, IAuthService authService)
@@ -51,7 +51,7 @@ namespace PSD_Project.API.Features.Commerce.Orders
         [HttpPost]
         public async Task<IHttpActionResult> HandleOrder(int id, [FromUri] int token)
         {
-            var auth = await authService.Authenticate(token);
+            var auth = await authService.GetSession(token);
             var handleOrder = await auth.Bind(userSession => ordersHandler.HandleOrder(id, userSession.Id));
             return handleOrder.Match(Ok, HandleError);
         }
