@@ -12,6 +12,7 @@ namespace PSD_Project.Service
     public interface IUsersService
     {
         Task<Try<List<User>, Exception>> GetUsersWithRole(int roleId);
+        Task<Try<User, Exception>> GetUserWithUsername(string username);
         Task<HttpStatusCode> UpdateUser(int userId, UserUpdateDetails form);
         Task<Try<User, Exception>> GetUser(int userId);
     }

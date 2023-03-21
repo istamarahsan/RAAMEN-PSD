@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using Newtonsoft.Json;
 using PSD_Project.API.Features.Users;
+using PSD_Project.Service;
 using Util.Try;
 
 namespace PSD_Project.API.Features.LogIn
@@ -12,33 +13,28 @@ namespace PSD_Project.API.Features.LogIn
     public class LogInController : ApiController
     {
         private readonly IUserSessions userSessions = new UserSessions();
-        private readonly Uri usersServiceUri = new Uri("http://localhost:5000/api/users");
+        private readonly IUsersService usersService = Services.GetUsersService();
 
         public LogInController()
         {
         }
 
-        public LogInController(Uri usersServiceUri, IUserSessions userSessions)
+        public LogInController(IUsersService usersService, IUserSessions userSessions)
         {
-            this.usersServiceUri = usersServiceUri;
+            this.usersService = usersService;
             this.userSessions = userSessions;
         }
 
         [Route]
         [HttpPost]
-        public async Task<IHttpActionResult> Login([FromBody] LoginCredentials credentials)
+        public async Task<IHttpActionResult> Authenticate([FromBody] LoginCredentials credentials)
         {
-            var requestForUserWithUsername =
-                await RaamenApp.HttpClient.GetAsync(new Uri(usersServiceUri, $"?username={credentials.Username}"));
+            var user = await usersService.GetUserWithUsername(credentials.Username);
 
-            if (requestForUserWithUsername.StatusCode == HttpStatusCode.NotFound) return BadRequest();
-
-            var responseString = await requestForUserWithUsername.Content.ReadAsStringAsync();
-            var user = (User)JsonConvert.DeserializeObject(responseString, typeof(User));
-
-            return user.Password
-                .Check(password => password == credentials.Password, _ => BadRequest() as IHttpActionResult)
-                .Bind(_ => userSessions.CreateSessionForUser(user).OrErr(() => InternalServerError() as IHttpActionResult))
+            return user
+                .MapErr(_ => BadRequest() as IHttpActionResult)
+                .Bind(u => u.Check(password => u.Password == credentials.Password, _ => BadRequest() as IHttpActionResult))
+                .Bind(u => userSessions.CreateSessionForUser(u).OrErr(() => InternalServerError() as IHttpActionResult))
                 .Map(Ok)
                 .Match(ok => ok, err => err);
         }
