@@ -20,7 +20,7 @@ namespace PSD_Project.Features.Commerce.Transactions
             {
                 var headerId = await db.Headers.Select(h => h.id).DefaultIfEmpty(1).MaxAsync() + 1;
                 var headersAdded = await db.Database.ExecuteSqlCommandAsync(
-                    $"insert into Header(id, CustomerId, StaffId, `Date`) values ({headerId}, {customerId}, {staffId}, {date})");
+                    $"insert into Header(id, CustomerId, StaffId, `Date`) values ({headerId}, {customerId}, {staffId}, str_to_date('{date.Day:00}/{date.Month:00}/{date.Year}', '%d/%m/%Y'))");
                 if (headersAdded != 1) throw new Exception();
                 if (entries.Count == 0) return Try.Of<TransactionRecord, Exception>(new TransactionRecord(headerId, customerId, staffId, new List<TransactionEntry>()));
                 foreach (var entry in entries)
@@ -33,8 +33,9 @@ namespace PSD_Project.Features.Commerce.Transactions
                 return Try.Of<TransactionRecord, Exception>(new TransactionRecord(
                     headerId, 
                     customerId, 
-                    staffId, 
-                    entries.Select(i => new TransactionEntry(i.RamenId, i.Quantity)).ToList()));
+                    staffId,
+                    entries.Select(i => new TransactionEntry(i.RamenId, i.Quantity)).ToList(),
+                    date));
             }
             catch (Exception e)
             {

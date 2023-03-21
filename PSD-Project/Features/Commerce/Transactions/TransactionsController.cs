@@ -26,24 +26,13 @@ namespace PSD_Project.Features.Commerce.Transactions
         public async Task<IHttpActionResult> GetTransactions()
         {
             var transactions = await transactionsRepository.GetTransactionsAsync();
-            return Ok(transactions);
+            return transactions.Match(Ok, HandleError);
         }
 
         [Route("{id}")]
         [HttpGet]
         public async Task<IHttpActionResult> GetTransaction(int transactionId)
         {
-            IHttpActionResult HandleError(Exception e)
-            {
-                switch (e)
-                {
-                    case ArgumentException _ :
-                        return NotFound();
-                    default:
-                        return InternalServerError();
-                }
-            }
-            
             var transaction = await transactionsRepository.GetTransactionAsync(transactionId);
             return transaction.Match(Ok, HandleError);
         }
@@ -52,23 +41,23 @@ namespace PSD_Project.Features.Commerce.Transactions
         [HttpPost]
         public async Task<IHttpActionResult> CreateTransaction([FromBody] NewTransactionDetails form)
         {
-            IHttpActionResult HandleError(Exception e)
-            {
-                switch (e)
-                {
-                    case ArgumentException _ :
-                        return NotFound();
-                    default:
-                        return InternalServerError();
-                }
-            }
-
             var record = await transactionsRepository.CreateTransactionAsync(
                 form.CustomerId,
                 form.StaffId,
                 form.Date,
                 form.Details);
             return record.Match(Ok, HandleError);
+        }
+        
+        private IHttpActionResult HandleError(Exception e)
+        {
+            switch (e)
+            {
+                case ArgumentException _ :
+                    return NotFound();
+                default:
+                    return InternalServerError();
+            }
         }
     }
 }

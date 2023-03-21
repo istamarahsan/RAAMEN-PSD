@@ -8,8 +8,9 @@ namespace PSD_Project.Features.Commerce.Orders
 {
     public interface IOrdersHandler
     { 
-        Task<Try<Order, Exception>> QueueOrderAsync(NewOrderDetails newOrderDetails);
-        Task<List<Order>> GetOrdersAsync();
-        Task<Try<TransactionRecord, Exception>> HandleOrderAsync(int unhandledTransactionId, int staffId);
+        Task<Try<Order, Exception>> QueueOrder(NewOrderDetails newOrderDetails);
+        Task<Try<List<Order>, Exception>> GetOrders();
+        Task<Try<Order, Exception>> GetOrder(int id);
+        Task<Try<TransactionRecord, Exception>> HandleOrder(int unhandledTransactionId, int staffId);
     }
 }

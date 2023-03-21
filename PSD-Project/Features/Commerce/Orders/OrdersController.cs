@@ -9,8 +9,8 @@ namespace PSD_Project.Features.Commerce.Orders
     [RoutePrefix("api/orders")]
     public class OrdersController : ApiController
     {
-        private readonly IOrdersHandler ordersHandler;
         private readonly IAuthService authService;
+        private readonly IOrdersHandler ordersHandler;
 
         public OrdersController()
         {
@@ -25,41 +25,45 @@ namespace PSD_Project.Features.Commerce.Orders
         }
 
         [Route]
+        [HttpGet]
+        public async Task<IHttpActionResult> GetOrders()
+        {
+            var orders = await ordersHandler.GetOrders();
+            return orders.Match(Ok, HandleError);
+        }
+        
+        [Route("{id}")]
+        [HttpGet]
+        public async Task<IHttpActionResult> GetOrder(int id)
+        {
+            var order = await ordersHandler.GetOrder(id);
+            return order.Match(Ok, HandleError);
+        }
+
+        [Route]
         [HttpPost]
         public async Task<IHttpActionResult> CreateOrder([FromBody] NewOrderDetails newOrderDetails)
         {
-            IHttpActionResult HandleQueueOrderException(Exception e)
-            {
-                switch (e)
-                {
-                    default:
-                        return InternalServerError();
-                }
-            }
-            
-            var error = await ordersHandler.QueueOrderAsync(newOrderDetails);
-            return error.Match(Ok, HandleQueueOrderException);
+            var error = await ordersHandler.QueueOrder(newOrderDetails);
+            return error.Match(Ok, HandleError);
         }
 
-        
         [Route("{id}")]
         [HttpPost]
         public async Task<IHttpActionResult> HandleOrder(int id, [FromUri] int token)
         {
-            IHttpActionResult HandleError(Exception e)
-            {
-                switch (e)
-                {
-                    case ArgumentException _ :
-                        return NotFound();
-                    default:
-                        return InternalServerError();
-                }
-            }
-
             var auth = await authService.Authenticate(token);
-            var handleOrder = await auth.Bind(userSession => ordersHandler.HandleOrderAsync(id, userSession.Id));
+            var handleOrder = await auth.Bind(userSession => ordersHandler.HandleOrder(id, userSession.Id));
             return handleOrder.Match(Ok, HandleError);
+        }
+        
+        private IHttpActionResult HandleError(Exception e)
+        {
+            switch (e)
+            {
+                default:
+                    return InternalServerError();
+            }
         }
     }
 }

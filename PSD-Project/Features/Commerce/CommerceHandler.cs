@@ -12,26 +12,32 @@ namespace PSD_Project.Features.Commerce.Transactions
 {
     public class CommerceHandler : IOrdersHandler
     {
-        private static readonly Dictionary<int, Order> UnhandledTransactions = new Dictionary<int, Order>();
+        private static readonly Dictionary<int, Order> Orders = new Dictionary<int, Order>();
         private static readonly IUsersService UsersService = new UsersService();
 
         private static readonly ITransactionsRepository TransactionsRepository = new TransactionsRepository();
 
-        public Task<Try<Order, Exception>> QueueOrderAsync(NewOrderDetails newOrderDetails)
+        public Task<Try<Order, Exception>> QueueOrder(NewOrderDetails newOrderDetails)
         {
             var transaction =
-                new Order(UnhandledTransactions.Keys.DefaultIfEmpty(0).Max() + 1, newOrderDetails.CustomerId, DateTime.Now, newOrderDetails.Cart);
-            UnhandledTransactions[transaction.Id] = transaction;
+                new Order(Orders.Keys.DefaultIfEmpty(0).Max() + 1, newOrderDetails.CustomerId, DateTime.Now, newOrderDetails.Cart);
+            Orders[transaction.Id] = transaction;
             var result = Try.Of<Order, Exception>(transaction);
             return Task.FromResult(result);
         }
 
-        public Task<List<Order>> GetOrdersAsync()
+        Task<Try<List<Order>, Exception>> IOrdersHandler.GetOrders()
         {
-            return Task.FromResult(UnhandledTransactions.Values.ToList());
+            return Task.FromResult(Try.Of<List<Order>, Exception>(Orders.Values.ToList()));
         }
 
-        public async Task<Try<TransactionRecord, Exception>> HandleOrderAsync(int unhandledTransactionId, int staffHandlerId)
+        public Task<Try<Order, Exception>> GetOrder(int id)
+        {
+            var result = Orders.Get(id).OrErr(() => new Exception());
+            return Task.FromResult(result);
+        }
+        
+        public async Task<Try<TransactionRecord, Exception>> HandleOrder(int unhandledTransactionId, int staffHandlerId)
         {
             var staff = await UsersService.GetUserAsync(staffHandlerId);
 
@@ -42,7 +48,7 @@ namespace PSD_Project.Features.Commerce.Transactions
 
             if (transactionProcessAttempt.IsOk())
             {
-                UnhandledTransactions.Remove(unhandledTransactionId);
+                Orders.Remove(unhandledTransactionId);
             }
 
             return transactionProcessAttempt;
@@ -59,7 +65,7 @@ namespace PSD_Project.Features.Commerce.Transactions
 
         private Try<(int StaffId, Order Transaction), Exception> PairWithUnhandledTransaction(User u, int unhandledTransactionId)
         {
-            return UnhandledTransactions.Get(unhandledTransactionId)
+            return Orders.Get(unhandledTransactionId)
                 .Map(t => (StaffId: u.Id, Transaction: t))
                 .OrErr(() => new Exception());
         }
