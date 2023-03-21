@@ -44,7 +44,7 @@ namespace PSD_Project.API.Features.Commerce.Orders
         public Try<Transaction, Exception> HandleOrder(int unhandledTransactionId, int orderHandlerId)
         {
             var orderProcessResult = usersService.GetUser(orderHandlerId)
-                .Bind(VerifyUserCanHandleTransaction)
+                .Bind(VerifyUserCanHandleOrder)
                 .Bind(u => PairWithUnhandledTransaction(u, unhandledTransactionId))
                 .Bind(AddToRepository);
 
@@ -82,8 +82,8 @@ namespace PSD_Project.API.Features.Commerce.Orders
         private Try<NewOrderDetails, Exception> VerifyUserCanPlaceOrder(NewOrderDetails orderDetails)
         {
             return usersService.GetUser(orderDetails.CustomerId)
-                .Bind(user => user.Role.Assert(RoleCanPlaceOrder, _ => new Exception()))
-                .Map(_ => orderDetails);
+                .Bind(user => usersService.CanRolePlaceOrder(user.Role.Id))
+                .Bind(canPlaceOrder => canPlaceOrder.Assert(true, () => orderDetails, () => new Exception()));
         }
         
         private Try<NewOrderDetails, Exception> VerifyCartItemsExist(NewOrderDetails orderDetails)
@@ -91,25 +91,16 @@ namespace PSD_Project.API.Features.Commerce.Orders
             return orderDetails.Assert(details => CartItemsExist(details.Cart), _ => new Exception());
         }
         
-        private Try<User, Exception> VerifyUserCanHandleTransaction(User user)
+        private Try<User, Exception> VerifyUserCanHandleOrder(User user)
         {
-            return user.Assert(u => RoleCanHandleTransactions(u.Role), _ => new Exception());
+            return usersService.CanRoleHandleOrder(user.Role.Id)
+                .Bind(canHandleOrder => canHandleOrder.Assert(true, () => user, () => new Exception()));
         }
         
         private bool CartItemsExist(List<CartItem> cart)
         {
             return cart.Select(item => item.RamenId)
                 .All(ramenId => ramenService.GetRamen(ramenId).IsOk());
-        }
-
-        private bool RoleCanPlaceOrder(Role role)
-        {
-            return role.Id == 0;
-        }
-
-        private bool RoleCanHandleTransactions(Role role)
-        {
-            return role.Id == 1 || role.Id == 2;
         }
     }
 }

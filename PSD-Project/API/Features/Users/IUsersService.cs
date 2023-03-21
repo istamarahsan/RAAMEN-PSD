@@ -12,5 +12,7 @@ namespace PSD_Project.API.Features.Users
         Try<User, Exception> GetUserWithUsername(string username);
         Try<User, Exception> CreateUser(UserDetails userDetails);
         Try<User, Exception> UpdateUser(int userId, UserUpdateDetails form);
+        Try<bool, Exception> CanRolePlaceOrder(int roleId);
+        Try<bool, Exception> CanRoleHandleOrder(int roleId);
     }
 }

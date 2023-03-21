@@ -56,7 +56,7 @@ namespace Util.Try
                 ? new TryOk<T, TErr>(@true()) as Try<T, TErr>
                 : new TryErr<T, TErr>(@false());
         }
- 
+
         public static Try<T, TErr> OrErr<T, TErr>(this Option<T> option, Func<TErr> otherwise)
         {
             return option.Match(

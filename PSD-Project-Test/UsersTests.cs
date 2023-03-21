@@ -1,13 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Web.Http.Results;
 using Bogus;
 using Bogus.DataSets;
-using PSD_Project;
 using PSD_Project.API.Features.Users;
-using PSD_Project.App.Models;
 using Util.Option;
 using Util.Collections;
 using Util.Try;
@@ -113,6 +110,10 @@ namespace PSD_Project_Test
             {
                 return UpdateUser(userId, form.Username, form.Email, form.Gender);
             }
+
+            public Try<bool, Exception> CanRolePlaceOrder(int roleId) => throw new NotImplementedException();
+
+            public Try<bool, Exception> CanRoleHandleOrder(int roleId) => throw new NotImplementedException();
 
             public Try<User, Exception> AddNewUser(string username, string email, string password, string gender, int roleId)
             {

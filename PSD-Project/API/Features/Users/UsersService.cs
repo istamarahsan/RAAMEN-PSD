@@ -52,5 +52,15 @@ namespace PSD_Project.API.Features.Users
             return usersList.Assert(l => l.Count <= 1, _ => new Exception("Duplicate usernames"))
                 .Bind(l => l.FirstOrDefault().ToOption().OrErr(() => new Exception("User not found")));
         }
+        
+        public Try<bool, Exception> CanRolePlaceOrder(int roleId)
+        {
+            return Try.Of<bool, Exception>(roleId == 0);
+        }
+
+        public Try<bool, Exception> CanRoleHandleOrder(int roleid)
+        {
+            return Try.Of<bool, Exception>(roleid == 1 || roleid == 2);
+        }
     }
 }
