@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using PSD_Project.EntityFramework;
+using PSD_Project.Services.Sql;
 using Util.Try;
 
 namespace PSD_Project.API.Features.Commerce.Transactions
@@ -16,17 +17,17 @@ namespace PSD_Project.API.Features.Commerce.Transactions
         {
             var db = new Raamen();
             var transaction = db.Database.BeginTransaction();
+            var stringBuilder = Services.Services.GetQueryStringBuilder(Services.Services.GetConfiguredDialect());
             try
             {
                 var headerId = await db.Headers.Select(h => h.id).DefaultIfEmpty(1).MaxAsync() + 1;
-                var headersAdded = await db.Database.ExecuteSqlCommandAsync(
-                    $"insert into Header(id, CustomerId, StaffId, `Date`) values ({headerId}, {customerId}, {staffId}, str_to_date('{date.Day:00}/{date.Month:00}/{date.Year}', '%d/%m/%Y'))");
+                
+                var headersAdded = await db.Database.ExecuteSqlCommandAsync(stringBuilder.StringForAddHeader(headerId, customerId, staffId, date));
                 if (headersAdded != 1) throw new Exception();
                 if (entries.Count == 0) return Try.Of<TransactionRecord, Exception>(new TransactionRecord(headerId, customerId, staffId, new List<TransactionEntry>()));
                 foreach (var entry in entries)
                 {
-                    var detailsAdded = await db.Database.ExecuteSqlCommandAsync(
-                        $"insert into Detail(Headerid, Ramenid, Quantity) values ({headerId}, {entry.RamenId}, {entry.Quantity})");
+                    var detailsAdded = await db.Database.ExecuteSqlCommandAsync(stringBuilder.StringForAddDetails(headerId, entry.RamenId, entry.Quantity));
                     if (detailsAdded != 1) throw new Exception();
                 }
                 transaction.Commit();

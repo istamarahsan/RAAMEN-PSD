@@ -233,6 +233,11 @@
     <Compile Include="Services\LoginAuthService.cs" />
     <Compile Include="Services\RamenService.cs" />
     <Compile Include="Services\RegisterService.cs" />
+    <Compile Include="Services\Services.cs" />
+    <Compile Include="Services\Sql\QueryStrings\MySqlQueryStringBuilder.cs" />
+    <Compile Include="Services\Sql\QueryStrings\QueryStringBuilder.cs" />
+    <Compile Include="Services\Sql\QueryStrings\SqlServerQueryStringBuilder.cs" />
+    <Compile Include="Services\Sql\SqlDialect.cs" />
     <Compile Include="Services\UsersService.cs" />
   </ItemGroup>
   <ItemGroup>
