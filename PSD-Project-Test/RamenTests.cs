@@ -33,27 +33,27 @@ namespace PSD_Project_Test
                 this.ramen = ramen;
             }
 
-            public Task<Try<List<Ramen>, Exception>> GetRamenAsync()
+            public Task<Try<List<Ramen>, Exception>> GetRamen()
             {
                 return Task.FromResult(Try.Of<List<Ramen>, Exception>(ramen.Values.ToList()));
             }
 
-            public Task<Option<Ramen>> GetRamenAsync(int ramenId)
+            public Task<Option<Ramen>> GetRamen(int ramenId)
             {
                 throw new NotImplementedException();
             }
 
-            public Task<Try<Ramen, Exception>> AddRamenAsync(string name, string borth, string price, int meatId)
+            public Task<Try<Ramen, Exception>> AddRamen(string name, string borth, string price, int meatId)
             {
                 throw new NotImplementedException();
             }
 
-            public Task<Try<Ramen, Exception>> UpdateRamenAsync(int ramenId, string name, string borth, string price, int meatId)
+            public Task<Try<Ramen, Exception>> UpdateRamen(int ramenId, string name, string borth, string price, int meatId)
             {
                 throw new NotImplementedException();
             }
 
-            public Task<Option<Exception>> DeleteRamenAsync(int ramenId)
+            public Task<Option<Exception>> DeleteRamen(int ramenId)
             {
                 throw new NotImplementedException();
             }

@@ -7,12 +7,12 @@ namespace PSD_Project.API.Features.Commerce.Transactions
 {
     public interface ITransactionsRepository
     {
-        Task<Try<TransactionRecord, Exception>> CreateTransactionAsync(
+        Task<Try<TransactionRecord, Exception>> CreateTransaction(
             int customerId, 
             int staffId,
             DateTime date,
             List<TransactionEntry> entries);
-        Task<Try<List<TransactionRecord>, Exception>> GetTransactionsAsync();
-        Task<Try<TransactionRecord, Exception>> GetTransactionAsync(int transactionId);
+        Task<Try<List<TransactionRecord>, Exception>> GetTransactions();
+        Task<Try<TransactionRecord, Exception>> GetTransaction(int transactionId);
     }
 }

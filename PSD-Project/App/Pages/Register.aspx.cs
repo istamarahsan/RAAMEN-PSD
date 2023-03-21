@@ -63,7 +63,7 @@ namespace PSD_Project.App.Pages
                     EmailTextBox.Text,
                     PasswordTextBox.Text,
                     GenderRadioButtons.SelectedItem.Value);
-                var registerTask = registerService.RegisterNewUserAsync(formDetails);
+                var registerTask = registerService.RegisterNewUser(formDetails);
                 registerTask.Wait();
                 var statusCode = registerTask.Result;
                 switch (statusCode)

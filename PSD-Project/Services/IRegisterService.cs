@@ -6,6 +6,6 @@ namespace PSD_Project.Services
 {
     public interface IRegisterService
     {
-        Task<HttpStatusCode> RegisterNewUserAsync(RegistrationFormDetails form);
+        Task<HttpStatusCode> RegisterNewUser(RegistrationFormDetails form);
     }
 }

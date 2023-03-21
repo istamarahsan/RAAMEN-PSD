@@ -15,7 +15,7 @@ namespace PSD_Project.Services
     {
         private static readonly Uri RegisterServiceUri = new Uri("http://localhost:5000/api/register");
         
-        public async Task<HttpStatusCode> RegisterNewUserAsync(RegistrationFormDetails form)
+        public async Task<HttpStatusCode> RegisterNewUser(RegistrationFormDetails form)
         {
             var json = JsonConvert.SerializeObject(form, Formatting.None);
             var content = new StringContent(json, Encoding.UTF8, "application/json");

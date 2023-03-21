@@ -40,7 +40,7 @@ namespace PSD_Project.API.Features.Commerce
         
         public async Task<Try<TransactionRecord, Exception>> HandleOrder(int unhandledTransactionId, int staffHandlerId)
         {
-            var staff = await UsersService.GetUserAsync(staffHandlerId);
+            var staff = await UsersService.GetUser(staffHandlerId);
 
             var transactionProcessAttempt = await staff
                 .Bind(VerifyUserCanHandleTransaction)
@@ -57,7 +57,7 @@ namespace PSD_Project.API.Features.Commerce
 
         private Task<Try<TransactionRecord, Exception>> TryAddToRepository((int StaffId, Order Transaction) pair)
         {
-            return TransactionsRepository.CreateTransactionAsync(
+            return TransactionsRepository.CreateTransaction(
                 pair.Transaction.CustomerId, 
                 pair.StaffId,
                 DateTime.Now,

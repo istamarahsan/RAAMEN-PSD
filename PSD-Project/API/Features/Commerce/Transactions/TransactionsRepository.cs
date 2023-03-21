@@ -12,7 +12,7 @@ namespace PSD_Project.API.Features.Commerce.Transactions
     {
         private readonly Raamen readOnlyDbContext = new Raamen();
         
-        public async Task<Try<TransactionRecord, Exception>> CreateTransactionAsync(int customerId, int staffId, DateTime date, List<TransactionEntry> entries)
+        public async Task<Try<TransactionRecord, Exception>> CreateTransaction(int customerId, int staffId, DateTime date, List<TransactionEntry> entries)
         {
             var db = new Raamen();
             var transaction = db.Database.BeginTransaction();
@@ -49,7 +49,7 @@ namespace PSD_Project.API.Features.Commerce.Transactions
             }
         }
 
-        public async Task<Try<List<TransactionRecord>, Exception>> GetTransactionsAsync()
+        public async Task<Try<List<TransactionRecord>, Exception>> GetTransactions()
         {
             try
             {
@@ -63,7 +63,7 @@ namespace PSD_Project.API.Features.Commerce.Transactions
             }
         }
 
-        public async Task<Try<TransactionRecord, Exception>> GetTransactionAsync(int transactionId)
+        public async Task<Try<TransactionRecord, Exception>> GetTransaction(int transactionId)
         {
             try
             {

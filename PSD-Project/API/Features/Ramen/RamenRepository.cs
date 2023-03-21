@@ -13,7 +13,7 @@ namespace PSD_Project.API.Features.Ramen
     {
         private readonly Raamen db = new Raamen();
         
-        public async Task<Try<List<Ramen>, Exception>> GetRamenAsync()
+        public async Task<Try<List<Ramen>, Exception>> GetRamen()
         {
             try
             {
@@ -26,7 +26,7 @@ namespace PSD_Project.API.Features.Ramen
             }
         }
 
-        public async Task<Option<Ramen>> GetRamenAsync(int ramenId)
+        public async Task<Option<Ramen>> GetRamen(int ramenId)
         {
             var ramen = await db.Ramen.FindAsync(ramenId);
             return ramen == null 
@@ -34,7 +34,7 @@ namespace PSD_Project.API.Features.Ramen
                 Option.Some(ConvertModel(ramen));
         }
 
-        public async Task<Try<Ramen, Exception>> AddRamenAsync(string name, string borth, string price, int meatId)
+        public async Task<Try<Ramen, Exception>> AddRamen(string name, string borth, string price, int meatId)
         {
             var nextId = await db.Ramen.Select(ramen => ramen.id).MaxAsync() + 1;
             var meat = await db.Meats.FindAsync(meatId);
@@ -62,7 +62,7 @@ namespace PSD_Project.API.Features.Ramen
             }
         }
 
-        public async Task<Try<Ramen, Exception>> UpdateRamenAsync(int ramenId, string name, string borth, string price, int meatId)
+        public async Task<Try<Ramen, Exception>> UpdateRamen(int ramenId, string name, string borth, string price, int meatId)
         {
             var ramen = await db.Ramen.FindAsync(ramenId);
             var meat = await db.Meats.FindAsync(meatId);
@@ -85,7 +85,7 @@ namespace PSD_Project.API.Features.Ramen
             }
         }
 
-        public async Task<Option<Exception>> DeleteRamenAsync(int ramenId)
+        public async Task<Option<Exception>> DeleteRamen(int ramenId)
         {
             var ramen = await db.Ramen.FindAsync(ramenId);
             if (ramen == null)

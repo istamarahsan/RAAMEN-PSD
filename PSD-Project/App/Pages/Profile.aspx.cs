@@ -88,7 +88,7 @@ namespace PSD_Project.App.Pages
                 .Bind(form => userSession.Map(s => s.Id).Map(id => (id, form)))
                 .Map(tuple =>
                 {
-                    var updateTask = UsersService.UpdateUserAsync(tuple.id, tuple.form);
+                    var updateTask = UsersService.UpdateUser(tuple.id, tuple.form);
                     updateTask.Wait();
                     return updateTask.Result;
                 })

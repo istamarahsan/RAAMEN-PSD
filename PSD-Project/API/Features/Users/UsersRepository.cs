@@ -13,20 +13,20 @@ namespace PSD_Project.API.Features.Users
     {
         private readonly Raamen db = new Raamen();
         
-        public async Task<Option<User>> GetUserAsync(int userId)
+        public async Task<Option<User>> GetUser(int userId)
         {
             return (await db.Users.Where(user => user.Id == userId).FirstOrDefaultAsync())
                 .ToOption()
                 .Map(ConvertModel);
         }
 
-        public async Task<List<User>> GetUsersAsync()
+        public async Task<List<User>> GetUsers()
         {
             var users = await db.Users.ToListAsync();
             return users.Select(ConvertModel).ToList();
         }
 
-        public async Task<List<User>> GetUsersWithRoleAsync(int roleId)
+        public async Task<List<User>> GetUsersWithRole(int roleId)
         {
             var usersWithRoleId = await db.Users.Where(user => user.Roleid == roleId).ToListAsync();
             return usersWithRoleId.AsEnumerable()
@@ -34,7 +34,7 @@ namespace PSD_Project.API.Features.Users
                 .ToList();
         }
 
-        public async Task<Option<User>> GetUserWithUsernameAsync(string username)
+        public async Task<Option<User>> GetUserWithUsername(string username)
         {
             var usersWithUsername = await db.Users.Where(user => user.Username == username).ToListAsync();
             return usersWithUsername.AsEnumerable()
@@ -43,7 +43,7 @@ namespace PSD_Project.API.Features.Users
                 .Map(ConvertModel);
         }
 
-        public async Task<Try<User, Exception>> AddNewUserAsync(string username, string email, string password, string gender, int roleId)
+        public async Task<Try<User, Exception>> AddNewUser(string username, string email, string password, string gender, int roleId)
         {
             var foundRole = await db.Roles.Where(role => role.id == roleId).FirstOrDefaultAsync();
             
@@ -75,7 +75,7 @@ namespace PSD_Project.API.Features.Users
             return Try.Of<User, Exception>(new User(newId, username, email, password, gender, new Role(foundRole.id, foundRole.name)));
         }
 
-        public async Task<Try<User, Exception>> UpdateUserAsync(int userId, string username, string email, string gender)
+        public async Task<Try<User, Exception>> UpdateUser(int userId, string username, string email, string gender)
         {
             var user = await db.Users.FirstOrDefaultAsync(u => u.Id == userId);
             if (user == null) return Try.Err<User, Exception>(new ArgumentException());

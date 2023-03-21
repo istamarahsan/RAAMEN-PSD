@@ -14,15 +14,16 @@ namespace PSD_Project.API.Features.Commerce.Transactions
             transactionsRepository = new TransactionsRepository();
         }
 
-        public TransactionsController(ITransactionsHandler transactionsHandler)
+        public TransactionsController(ITransactionsRepository transactionsRepository)
         {
+            this.transactionsRepository = transactionsRepository;
         }
 
         [Route]
         [HttpGet]
         public async Task<IHttpActionResult> GetTransactions()
         {
-            var transactions = await transactionsRepository.GetTransactionsAsync();
+            var transactions = await transactionsRepository.GetTransactions();
             return transactions.Match(Ok, HandleError);
         }
 
@@ -30,7 +31,7 @@ namespace PSD_Project.API.Features.Commerce.Transactions
         [HttpGet]
         public async Task<IHttpActionResult> GetTransaction(int transactionId)
         {
-            var transaction = await transactionsRepository.GetTransactionAsync(transactionId);
+            var transaction = await transactionsRepository.GetTransaction(transactionId);
             return transaction.Match(Ok, HandleError);
         }
 
@@ -38,7 +39,7 @@ namespace PSD_Project.API.Features.Commerce.Transactions
         [HttpPost]
         public async Task<IHttpActionResult> CreateTransaction([FromBody] NewTransactionDetails form)
         {
-            var record = await transactionsRepository.CreateTransactionAsync(
+            var record = await transactionsRepository.CreateTransaction(
                 form.CustomerId,
                 form.StaffId,
                 form.Date,

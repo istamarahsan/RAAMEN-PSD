@@ -71,27 +71,27 @@ namespace PSD_Project_Test
                 this.users = users;
             }
 
-            public Task<Option<User>> GetUserAsync(int userId)
+            public Task<Option<User>> GetUser(int userId)
             {
                 return Task.FromResult(users.Get(userId));
             }
 
-            public Task<List<User>> GetUsersAsync()
+            public Task<List<User>> GetUsers()
             {
                 return Task.FromResult(users.Values.ToList());
             }
 
-            public Task<List<User>> GetUsersWithRoleAsync(int roleId)
+            public Task<List<User>> GetUsersWithRole(int roleId)
             {
                 return Task.FromResult(users.Values.Where(user => user.Role.Id == roleId).ToList());
             }
 
-            public Task<Option<User>> GetUserWithUsernameAsync(string username)
+            public Task<Option<User>> GetUserWithUsername(string username)
             {
                 return Task.FromResult(users.Values.FirstOrDefault(user => user.Username == username).ToOption());
             }
 
-            public Task<Try<User, Exception>> AddNewUserAsync(string username, string email, string password, string gender, int roleId)
+            public Task<Try<User, Exception>> AddNewUser(string username, string email, string password, string gender, int roleId)
             {
                 var nextId = users.Keys.DefaultIfEmpty(0).Max() + 1;
                 var result = roles.Get(roleId)
@@ -106,7 +106,7 @@ namespace PSD_Project_Test
                 return Task.FromResult(result);
             }
 
-            public Task<Try<User, Exception>> UpdateUserAsync(int userId, string username, string email, string gender)
+            public Task<Try<User, Exception>> UpdateUser(int userId, string username, string email, string gender)
             {
                 if (!users.ContainsKey(userId)) return Task.FromResult(Try.Err<User, Exception>(new ArgumentException("User does not exist"))) ;
 

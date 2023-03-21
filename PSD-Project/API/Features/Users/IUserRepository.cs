@@ -8,11 +8,11 @@ namespace PSD_Project.API.Features.Users
 {
     public interface IUsersRepository
     {
-        Task<Option<User>> GetUserAsync(int userId);
-        Task<List<User>> GetUsersAsync();
-        Task<List<User>> GetUsersWithRoleAsync(int roleId);
-        Task<Option<User>> GetUserWithUsernameAsync(string username);
-        Task<Try<User, Exception>> AddNewUserAsync(string username, string email, string password, string gender, int roleId);
-        Task<Try<User, Exception>> UpdateUserAsync(int userId, string username, string email, string gender);
+        Task<Option<User>> GetUser(int userId);
+        Task<List<User>> GetUsers();
+        Task<List<User>> GetUsersWithRole(int roleId);
+        Task<Option<User>> GetUserWithUsername(string username);
+        Task<Try<User, Exception>> AddNewUser(string username, string email, string password, string gender, int roleId);
+        Task<Try<User, Exception>> UpdateUser(int userId, string username, string email, string gender);
     }
 }

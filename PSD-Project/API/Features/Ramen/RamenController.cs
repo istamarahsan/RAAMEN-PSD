@@ -23,7 +23,7 @@ namespace PSD_Project.API.Features.Ramen
         [HttpGet]
         public async Task<IHttpActionResult> GetAllRamen()
         {
-            var ramen = await ramenRepository.GetRamenAsync();
+            var ramen = await ramenRepository.GetRamen();
             return ramen.Match<IHttpActionResult>(Ok, InternalServerError);
         }
 
@@ -31,7 +31,7 @@ namespace PSD_Project.API.Features.Ramen
         [HttpGet]
         public async Task<IHttpActionResult> GetRamen(int id)
         {
-            var ramen = await ramenRepository.GetRamenAsync(id);
+            var ramen = await ramenRepository.GetRamen(id);
             return ramen.Match<IHttpActionResult>(Ok, NotFound);
         }
 
@@ -52,7 +52,7 @@ namespace PSD_Project.API.Features.Ramen
                 }
             }
             
-            var result = await ramenRepository.AddRamenAsync(form.Name, form.Borth, form.Price, form.MeatId);
+            var result = await ramenRepository.AddRamen(form.Name, form.Borth, form.Price, form.MeatId);
             return result.Match(Ok, HandleAddRamenError);
         }
 
@@ -73,7 +73,7 @@ namespace PSD_Project.API.Features.Ramen
                 }
             }
             
-            var result = await ramenRepository.UpdateRamenAsync(id, form.Name, form.Borth, form.Price, form.MeatId);
+            var result = await ramenRepository.UpdateRamen(id, form.Name, form.Borth, form.Price, form.MeatId);
             return result.Match(Ok, HandleUpdateRamenError);
         }
 
@@ -92,7 +92,7 @@ namespace PSD_Project.API.Features.Ramen
                 }
             }
 
-            var error = await ramenRepository.DeleteRamenAsync(id);
+            var error = await ramenRepository.DeleteRamen(id);
             return error.Match(HandleUpdateRamenError, Ok);
         }
     }

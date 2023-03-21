@@ -154,7 +154,6 @@
     <Compile Include="API\Features\Commerce\Orders\NewOrderDetails.cs" />
     <Compile Include="API\Features\Commerce\Orders\Order.cs" />
     <Compile Include="API\Features\Commerce\Orders\OrdersController.cs" />
-    <Compile Include="API\Features\Commerce\Transactions\ITransactionsHandler.cs" />
     <Compile Include="API\Features\Commerce\Transactions\ITransactionsRepository.cs" />
     <Compile Include="API\Features\Commerce\Transactions\NewTransactionDetails.cs" />
     <Compile Include="API\Features\Commerce\Transactions\TransactionEntry.cs" />

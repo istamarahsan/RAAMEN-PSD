@@ -26,8 +26,8 @@ namespace PSD_Project.App.Pages
                     some: details =>
                     {
                         RoleLabel.Text = details.Role.Name;
-                        var staffDataTask = UsersService.GetUsersWithRoleAsync(1);
-                        var customersDataTask = UsersService.GetUsersWithRoleAsync(0);
+                        var staffDataTask = UsersService.GetUsersWithRole(1);
+                        var customersDataTask = UsersService.GetUsersWithRole(0);
                         customersDataTask.Wait();
                         staffDataTask.Wait();
                         CurrentUserRole = RoleById(details.Role.Id).Ok().OrElse(UserRole.Customer);
