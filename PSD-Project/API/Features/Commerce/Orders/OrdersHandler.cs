@@ -9,9 +9,9 @@ using PSD_Project.Services;
 using Util.Collections;
 using Util.Try;
 
-namespace PSD_Project.API.Features.Commerce
+namespace PSD_Project.API.Features.Commerce.Orders
 {
-    public class CommerceHandler : IOrdersHandler
+    public class OrdersHandler : IOrdersHandler
     {
         private static readonly Dictionary<int, Order> Orders = new Dictionary<int, Order>();
         private static readonly IUsersService UsersService = new UsersService();

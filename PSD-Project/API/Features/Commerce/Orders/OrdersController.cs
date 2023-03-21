@@ -13,7 +13,7 @@ namespace PSD_Project.API.Features.Commerce.Orders
 
         public OrdersController()
         {
-            ordersHandler = new CommerceHandler();
+            ordersHandler = new OrdersHandler();
             authService = new LoginAuthService();
         }
 
