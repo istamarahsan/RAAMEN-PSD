@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Web;
 using Newtonsoft.Json;
 using PSD_Project.App.Models;
-using PSD_Project.Features.Register;
 using Util.Option;
 using Util.Try;
 
