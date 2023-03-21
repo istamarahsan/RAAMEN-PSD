@@ -11,7 +11,7 @@ namespace PSD_Project.Services
     {
         private readonly Uri ramenServiceUri = new Uri("http://localhost:5000/ramen");
         
-        public async Task<Try<List<Ramen>, Exception>> GetAllRamenAsync()
+        public async Task<Try<List<Ramen>, Exception>> GetAllRamen()
         {
             var response = await RaamenApp.HttpClient.GetAsync(ramenServiceUri);
             return response.TryGetContent()
