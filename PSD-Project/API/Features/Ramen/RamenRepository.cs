@@ -84,7 +84,7 @@ namespace PSD_Project.API.Features.Ramen
             ramen.Meat = meat;
             try
             {
-                db.SaveChangesAsync();
+                db.SaveChanges();
                 return Try.Of<Ramen, Exception>(ConvertModel(ramen));
             }
             catch (Exception e)
