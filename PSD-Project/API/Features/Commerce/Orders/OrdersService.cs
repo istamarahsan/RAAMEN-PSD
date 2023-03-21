@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using PSD_Project.API.Features.Commerce.Transactions;
 using PSD_Project.API.Features.Users;
-using PSD_Project.API.Service;
 using Util.Collections;
 using Util.Try;
 
@@ -12,12 +11,12 @@ namespace PSD_Project.API.Features.Commerce.Orders
     public class OrdersService : IOrdersService
     {
         private static readonly Dictionary<int, Order> Orders = new Dictionary<int, Order>();
-        private static readonly IUsersService UsersService = Services.GetUsersService();
-
+        private readonly IUsersService usersService;
         private readonly ITransactionsService transactionsService;
         
-        public OrdersService(ITransactionsService transactionsService)
+        public OrdersService(IUsersService usersService, ITransactionsService transactionsService)
         {
+            this.usersService = usersService;
             this.transactionsService = transactionsService;
         }
 
@@ -43,7 +42,7 @@ namespace PSD_Project.API.Features.Commerce.Orders
         
         public Try<Transaction, Exception> HandleOrder(int unhandledTransactionId, int staffHandlerId)
         {
-            var staff = UsersService.GetUser(staffHandlerId);
+            var staff = usersService.GetUser(staffHandlerId);
 
             var transactionProcessAttempt = staff
                 .Bind(VerifyUserCanHandleTransaction)
