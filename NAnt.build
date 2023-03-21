@@ -53,17 +53,5 @@
             <delete
                 file="${webConfigFile}"
             />
-            <xmlpoke
-                file="${webConfigFile}"
-                failonerror="true"
-                xpath="/configuration/connectionStrings/add[@name = 'Raamen']/@providerName"
-                value=""
-            />
-            <xmlpoke
-                file="${webConfigFile}"
-                failonerror="true"
-                xpath="/configuration/connectionStrings/add[@name = 'Raamen']/@connectionString"
-                value=""
-            />
         </target>
     </project>
