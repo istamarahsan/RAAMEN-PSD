@@ -9,19 +9,19 @@ using Util.Try;
 
 namespace PSD_Project.API.Features.LogIn
 {
-    [RoutePrefix("api/login")]
-    public class LogInController : ApiController
+    [RoutePrefix("api/auth")]
+    public class UserAuthenticationController : ApiController
     {
         private readonly IUserSessionsService userSessionsService;
         private readonly IUsersService usersService;
 
-        public LogInController()
+        public UserAuthenticationController()
         {
             userSessionsService = Services.GetUserSessionsService();
             usersService = Services.GetUsersService();
         }
 
-        public LogInController(IUsersService usersService, IUserSessionsService userSessionsService)
+        public UserAuthenticationController(IUsersService usersService, IUserSessionsService userSessionsService)
         {
             this.usersService = usersService;
             this.userSessionsService = userSessionsService;
@@ -43,9 +43,9 @@ namespace PSD_Project.API.Features.LogIn
 
         [Route]
         [HttpGet]
-        public IHttpActionResult GetSession([FromUri] int sessionToken)
+        public IHttpActionResult GetSession([FromUri] int token)
         {
-            return userSessionsService.GetSession(sessionToken)
+            return userSessionsService.GetSession(token)
                     .Map(Ok)
                     .Cast<IHttpActionResult>()
                     .OrElse(NotFound());

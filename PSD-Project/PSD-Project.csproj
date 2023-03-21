@@ -164,7 +164,7 @@
     <Compile Include="API\Features\LogIn\AuthService.cs" />
     <Compile Include="API\Features\LogIn\IAuthService.cs" />
     <Compile Include="API\Features\LogIn\IUserSessionsService.cs" />
-    <Compile Include="API\Features\LogIn\LogInController.cs" />
+    <Compile Include="API\Features\LogIn\UserAuthenticationController.cs" />
     <Compile Include="API\Features\LogIn\LoginCredentials.cs" />
     <Compile Include="API\Features\LogIn\UserSession.cs" />
     <Compile Include="API\Features\LogIn\UserSessionDetails.cs" />
