@@ -13,7 +13,7 @@ namespace PSD_Project.Features.Commerce.Transactions
         [DataMember] public readonly DateTime? Date;
         [DataMember] public readonly List<TransactionEntry> Details;
 
-        public TransactionRecord(int id, int customerId, int staffId, List<TransactionEntry> details, DateTime date)
+        public TransactionRecord(int id, int customerId, int staffId, List<TransactionEntry> details, DateTime? date)
         {
             Id = id;
             CustomerId = customerId;

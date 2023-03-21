@@ -8,7 +8,12 @@ namespace PSD_Project.Features.Commerce.Transactions
 {
     public interface ITransactionsRepository
     {
-        Task<Try<TransactionRecord, Exception>> AddNewTransactionAsync(int customerId, int staffId,
-            List<CartItem> cart);
+        Task<Try<TransactionRecord, Exception>> CreateTransactionAsync(
+            int customerId, 
+            int staffId,
+            DateTime date,
+            List<TransactionEntry> entries);
+        Task<Try<List<TransactionRecord>, Exception>> GetTransactionsAsync();
+        Task<Try<TransactionRecord, Exception>> GetTransactionAsync(int transactionId);
     }
 }

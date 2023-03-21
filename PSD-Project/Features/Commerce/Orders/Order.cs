@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
@@ -7,14 +8,20 @@ namespace PSD_Project.Features.Commerce.Orders
     public class Order
     {
         [DataMember]
+        public readonly int Id;
+        [DataMember] 
         public readonly int CustomerId;
-        [DataMember]
-        public readonly List<CartItem> Cart;
+        [DataMember] 
+        public readonly DateTime TimeCreated;
+        [DataMember] 
+        public readonly List<CartItem> Items;
 
-        public Order(int customerId, List<CartItem> cart)
+        public Order(int id, int customerId, DateTime timeCreated, List<CartItem> items)
         {
+            Id = id;
             CustomerId = customerId;
-            Cart = cart;
+            TimeCreated = timeCreated;
+            Items = items;
         }
     }
 }

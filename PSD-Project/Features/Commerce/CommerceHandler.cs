@@ -10,28 +10,28 @@ using Util.Try;
 
 namespace PSD_Project.Features.Commerce.Transactions
 {
-    public class CommerceHandler : IOrdersHandler, ITransactionsHandler
+    public class CommerceHandler : IOrdersHandler
     {
-        private static readonly Dictionary<int, UnhandledTransaction> UnhandledTransactions = new Dictionary<int, UnhandledTransaction>();
+        private static readonly Dictionary<int, Order> UnhandledTransactions = new Dictionary<int, Order>();
         private static readonly IUsersService UsersService = new UsersService();
 
-        private static readonly ITransactionsRepository TransactionsRepository = new RawMySqlTransactionsRepository();
+        private static readonly ITransactionsRepository TransactionsRepository = new TransactionsRepository();
 
-        public Task<Try<UnhandledTransaction, Exception>> QueueOrderAsync(Order order)
+        public Task<Try<Order, Exception>> QueueOrderAsync(NewOrderDetails newOrderDetails)
         {
             var transaction =
-                new UnhandledTransaction(UnhandledTransactions.Keys.DefaultIfEmpty(0).Max() + 1, order.CustomerId, DateTime.Now, order.Cart);
+                new Order(UnhandledTransactions.Keys.DefaultIfEmpty(0).Max() + 1, newOrderDetails.CustomerId, DateTime.Now, newOrderDetails.Cart);
             UnhandledTransactions[transaction.Id] = transaction;
-            var result = Try.Of<UnhandledTransaction, Exception>(transaction);
+            var result = Try.Of<Order, Exception>(transaction);
             return Task.FromResult(result);
         }
 
-        public Task<List<UnhandledTransaction>> GetUnhandledTransactionsAsync()
+        public Task<List<Order>> GetOrdersAsync()
         {
             return Task.FromResult(UnhandledTransactions.Values.ToList());
         }
 
-        public async Task<Try<TransactionRecord, Exception>> HandleTransactionAsync(int unhandledTransactionId, int staffHandlerId)
+        public async Task<Try<TransactionRecord, Exception>> HandleOrderAsync(int unhandledTransactionId, int staffHandlerId)
         {
             var staff = await UsersService.GetUserAsync(staffHandlerId);
 
@@ -48,12 +48,16 @@ namespace PSD_Project.Features.Commerce.Transactions
             return transactionProcessAttempt;
         }
 
-        private Task<Try<TransactionRecord, Exception>> TryAddToRepository((int StaffId, UnhandledTransaction Transaction) pair)
+        private Task<Try<TransactionRecord, Exception>> TryAddToRepository((int StaffId, Order Transaction) pair)
         {
-            return TransactionsRepository.AddNewTransactionAsync(pair.Transaction.CustomerId, pair.StaffId, pair.Transaction.Items);
+            return TransactionsRepository.CreateTransactionAsync(
+                pair.Transaction.CustomerId, 
+                pair.StaffId,
+                DateTime.Now,
+                pair.Transaction.Items.Select(i => new TransactionEntry(i.RamenId, i.Quantity)).ToList());
         }
 
-        private Try<(int StaffId, UnhandledTransaction Transaction), Exception> PairWithUnhandledTransaction(User u, int unhandledTransactionId)
+        private Try<(int StaffId, Order Transaction), Exception> PairWithUnhandledTransaction(User u, int unhandledTransactionId)
         {
             return UnhandledTransactions.Get(unhandledTransactionId)
                 .Map(t => (StaffId: u.Id, Transaction: t))
