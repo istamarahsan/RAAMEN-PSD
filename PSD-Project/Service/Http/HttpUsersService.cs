@@ -36,13 +36,23 @@ namespace PSD_Project.Service.Http
 
         public async Task<Try<User, Exception>> GetUserWithUsername(string username)
         {
-            var response = await RaamenApp.HttpClient.GetAsync(new Uri(usersServiceUri, $"?username={username}"));
+            var response = await httpClient.GetAsync(new Uri(usersServiceUri, $"?username={username}"));
             
             if (response.StatusCode == HttpStatusCode.NotFound) return Try.Err<User, Exception>(new Exception());
 
             var responseString = await response.Content.ReadAsStringAsync();
             var deserialized = (User)JsonConvert.DeserializeObject(responseString, typeof(User));
             return deserialized.ToOption().OrErr(() => new Exception());
+        }
+
+        public async Task<Try<User, Exception>> CreateUser(NewUserDetails userDetails)
+        {
+            var userDetailsJson = JsonConvert.SerializeObject(userDetails, Formatting.None);
+            var userDetailsContent = new StringContent(userDetailsJson, Encoding.UTF8, "application/json");
+            var response = await httpClient.PostAsync(usersServiceUri, userDetailsContent);
+            return response.TryGetContent()
+                .Bind(r => r.TryReadResponseString())
+                .Bind(str => str.TryDeserializeJson<User>());
         }
 
         public async Task<HttpStatusCode> UpdateUser(int userId, UserUpdateDetails form)

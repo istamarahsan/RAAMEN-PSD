@@ -6,21 +6,24 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using Newtonsoft.Json;
 using PSD_Project.API.Features.Users;
+using PSD_Project.Service;
+using Util.Try;
 
 namespace PSD_Project.API.Features.Register
 {
     [RoutePrefix("api/register")]
     public partial class RegisterController : ApiController
     {
-        private readonly Uri usersServiceUri = new Uri("http://localhost:5000/api/users");
+        private readonly IUsersService usersService;
 
         public RegisterController()
         {
+            usersService = Services.GetUsersService();
         }
 
-        public RegisterController(Uri usersServiceUri)
+        public RegisterController(IUsersService usersService)
         {
-            this.usersServiceUri = usersServiceUri;
+            this.usersService = usersService;
         }
 
         [Route]
@@ -29,26 +32,14 @@ namespace PSD_Project.API.Features.Register
         {
             if (form == null) return BadRequest();
 
-            var requestForUsersWithSameUsername =
-                await RaamenApp.HttpClient.GetAsync(new Uri(usersServiceUri, $"?username={form.Username}"));
-            if (requestForUsersWithSameUsername.StatusCode == HttpStatusCode.NotFound)
-            {
-                var userDetailsJson = JsonConvert.SerializeObject(
-                    new NewUserDetails(
-                        username: form.Username,
-                        email: form.Email,
-                        password: form.Password,
-                        gender: form.Gender,
-                        0), 
-                    Formatting.None);
-                var userDetailsContent = new StringContent(userDetailsJson, Encoding.UTF8, "application/json");
-                var requestToAddNewUser = await RaamenApp.HttpClient.PostAsync(usersServiceUri, userDetailsContent);
-                return requestToAddNewUser.StatusCode == HttpStatusCode.OK
-                    ? (IHttpActionResult)Ok()
-                    : InternalServerError();
-            }
+            var newUserDetails = new NewUserDetails(username: form.Username, email: form.Email, password: form.Password, gender: form.Gender, 0);
+            
+            var requestForUsersWithSameUsername = await usersService.GetUserWithUsername(form.Username);
+            var createUser = await requestForUsersWithSameUsername.Err()
+                .OrErr(() => new Exception("username already exists"))
+                .Bind(_ => usersService.CreateUser(newUserDetails));
 
-            return Conflict();
+            return createUser.Match<IHttpActionResult>(Ok, _ => InternalServerError());
         }
     }
 }

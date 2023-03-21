@@ -13,6 +13,7 @@ namespace PSD_Project.Service
     {
         Task<Try<List<User>, Exception>> GetUsersWithRole(int roleId);
         Task<Try<User, Exception>> GetUserWithUsername(string username);
+        Task<Try<User, Exception>> CreateUser(NewUserDetails userDetails);
         Task<HttpStatusCode> UpdateUser(int userId, UserUpdateDetails form);
         Task<Try<User, Exception>> GetUser(int userId);
     }
