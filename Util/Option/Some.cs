@@ -22,5 +22,6 @@ namespace Util.Option
         public override bool IsSome() => true;
 
         public override bool IsNone() => false;
+        public override T Unwrap() => data;
     }
 }

@@ -215,6 +215,9 @@
     <Compile Include="App\AppServices.cs" />
     <Compile Include="App\Services\Auth\AdapterAuthService.cs" />
     <Compile Include="App\Services\Auth\IAuthService.cs" />
+    <Compile Include="App\Services\RamenService\AdapterRamenService.cs" />
+    <Compile Include="App\Services\RamenService\IRamenService.cs" />
+    <Compile Include="App\Services\RamenService\RamenServiceError.cs" />
     <Compile Include="App\Services\Register\AdapterRegisterService.cs" />
     <Compile Include="App\Services\Register\IRegisterService.cs" />
     <Compile Include="App\Services\Register\RegisterError.cs" />

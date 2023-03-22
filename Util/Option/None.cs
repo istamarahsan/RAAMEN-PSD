@@ -16,5 +16,6 @@ namespace Util.Option
         public override bool IsSome() => false;
 
         public override bool IsNone() => true;
+        public override T Unwrap() => throw new InvalidOperationException();
     }
 }

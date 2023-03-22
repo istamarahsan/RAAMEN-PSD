@@ -12,6 +12,7 @@ namespace Util.Option
         public abstract T OrElse(T value);
         public abstract bool IsSome();
         public abstract bool IsNone();
+        public abstract T Unwrap();
     }
 
     public static class Option
