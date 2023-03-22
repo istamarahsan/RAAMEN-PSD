@@ -20,9 +20,12 @@ namespace PSD_Project.API.Features.Users.Authorization
             },
             [Role.Admin] = new List<Permission>
             {
+                Permission.PlaceOrder,
+                Permission.ReadOwnTransactions,
                 Permission.HandleOrder,
                 Permission.ReadCustomerUserdetails,
-                Permission.ReadStaffUserdetails
+                Permission.ReadStaffUserdetails,
+                Permission.ReadAllTransactions
             }
         };
 
