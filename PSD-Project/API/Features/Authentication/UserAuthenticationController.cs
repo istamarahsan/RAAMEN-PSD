@@ -29,7 +29,7 @@ namespace PSD_Project.API.Features.Authentication
 
         [Route]
         [HttpPost]
-        public IHttpActionResult Authenticate([FromBody] LoginCredentials credentials)
+        public IHttpActionResult Authenticate([FromBody] UserCredentials credentials)
         {
             var user = usersService.GetUserWithUsername(credentials.Username);
 

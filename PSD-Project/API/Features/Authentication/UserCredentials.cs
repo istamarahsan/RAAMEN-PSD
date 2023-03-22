@@ -1,13 +1,13 @@
 using System.Runtime.Serialization;
 
-namespace PSD_Project.App.Pages
+namespace PSD_Project.API.Features.Authentication
 {
     [DataContract]
     public class UserCredentials
     {
-        [DataMember] 
+        [DataMember]
         public readonly string Username;
-        [DataMember] 
+        [DataMember]
         public readonly string Password;
 
         public UserCredentials(string username, string password)

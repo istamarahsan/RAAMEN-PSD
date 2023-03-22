@@ -162,7 +162,7 @@
     <Compile Include="API\Features\Authentication\IAuthenticationService.cs" />
     <Compile Include="API\Features\Authentication\IUserSessionsService.cs" />
     <Compile Include="API\Features\Authentication\UserAuthenticationController.cs" />
-    <Compile Include="API\Features\Authentication\LoginCredentials.cs" />
+    <Compile Include="API\Features\Authentication\UserCredentials.cs" />
     <Compile Include="API\Features\Authentication\UserSession.cs" />
     <Compile Include="API\Features\Authentication\UserSessionDetails.cs" />
     <Compile Include="API\Features\Authentication\UserSessionsService.cs" />
@@ -205,8 +205,6 @@
     <Compile Include="App\Services\Login\AdapterLoginService.cs" />
     <Compile Include="App\Services\Login\ILoginService.cs" />
     <Compile Include="App\Services\Login\LoginError.cs" />
-    <Compile Include="App\Models\UserCredentials.cs" />
-    <Compile Include="App\Models\UserRole.cs" />
     <Compile Include="App\Pages\Login.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
       <DependentUpon>Login.aspx</DependentUpon>

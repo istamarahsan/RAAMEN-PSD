@@ -14,7 +14,7 @@ namespace PSD_Project.App.Services.Login
         public Try<UserSession, LoginError> Login(UserCredentials credentials)
         {
             return userAuthenticationController
-                .Authenticate(new LoginCredentials(credentials.Username, credentials.Password))
+                .Authenticate(credentials)
                 .InterpretAs<UserSession>()
                 .MapErr(HandleError);
         }
