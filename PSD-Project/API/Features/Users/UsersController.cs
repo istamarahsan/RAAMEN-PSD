@@ -41,7 +41,10 @@ namespace PSD_Project.API.Features.Users
                 .Map(session => session.Role.Id)
                 .Bind(roleId => authorizationService.RoleHasPermission(roleId, Permission.ReadAllUserdetails)
                     .Assert<Exception>(true, () => new UnauthorizedAccessException()))
-                .Bind(_ => usersService.GetUsers())
+                .Bind(hasPermission =>
+                    hasPermission
+                        ? usersService.GetUsers()
+                        : Try.Err<List<User>, Exception>(new UnauthorizedAccessException()))
                 .Match(Ok, HandleException);
         }
 
@@ -61,7 +64,10 @@ namespace PSD_Project.API.Features.Users
                 .Map(session => session.Role.Id)
                 .Bind(roleId =>
                     targetPermission.Map(permission => authorizationService.RoleHasPermission(roleId, permission)))
-                .Bind(_ => targetUser)
+                .Bind(hasPermission =>
+                    hasPermission
+                        ? usersService.GetUser(id)
+                        : Try.Err<User, Exception>(new UnauthorizedAccessException()))
                 .Match(Ok, HandleException);
         }
         
