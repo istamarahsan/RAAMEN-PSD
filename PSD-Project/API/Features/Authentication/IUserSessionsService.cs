@@ -1,7 +1,7 @@
 using PSD_Project.API.Features.Users;
 using Util.Option;
 
-namespace PSD_Project.API.Features.LogIn
+namespace PSD_Project.API.Features.Authentication
 {
     public interface IUserSessionsService
     {

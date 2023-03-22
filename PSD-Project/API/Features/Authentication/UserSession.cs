@@ -1,6 +1,6 @@
 using System.Runtime.Serialization;
 
-namespace PSD_Project.API.Features.LogIn
+namespace PSD_Project.API.Features.Authentication
 {
     [DataContract]
     public class UserSession

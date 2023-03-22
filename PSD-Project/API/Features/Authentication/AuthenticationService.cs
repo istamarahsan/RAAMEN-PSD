@@ -3,7 +3,7 @@ using PSD_Project.API.Features.Users;
 using PSD_Project.App.Pages;
 using Util.Try;
 
-namespace PSD_Project.API.Features.LogIn
+namespace PSD_Project.API.Features.Authentication
 {
     public class AuthenticationService : IAuthenticationService
     {

@@ -1,7 +1,7 @@
 using System.Runtime.Serialization;
 using PSD_Project.API.Features.Users;
 
-namespace PSD_Project.API.Features.LogIn
+namespace PSD_Project.API.Features.Authentication
 {
     [DataContract]
     public class UserSessionDetails
@@ -15,9 +15,9 @@ namespace PSD_Project.API.Features.LogIn
         [DataMember]
         public readonly string Gender;
         [DataMember] 
-        public readonly Role Role;
+        public readonly RoleDetails Role;
 
-        public UserSessionDetails(int id, string username, string email, string password, string gender, Role role)
+        public UserSessionDetails(int id, string username, string email, string password, string gender, RoleDetails role)
         {
             Id = id;
             Username = username;

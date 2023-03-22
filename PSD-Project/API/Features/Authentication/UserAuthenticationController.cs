@@ -7,7 +7,7 @@ using PSD_Project.API.Features.Users;
 using PSD_Project.API.Service;
 using Util.Try;
 
-namespace PSD_Project.API.Features.LogIn
+namespace PSD_Project.API.Features.Authentication
 {
     [RoutePrefix("api/auth")]
     public class UserAuthenticationController : ApiController

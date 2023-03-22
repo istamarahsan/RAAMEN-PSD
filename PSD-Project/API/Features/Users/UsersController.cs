@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Web.Http;
+using PSD_Project.API.Features.Authentication;
+using PSD_Project.API.Features.Users.Authorization;
 using PSD_Project.API.Service;
 using Util.Option;
 using Util.Try;
@@ -11,25 +12,29 @@ namespace PSD_Project.API.Features.Users
     [RoutePrefix("api/users")]
     public class UsersController : ApiController
     {
+        private readonly IAuthenticationService authenticationService;
+        private readonly IAuthorizationService authorizationService;
         private readonly IUsersService usersService;
 
         public UsersController()
         {
             usersService = Services.GetUsersService();
+            authenticationService = Services.GetAuthenticationService();
+            authorizationService = Services.GetAuthorizationService();
         }
 
-        public UsersController(IUsersService usersService)
+        public UsersController(IUsersService usersService, IAuthenticationService authenticationService,
+            IAuthorizationService authorizationService)
         {
             this.usersService = usersService;
+            this.authenticationService = authenticationService;
+            this.authorizationService = authorizationService;
         }
 
         [Route]
         [HttpGet]
-        public IHttpActionResult GetAllUsers()
-        {
-            return usersService.GetUsers().Match(Ok, HandleException);
-        }
-        
+        public IHttpActionResult GetAllUsers() => usersService.GetUsers().Match(Ok, HandleException);
+
         [Route("{id}")]
         [HttpGet]
         public IHttpActionResult GetUser(int id)
@@ -40,10 +45,18 @@ namespace PSD_Project.API.Features.Users
 
         [Route]
         [HttpGet]
-        public IHttpActionResult GetUsersWithRole([FromUri] int roleId)
+        public IHttpActionResult GetUsersWithRole([FromUri] int roleId, [FromUri] int token)
         {
-            var users = usersService.GetUsersWithRole(roleId);
-            return users.Match(Ok, HandleException);
+            return authenticationService.GetSession(token)
+                .Map(user => user.Role.Id)
+                .Bind(usersService.GetRoleOfId)
+                .Bind(role => VerifyPermissionToViewTargetRoleExists(role).Map(permission => (role, permission)))
+                .Map(request => authorizationService.RoleHasPermission(request.role, request.permission))
+                .Bind(hasPermission =>
+                    hasPermission
+                        ? usersService.GetUsersWithRole(roleId)
+                        : Try.Err<List<User>, Exception>(new Exception("Unauthorized")))
+                .Match(Ok, HandleException);
         }
 
         [Route]
@@ -53,7 +66,7 @@ namespace PSD_Project.API.Features.Users
             var user = usersService.GetUserWithUsername(username);
             return user.Match(Ok, HandleException);
         }
-        
+
         [Route]
         [HttpPost]
         public IHttpActionResult CreateNewUser([FromBody] UserDetails form)
@@ -72,7 +85,7 @@ namespace PSD_Project.API.Features.Users
             var updateTry = usersService.UpdateUser(id, form);
             return updateTry.Match(Ok, HandleException);
         }
-        
+
         private IHttpActionResult HandleException(Exception exception)
         {
             switch (exception)
@@ -82,6 +95,26 @@ namespace PSD_Project.API.Features.Users
                 default:
                     return InternalServerError(exception);
             }
+        }
+
+        private Option<Permission> ParseViewPermissionFromTargetRole(Role role)
+        {
+            switch (role)
+            {
+                case Role.Customer:
+                    return Option.Some(Permission.ReadCustomerUserdetails);
+                case Role.Staff:
+                    return Option.Some(Permission.ReadStaffUserdetails);
+                case Role.Admin:
+                default:
+                    return Option.None<Permission>();
+            }
+        }
+        
+        private Try<Permission, Exception> VerifyPermissionToViewTargetRoleExists(Role role)
+        {
+            return ParseViewPermissionFromTargetRole(role)
+                .OrErr(() => new Exception("No such permission exists"));
         }
     }
 }

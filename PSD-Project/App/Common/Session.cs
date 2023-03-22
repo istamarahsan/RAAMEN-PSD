@@ -1,5 +1,5 @@
 using System.Web.SessionState;
-using PSD_Project.API.Features.LogIn;
+using PSD_Project.API.Features.Authentication;
 using Util.Option;
 
 namespace PSD_Project.App.Common

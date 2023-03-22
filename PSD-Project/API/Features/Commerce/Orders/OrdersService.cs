@@ -4,6 +4,7 @@ using System.Linq;
 using PSD_Project.API.Features.Commerce.Transactions;
 using PSD_Project.API.Features.Ramen;
 using PSD_Project.API.Features.Users;
+using PSD_Project.API.Features.Users.Authorization;
 using Util.Collections;
 using Util.Try;
 
@@ -15,12 +16,14 @@ namespace PSD_Project.API.Features.Commerce.Orders
         private readonly IUsersService usersService;
         private readonly ITransactionsService transactionsService;
         private readonly IRamenService ramenService;
+        private readonly IAuthorizationService authorizationService;
         
-        public OrdersService(IUsersService usersService, ITransactionsService transactionsService, IRamenService ramenService)
+        public OrdersService(IUsersService usersService, ITransactionsService transactionsService, IRamenService ramenService, IAuthorizationService authorizationService)
         {
             this.usersService = usersService;
             this.transactionsService = transactionsService;
             this.ramenService = ramenService;
+            this.authorizationService = authorizationService;
         }
 
         public Try<Order, Exception> QueueOrder(NewOrderDetails newOrderDetails)
@@ -82,7 +85,8 @@ namespace PSD_Project.API.Features.Commerce.Orders
         private Try<NewOrderDetails, Exception> VerifyUserCanPlaceOrder(NewOrderDetails orderDetails)
         {
             return usersService.GetUser(orderDetails.CustomerId)
-                .Bind(user => usersService.CanRolePlaceOrder(user.Role.Id))
+                .Bind(user => usersService.GetRoleOfId(user.Role.Id))
+                .Map(role => authorizationService.RoleHasPermission(role, Permission.PlaceOrder))
                 .Bind(canPlaceOrder => canPlaceOrder.Assert(true, () => orderDetails, () => new Exception()));
         }
         
@@ -93,7 +97,8 @@ namespace PSD_Project.API.Features.Commerce.Orders
         
         private Try<User, Exception> VerifyUserCanHandleOrder(User user)
         {
-            return usersService.CanRoleHandleOrder(user.Role.Id)
+            return usersService.GetRoleOfId(user.Role.Id)
+                .Map(role => authorizationService.RoleHasPermission(role, Permission.HandleOrder))
                 .Bind(canHandleOrder => canHandleOrder.Assert(true, () => user, () => new Exception()));
         }
         

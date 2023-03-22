@@ -9,7 +9,7 @@ using Util.Try;
 
 namespace PSD_Project.API.Features.Users
 {
-    public class UserRepository : IUserRepository
+    public class UsersRolesRepository : IUserRepository, IRolesRepository
     {
         private readonly Raamen db = new Raamen();
         
@@ -20,7 +20,7 @@ namespace PSD_Project.API.Features.Users
                 return db.Users.FirstOrDefault(u => u.Id == userId)
                     .ToOption()
                     .OrErr(() => new Exception())
-                    .Map(ConvertModel);
+                    .Map(ConvertUserModel);
             }
             catch (Exception e)
             {
@@ -33,7 +33,7 @@ namespace PSD_Project.API.Features.Users
         {
             try
             {
-                var users = db.Users.Select(ConvertModel).ToList();
+                var users = db.Users.Select(ConvertUserModel).ToList();
                 return Try.Of<List<User>, Exception>(users);
             }
             catch (Exception e)
@@ -49,7 +49,7 @@ namespace PSD_Project.API.Features.Users
             {
                 var users = db.Users.Where(user => user.Roleid == roleId)
                     .AsEnumerable()
-                    .Select(ConvertModel)
+                    .Select(ConvertUserModel)
                     .ToList();
                 return Try.Of<List<User>, Exception>(users);
             }
@@ -65,13 +65,40 @@ namespace PSD_Project.API.Features.Users
             {
                 var users = db.Users.Where(user => user.Username == username)
                     .AsEnumerable()
-                    .Select(ConvertModel)
+                    .Select(ConvertUserModel)
                     .ToList();
                 return Try.Of<List<User>, Exception>(users);
             }
             catch (Exception e)
             {
                 return Try.Err<List<User>, Exception>(e);
+            }
+        }
+
+        public Try<RoleDetails, Exception> GetRole(int roleId)
+        {
+            try
+            {
+                var role = db.Roles.Find(roleId);
+                if (role == null) throw new Exception();
+                return Try.Of<RoleDetails, Exception>(ConvertRoleModel(role));
+            }
+            catch (Exception e)
+            {
+                return Try.Err<RoleDetails, Exception>(e);
+            }
+        }
+        
+        public Try<List<RoleDetails>, Exception> GetRoles()
+        {
+            try
+            {
+                var roles = db.Roles.Select(ConvertRoleModel).ToList();
+                return Try.Of<List<RoleDetails>, Exception>(roles);
+            }
+            catch (Exception e)
+            {
+                return Try.Err<List<RoleDetails>, Exception>(e);
             }
         }
 
@@ -104,7 +131,7 @@ namespace PSD_Project.API.Features.Users
                 return Try.Err<User, Exception>(e);
             }
 
-            return Try.Of<User, Exception>(new User(newId, username, email, password, gender, new Role(foundRole.id, foundRole.name)));
+            return Try.Of<User, Exception>(new User(newId, username, email, password, gender, new RoleDetails(foundRole.id, foundRole.name)));
         }
 
         public Try<User, Exception> UpdateUser(int userId, string username, string email, string gender)
@@ -122,18 +149,20 @@ namespace PSD_Project.API.Features.Users
             {
                 return Try.Err<User, Exception>(e);
             }
-            return Try.Of<User, Exception>(ConvertModel(user));
+            return Try.Of<User, Exception>(ConvertUserModel(user));
         }
 
-        private User ConvertModel(PSD_Project.EntityFramework.User user) => 
+        private User ConvertUserModel(PSD_Project.EntityFramework.User user) => 
             new User(
                 user.Id, 
                 user.Username, 
                 user.Email, 
                 user.Password,
                 user.Gender,
-                new Role(
+                new RoleDetails(
                     user.Role.id,
                     user.Role.name));
+
+        private RoleDetails ConvertRoleModel(Role role) => new RoleDetails(role.id, role.name);
     }
 }

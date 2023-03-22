@@ -2,7 +2,7 @@ using System;
 using PSD_Project.App.Pages;
 using Util.Try;
 
-namespace PSD_Project.API.Features.LogIn
+namespace PSD_Project.API.Features.Authentication
 {
     public interface IAuthenticationService
     {

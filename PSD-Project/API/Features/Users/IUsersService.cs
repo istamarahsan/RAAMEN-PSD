@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using PSD_Project.API.Features.Users.Authorization;
 using Util.Try;
 
 namespace PSD_Project.API.Features.Users
@@ -12,7 +13,6 @@ namespace PSD_Project.API.Features.Users
         Try<User, Exception> GetUserWithUsername(string username);
         Try<User, Exception> CreateUser(UserDetails userDetails);
         Try<User, Exception> UpdateUser(int userId, UserUpdateDetails form);
-        Try<bool, Exception> CanRolePlaceOrder(int roleId);
-        Try<bool, Exception> CanRoleHandleOrder(int roleId);
+        Try<Role, Exception> GetRoleOfId(int roleId);
     }
 }
