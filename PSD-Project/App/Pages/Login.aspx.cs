@@ -1,9 +1,9 @@
 using System;
 using System.Web;
 using System.Web.UI;
-using PSD_Project.API.Features.Authentication;
-using PSD_Project.API.Service;
 using PSD_Project.App.Common;
+using PSD_Project.App.Services.Login;
+using PSD_Project.App.Services.Auth;
 using Util.Option;
 using Util.Try;
 
@@ -11,14 +11,14 @@ namespace PSD_Project.App.Pages
 {
     public partial class Login : Page
     {
-        private static readonly IAuthenticationService AuthenticationService = Services.GetAuthenticationService();
-
+        private readonly ILoginService loginService = AppServices.Singletons.LoginService;
+        private readonly IAuthService authService = AppServices.Singletons.AuthService;
         protected void Page_Load(object sender, EventArgs e)
         {
             var sessionTokenCookie = Request.Cookies[Globals.SessionCookieName].ToOption();
             sessionTokenCookie.Map(cookie => cookie.Value)
                 .Bind(val => val.TryParseInt().Ok())
-                .Bind(token => AuthenticateSession(token).Ok())
+                .Bind(token => authService.GetSession(token).Ok())
                 .Match(
                     some: sessionDetails =>
                     {
@@ -34,7 +34,7 @@ namespace PSD_Project.App.Pages
                 UsernameTextBox.Text,
                 PasswordTextBox.Text);
 
-            var auth = AuthenticationService.Authenticate(credentials);
+            var auth = loginService.Login(credentials);
             auth.Map(s => s.SessionToken)
                 .Match(
                     ok: token =>
@@ -66,16 +66,20 @@ namespace PSD_Project.App.Pages
                         
                         Response.Redirect("Home.aspx");
                     },
-                    err: exception =>
+                    err: error =>
                     {
-                        LoginResultLabel.Text = exception.Message;
+                        switch (error)
+                        {
+                            case LoginError.InvalidCredentials:
+                                // display some error stuff
+                                break;
+                            case LoginError.ServiceUnavailable:
+                            default:
+                                // display some error stuff
+                                break;
+                        }
                     });
             
-        }
-
-        private Try<UserSessionDetails, Exception> AuthenticateSession(int token)
-        {
-            return AuthenticationService.GetSession(token);
         }
 
         private void TryFillRememberedCredentials()

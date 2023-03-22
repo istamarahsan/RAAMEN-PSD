@@ -11,6 +11,7 @@ namespace Util.Try
         public abstract TOut Match<TOut>(Func<T, TOut> ok, Func<TErr, TOut> err);
         public abstract Try<TOut, TErr> Map<TOut>(Func<T, TOut> f);
         public abstract Try<T, TOut> MapErr<TOut>(Func<TErr, TOut> f);
+        public abstract T Recover(Func<TErr, T> f);
         public abstract Try<TOut, TErr> Cast<TOut>(Func<TErr> @catch);
         public abstract Try<TOut, TErr> Bind<TOut>(Func<T, Try<TOut, TErr>> f);
         public abstract Option<T> Ok();

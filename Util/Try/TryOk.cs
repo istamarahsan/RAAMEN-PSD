@@ -32,7 +32,12 @@ namespace Util.Try
         {
             return new TryOk<T, TOut>(Value);
         }
-        
+
+        public override T Recover(Func<TErr, T> f)
+        {
+            return Value;
+        }
+
         public override Try<TOut, TErr> Cast<TOut>(Func<TErr> @catch)
         {
             return Value is TOut @out 

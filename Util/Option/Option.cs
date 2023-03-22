@@ -30,5 +30,10 @@ namespace Util.Option
                 ? Some(input)
                 : None<T>();
         }
+
+        public static Option<T> As<T>(this object obj) where T : class
+        {
+            return (obj as T).ToOption();
+        }
     }
 }
