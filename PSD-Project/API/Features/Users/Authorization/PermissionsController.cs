@@ -1,5 +1,6 @@
 using System;
 using System.IO.Ports;
+using System.Linq;
 using System.Web.Http;
 using PSD_Project.API.Features.Authentication;
 using PSD_Project.API.Service;
@@ -36,6 +37,7 @@ namespace PSD_Project.API.Features.Users.Authorization
                 .Map(user => user.Role.Id)
                 .Bind(roleId => usersService.GetRoleOfId(roleId))
                 .Map(role => authorizationService.GetPermissions(role))
+                .Map(permissions => permissions.Select(p => p.ToString()).ToList())
                 .Match(Ok, HandleException);
         }
 

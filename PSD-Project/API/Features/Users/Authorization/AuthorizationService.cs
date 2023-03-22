@@ -36,7 +36,6 @@ namespace PSD_Project.API.Features.Users.Authorization
         public List<Permission> GetPermissions(Role role)
         {
             return permissionsTable.Get(role)
-                .Map(permissions => permissions)
                 .OrElse(new List<Permission>());
         }
     }
