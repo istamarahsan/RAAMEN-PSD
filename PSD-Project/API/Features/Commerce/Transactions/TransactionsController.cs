@@ -21,6 +21,9 @@ namespace PSD_Project.API.Features.Commerce.Transactions
         public TransactionsController()
         {
             transactionsService = Services.GetTransactionsService();
+            authorizationService = Services.GetAuthorizationService();
+            authenticationService = Services.GetAuthenticationService();
+            usersService = Services.GetUsersService();
         }
 
         public TransactionsController(
@@ -37,19 +40,29 @@ namespace PSD_Project.API.Features.Commerce.Transactions
 
         [Route]
         [HttpGet]
-        public IHttpActionResult GetTransactions([FromUri(Name = "all")] bool getAllTransactions = false)
+        public IHttpActionResult GetTransactions()
         {
             return Request.ExtractAuthToken()
                 .Bind(authenticationService.GetSession)
                 .Map(userSession => (userId: userSession.Id, roleId: userSession.Role.Id))
                 .Bind(request => usersService.GetRoleOfId(request.roleId).Map(role => (request.userId, role)))
-                .Bind(request => getAllTransactions
-                    ? authorizationService.RoleHasPermission(request.role, Permission.ReadAllTransactions)
-                        .Assert<Exception>(true, () => new UnauthorizedAccessException())
-                        .Bind(_ => transactionsService.GetTransactions())
-                    : authorizationService.RoleHasPermission(request.role, Permission.ReadOwnTransactions)
+                .Bind(request => authorizationService.RoleHasPermission(request.role, Permission.ReadOwnTransactions)
                         .Assert<Exception>(true, () => new UnauthorizedAccessException())
                         .Bind(_ => transactionsService.GetTransactionsForUser(request.userId)))
+                .Match(Ok, HandleError);
+        }
+        
+        [Route("all")]
+        [HttpGet]
+        public IHttpActionResult GetAllTransactions()
+        {
+            return Request.ExtractAuthToken()
+                .Bind(authenticationService.GetSession)
+                .Map(userSession => (userId: userSession.Id, roleId: userSession.Role.Id))
+                .Bind(request => usersService.GetRoleOfId(request.roleId).Map(role => (request.userId, role)))
+                .Bind(request => authorizationService.RoleHasPermission(request.role, Permission.ReadAllTransactions)
+                        .Assert<Exception>(true, () => new UnauthorizedAccessException())
+                        .Bind(_ => transactionsService.GetTransactions()))
                 .Match(Ok, HandleError);
         }
 

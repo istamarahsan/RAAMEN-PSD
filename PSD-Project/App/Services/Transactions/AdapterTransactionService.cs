@@ -27,7 +27,7 @@ namespace PSD_Project.App.Services.Transactions
             var request = new HttpRequestMessage();
             request.Headers.Authorization = new AuthenticationHeaderValue("", token.ToString());
             transactionsController.Request = request;
-            return transactionsController.GetTransactions(getAllTransactions: true)
+            return transactionsController.GetAllTransactions()
                 .InterpretAs<List<Transaction>>()
                 .MapErr(_ => TransactionServiceError.InternalServiceError);
         }
