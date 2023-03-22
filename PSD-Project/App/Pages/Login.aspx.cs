@@ -73,7 +73,7 @@ namespace PSD_Project.App.Pages
                             case LoginError.InvalidCredentials:
                                 // display some error stuff
                                 break;
-                            case LoginError.ServiceUnavailable:
+                            case LoginError.InternalServiceError:
                             default:
                                 // display some error stuff
                                 break;

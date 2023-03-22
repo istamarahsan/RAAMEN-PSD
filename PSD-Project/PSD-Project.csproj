@@ -218,6 +218,10 @@
     <Compile Include="App\AppServices.cs" />
     <Compile Include="App\Services\Auth\AdapterAuthService.cs" />
     <Compile Include="App\Services\Auth\IAuthService.cs" />
+    <Compile Include="App\Services\Register\IRegisterService.cs" />
+    <Compile Include="App\Services\Users\AdapterUserService.cs" />
+    <Compile Include="App\Services\Users\IUserService.cs" />
+    <Compile Include="App\Services\Users\UserServiceError.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="EntityFramework\Detail.cs" />
     <Compile Include="EntityFramework\Header.cs" />

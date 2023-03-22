@@ -5,7 +5,7 @@ namespace PSD_Project.App.Services.Login
 {
     public enum LoginError
     {
-        ServiceUnavailable,
+        InternalServiceError,
         InvalidCredentials
     }
 }

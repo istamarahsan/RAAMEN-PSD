@@ -18,6 +18,8 @@ namespace Util.Try
         public abstract Option<TErr> Err();
         public abstract bool IsOk();
         public abstract bool IsErr();
+        public abstract T Unwrap();
+        public abstract TErr UnwrapError();
     }
 
     public static class Try

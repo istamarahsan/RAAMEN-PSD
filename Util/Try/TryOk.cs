@@ -69,5 +69,9 @@ namespace Util.Try
         {
             return false;
         }
+
+        public override T Unwrap() => Value;
+
+        public override TErr UnwrapError() => throw new InvalidOperationException();
     }
 }

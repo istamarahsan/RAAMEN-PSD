@@ -26,7 +26,7 @@ namespace PSD_Project.App.Services.Login
                 case BadRequestResult _:
                     return LoginError.InvalidCredentials;
                 default:
-                    return LoginError.ServiceUnavailable;
+                    return LoginError.InternalServiceError;
             }
         }
     }
