@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using Newtonsoft.Json;
 using PSD_Project.API.Features.Users;
-using PSD_Project.API.Service;
+using PSD_Project.API.Util;
 using Util.Try;
 
 namespace PSD_Project.API.Features.Register

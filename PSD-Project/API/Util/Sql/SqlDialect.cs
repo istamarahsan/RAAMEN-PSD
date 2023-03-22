@@ -1,4 +1,4 @@
-namespace PSD_Project.API.Service.Sql
+namespace PSD_Project.API.Util.Sql
 {
     public enum SqlDialect
     {

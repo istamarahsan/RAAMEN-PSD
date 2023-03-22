@@ -4,7 +4,7 @@ using PSD_Project.App.Common;
 using Util.Option;
 using Util.Try;
 
-namespace PSD_Project.API
+namespace PSD_Project.API.Util
 {
     public static class ApiExtensions
     {

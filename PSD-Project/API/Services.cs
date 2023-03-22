@@ -1,22 +1,21 @@
 using System.Configuration;
+using PSD_Project.API.Features.Authentication;
 using PSD_Project.API.Features.Commerce.Orders;
 using PSD_Project.API.Features.Commerce.Transactions;
-using PSD_Project.API.Features.Authentication;
 using PSD_Project.API.Features.Ramen;
 using PSD_Project.API.Features.Register;
 using PSD_Project.API.Features.Users;
 using PSD_Project.API.Features.Users.Authorization;
-using PSD_Project.API.Service.Sql;
-using PSD_Project.API.Service.Sql.QueryStrings;
+using PSD_Project.API.Util.Sql;
+using PSD_Project.API.Util.Sql.QueryStrings;
 
-namespace PSD_Project.API.Service
+namespace PSD_Project.API
 {
     public static class Services
     {
         private static readonly IUserRepository UserRepository = new UsersRolesRepository();
         private static readonly IRolesRepository RolesRepository = new UsersRolesRepository();
         private static readonly IUsersService UsersService = new UsersService(UserRepository, RolesRepository);
-        private static readonly IRegisterService RegisterService = new RegisterService(UsersService);
         private static readonly IRamenService RamenService = new RamenRepository();
         private static readonly IUserSessionsService UserSessionsService = new UserSessionsService();
         private static readonly IAuthenticationService AuthenticationService = new AuthenticationService(UserSessionsService, UsersService);
@@ -24,8 +23,6 @@ namespace PSD_Project.API.Service
         private static readonly IAuthorizationService AuthorizationService = new AuthorizationService();
         private static readonly IOrdersService OrdersService = new OrdersService(UsersService, TransactionsService, RamenService, AuthorizationService);
         public static IAuthenticationService GetAuthenticationService() => AuthenticationService;
-
-        public static IRegisterService GetRegisterService() => RegisterService;
 
         public static IUsersService GetUsersService() => UsersService;
 

@@ -16,7 +16,7 @@ namespace PSD_Project.API.Features.Commerce.Transactions
         {
             var db = new Raamen();
             var transaction = db.Database.BeginTransaction();
-            var stringBuilder = Service.Services.GetQueryStringBuilder(Service.Services.GetConfiguredDialect());
+            var stringBuilder = Services.GetQueryStringBuilder(Services.GetConfiguredDialect());
             try
             {
                 var headerId = db.Headers.Select(h => h.id).DefaultIfEmpty(1).Max() + 1;

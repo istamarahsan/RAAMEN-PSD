@@ -1,6 +1,6 @@
 using System;
 
-namespace PSD_Project.API.Service.Sql.QueryStrings
+namespace PSD_Project.API.Util.Sql.QueryStrings
 {
     public class SqlServerQueryStringBuilder : QueryStringBuilder
     {
