@@ -48,6 +48,11 @@ namespace PSD_Project_Test
             return allowAllPermissions;
         }
 
+        public List<Permission> GetPermissions(Role role)
+        {
+            return typeof(Permission).GetEnumValues().Cast<Permission>().ToList();
+        }
+
         public Try<UserSessionDetails, Exception> GetSession(int token)
         {
             return UserSessionDetails.Get(token).OrErr(() => new Exception("Token is invalid"));

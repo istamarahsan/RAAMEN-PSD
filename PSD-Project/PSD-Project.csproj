@@ -183,6 +183,7 @@
     <Compile Include="API\Features\Users\Authorization\AuthorizationService.cs" />
     <Compile Include="API\Features\Users\Authorization\IAuthorizationService.cs" />
     <Compile Include="API\Features\Users\Authorization\Permission.cs" />
+    <Compile Include="API\Features\Users\Authorization\PermissionsController.cs" />
     <Compile Include="API\Features\Users\Authorization\Role.cs" />
     <Compile Include="API\Features\Users\IRolesRepository.cs" />
     <Compile Include="API\Features\Users\IUserRepository.cs" />
@@ -254,6 +255,9 @@
       <Project>{15059755-f497-427f-bee1-b9fb3288f82b}</Project>
       <Name>Util</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App\Services" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
