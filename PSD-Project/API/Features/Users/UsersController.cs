@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Web.Http;
 using PSD_Project.API.Features.Authentication;
 using PSD_Project.API.Features.Users.Authorization;
@@ -37,14 +36,33 @@ namespace PSD_Project.API.Features.Users
         [HttpGet]
         public IHttpActionResult GetAllUsers()
         {
-            return usersService.GetUsers().Match(Ok, HandleException);
+            return Request.ExtractAuthToken()
+                .Bind(authenticationService.GetSession)
+                .Map(session => session.Role.Id)
+                .Bind(roleId => authorizationService.RoleHasPermission(roleId, Permission.ReadAllUserdetails)
+                    .Assert<Exception>(true, () => new UnauthorizedAccessException()))
+                .Bind(_ => usersService.GetUsers())
+                .Match(Ok, HandleException);
         }
 
         [Route("{id}")]
         [HttpGet]
         public IHttpActionResult GetUser(int id)
         {
-            return usersService.GetUser(id).Match(Ok, HandleException);
+            var targetUser = usersService.GetUser(id);
+            
+            var targetPermission = targetUser
+                .Map(user => user.Role.Id)
+                .Bind(roleId => authorizationService.RoleOfId(roleId).OrErr(() => new Exception()))
+                .Bind(VerifyPermissionToViewTargetRoleExists);
+
+            return Request.ExtractAuthToken()
+                .Bind(authenticationService.GetSession)
+                .Map(session => session.Role.Id)
+                .Bind(roleId =>
+                    targetPermission.Map(permission => authorizationService.RoleHasPermission(roleId, permission)))
+                .Bind(_ => targetUser)
+                .Match(Ok, HandleException);
         }
         
         [Route]
@@ -63,13 +81,6 @@ namespace PSD_Project.API.Features.Users
                         ? usersService.GetUsersWithRole(roleId)
                         : Try.Err<List<User>, Exception>(new UnauthorizedAccessException()))
                 .Match(Ok, HandleException);
-        }
-
-        [Route]
-        [HttpGet]
-        public IHttpActionResult GetUserWithUsername([FromUri] string username)
-        {
-            return usersService.GetUserWithUsername(username).Match(Ok, HandleException);
         }
 
         [Route]
