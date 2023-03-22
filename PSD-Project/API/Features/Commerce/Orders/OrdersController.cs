@@ -9,19 +9,19 @@ namespace PSD_Project.API.Features.Commerce.Orders
     [RoutePrefix("api/orders")]
     public class OrdersController : ApiController
     {
-        private readonly IAuthService authService;
+        private readonly IAuthenticationService authenticationService;
         private readonly IOrdersService ordersService;
 
         public OrdersController()
         {
             ordersService = Services.GetOrdersService();
-            authService = Services.GetAuthService();
+            authenticationService = Services.GetAuthenticationService();
         }
 
-        public OrdersController(IOrdersService ordersService, IAuthService authService)
+        public OrdersController(IOrdersService ordersService, IAuthenticationService authenticationService)
         {
             this.ordersService = ordersService;
-            this.authService = authService;
+            this.authenticationService = authenticationService;
         }
 
         [Route]
@@ -52,7 +52,7 @@ namespace PSD_Project.API.Features.Commerce.Orders
         [HttpPost]
         public IHttpActionResult HandleOrder(int id, [FromUri] int token)
         {
-            return authService.GetSession(token)
+            return authenticationService.GetSession(token)
                 .Bind(userSession => ordersService.HandleOrder(id, userSession.Id))
                 .Match(Ok, HandleError);
         }

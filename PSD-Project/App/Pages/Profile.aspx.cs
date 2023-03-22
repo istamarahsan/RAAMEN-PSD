@@ -13,7 +13,7 @@ namespace PSD_Project.App.Pages
 {
     public partial class Profile : Page
     {
-        private static readonly IAuthService AuthService = Services.GetAuthService();
+        private static readonly IAuthenticationService AuthenticationService = Services.GetAuthenticationService();
         private static readonly IUsersService UsersService = Services.GetUsersService();
         private Option<UserSessionDetails> userSession = Option.None<UserSessionDetails>();
 
@@ -26,7 +26,7 @@ namespace PSD_Project.App.Pages
             Request.Cookies[Globals.SessionCookieName].ToOption()
                 .Map(cookie => cookie.Value)
                 .Bind(str => str.TryParseInt().Ok())
-                .Bind(token => AuthService.GetSession(token).Ok())
+                .Bind(token => AuthenticationService.GetSession(token).Ok())
                 .Match(
                     details => Session[Globals.SavedSessionName] = details,
                     () => Response.Redirect("Login.aspx"));
@@ -65,7 +65,7 @@ namespace PSD_Project.App.Pages
 
             var passwordValidation = userSession
                 .Map(session => new UserCredentials(session.Username, PasswordTextBox.Text))
-                .Bind(credentials =>  AuthService.Authenticate(credentials).Ok())
+                .Bind(credentials =>  AuthenticationService.Authenticate(credentials).Ok())
                 .OrErr(() => "please check your password and try again");
 
             PasswordErrorLabel.Text = passwordValidation.Err().OrElse("");

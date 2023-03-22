@@ -17,10 +17,10 @@ namespace PSD_Project.API.Service
         private static readonly IRegisterService RegisterService = new RegisterService(UsersService);
         private static readonly IRamenService RamenService = new RamenRepository();
         private static readonly IUserSessionsService UserSessionsService = new UserSessionsService();
-        private static readonly IAuthService AuthService = new AuthService(UserSessionsService, UsersService);
+        private static readonly IAuthenticationService AuthenticationService = new AuthenticationService(UserSessionsService, UsersService);
         private static readonly ITransactionsService TransactionsService = new TransactionsRepository();
         private static readonly IOrdersService OrdersService = new OrdersService(UsersService, TransactionsService, RamenService);
-        public static IAuthService GetAuthService() => AuthService;
+        public static IAuthenticationService GetAuthenticationService() => AuthenticationService;
 
         public static IRegisterService GetRegisterService() => RegisterService;
 

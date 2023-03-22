@@ -11,7 +11,7 @@ namespace PSD_Project.App.Pages
 {
     public partial class Login : Page
     {
-        private static readonly IAuthService AuthService = Services.GetAuthService();
+        private static readonly IAuthenticationService AuthenticationService = Services.GetAuthenticationService();
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -34,7 +34,7 @@ namespace PSD_Project.App.Pages
                 UsernameTextBox.Text,
                 PasswordTextBox.Text);
 
-            var auth = AuthService.Authenticate(credentials);
+            var auth = AuthenticationService.Authenticate(credentials);
             auth.Map(s => s.SessionToken)
                 .Match(
                     ok: token =>
@@ -75,7 +75,7 @@ namespace PSD_Project.App.Pages
 
         private Try<UserSessionDetails, Exception> AuthenticateSession(int token)
         {
-            return AuthService.GetSession(token);
+            return AuthenticationService.GetSession(token);
         }
 
         private void TryFillRememberedCredentials()

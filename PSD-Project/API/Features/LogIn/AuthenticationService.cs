@@ -5,12 +5,12 @@ using Util.Try;
 
 namespace PSD_Project.API.Features.LogIn
 {
-    public class AuthService : IAuthService
+    public class AuthenticationService : IAuthenticationService
     {
         private readonly IUserSessionsService userSessionsService;
         private readonly IUsersService usersService;
 
-        public AuthService(IUserSessionsService userSessionsService, IUsersService usersService)
+        public AuthenticationService(IUserSessionsService userSessionsService, IUsersService usersService)
         {
             this.userSessionsService = userSessionsService;
             this.usersService = usersService;

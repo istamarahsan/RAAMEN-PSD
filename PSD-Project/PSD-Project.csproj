@@ -161,8 +161,8 @@
     <Compile Include="API\Features\Commerce\Transactions\Transaction.cs" />
     <Compile Include="API\Features\Commerce\Transactions\TransactionsController.cs" />
     <Compile Include="API\Features\Commerce\Transactions\TransactionsRepository.cs" />
-    <Compile Include="API\Features\LogIn\AuthService.cs" />
-    <Compile Include="API\Features\LogIn\IAuthService.cs" />
+    <Compile Include="API\Features\LogIn\AuthenticationService.cs" />
+    <Compile Include="API\Features\LogIn\IAuthenticationService.cs" />
     <Compile Include="API\Features\LogIn\IUserSessionsService.cs" />
     <Compile Include="API\Features\LogIn\UserAuthenticationController.cs" />
     <Compile Include="API\Features\LogIn\LoginCredentials.cs" />

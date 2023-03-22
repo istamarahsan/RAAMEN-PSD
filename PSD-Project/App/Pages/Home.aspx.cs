@@ -12,7 +12,7 @@ namespace PSD_Project.App.Pages
 {
     public partial class Home : Page
     {
-        private static readonly IAuthService AuthService = Services.GetAuthService();
+        private static readonly IAuthenticationService AuthenticationService = Services.GetAuthenticationService();
         private static readonly IUsersService UsersService = Services.GetUsersService();
 
         protected UserRole CurrentUserRole = UserRole.Customer;
