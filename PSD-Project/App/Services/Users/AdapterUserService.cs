@@ -11,25 +11,28 @@ namespace PSD_Project.App.Services.Users
     {
         private readonly UsersController usersController = new UsersController();
         
-        public Try<List<User>, UserServiceError> GetCustomers()
+        public Try<List<User>, UserServiceError> GetCustomers(int token)
         {
-            return usersController.GetUsersWithRole(0)
-                .InterpretAs<List<User>>()
-                .MapErr(HandleError);
+            return usersController.WithAuthToken(token, controller =>
+                controller.GetUsersWithRole(0)
+                    .InterpretAs<List<User>>()
+                    .MapErr(HandleError));
         }
 
-        public Try<List<User>, UserServiceError> GetStaff()
+        public Try<List<User>, UserServiceError> GetStaff(int token)
         {
-            return usersController.GetUsersWithRole(1)
-                .InterpretAs<List<User>>()
-                .MapErr(HandleError);
+            return usersController.WithAuthToken(token, controller =>
+                controller.GetUsersWithRole(1)
+                    .InterpretAs<List<User>>()
+                    .MapErr(HandleError));
         }
 
-        public Try<User, UserServiceError> UpdateUserDetails(int userId, UserUpdateDetails updateDetails)
+        public Try<User, UserServiceError> UpdateUserDetails(int token, int userId, UserUpdateDetails updateDetails)
         {
-            return usersController.UpdateUser(userId, updateDetails)
-                .InterpretAs<User>()
-                .MapErr(HandleError);
+            return usersController.WithAuthToken(token, controller => 
+                controller.UpdateUser(userId, updateDetails)
+                    .InterpretAs<User>()
+                    .MapErr(HandleError));
         }
 
         private UserServiceError HandleError(IHttpActionResult response)

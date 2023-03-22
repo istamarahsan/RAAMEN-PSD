@@ -21,12 +21,10 @@ namespace PSD_Project.App.Services.Orders
 
         public Try<Transaction, OrderServiceError> HandleOrder(int token, int orderId)
         {
-            var request = new HttpRequestMessage();
-            request.Headers.Authorization = new AuthenticationHeaderValue("", token.ToString());
-            ordersController.Request = request;
-            return ordersController.HandleOrder(orderId)
-                .InterpretAs<Transaction>()
-                .MapErr(_ => OrderServiceError.InternalServiceError);
+            return ordersController.WithAuthToken(token, controller => 
+                controller.HandleOrder(orderId)
+                    .InterpretAs<Transaction>()
+                    .MapErr(_ => OrderServiceError.InternalServiceError));
         }
 
         public Try<List<Order>, OrderServiceError> GetOrders()

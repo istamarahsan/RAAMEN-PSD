@@ -1,4 +1,7 @@
+using System;
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Web.Http;
 using System.Web.Http.Results;
 using Util.Option;
@@ -14,6 +17,17 @@ namespace PSD_Project.App.Common
             return response.As<OkNegotiatedContentResult<T>>()
                 .Map(result => result.Content)
                 .OrErr(() => response);
+        }
+
+        public static T WithAuthToken<TController, T>(this TController controller, int token, Func<TController, T> operation) where TController : ApiController
+        {
+            var prev = controller.Request;
+            var request = new HttpRequestMessage();
+            request.Headers.Authorization = new AuthenticationHeaderValue("", token.ToString());
+            controller.Request = request;
+            var result = operation(controller);
+            controller.Request = prev;
+            return result;
         }
     }
 }

@@ -7,8 +7,8 @@ namespace PSD_Project.App.Services.Users
 {
     public interface IUserService
     {
-        Try<List<User>, UserServiceError>  GetCustomers();
-        Try<List<User>, UserServiceError>  GetStaff();
-        Try<User, UserServiceError> UpdateUserDetails(int userId, UserUpdateDetails updateDetails);
+        Try<List<User>, UserServiceError>  GetCustomers(int token);
+        Try<List<User>, UserServiceError>  GetStaff(int token);
+        Try<User, UserServiceError> UpdateUserDetails(int token, int userId, UserUpdateDetails updateDetails);
     }
 }

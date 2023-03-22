@@ -14,22 +14,18 @@ namespace PSD_Project.App.Services.Transactions
         
         public Try<List<Transaction>, TransactionServiceError> GetTransactions(int token)
         {
-            var request = new HttpRequestMessage();
-            request.Headers.Authorization = new AuthenticationHeaderValue("", token.ToString());
-            transactionsController.Request = request;
-            return transactionsController.GetTransactions()
-                .InterpretAs<List<Transaction>>()
-                .MapErr(_ => TransactionServiceError.InternalServiceError);
+            return transactionsController.WithAuthToken(token, controller => 
+                controller.GetTransactions()
+                    .InterpretAs<List<Transaction>>()
+                    .MapErr(_ => TransactionServiceError.InternalServiceError));
         }
 
         public Try<List<Transaction>, TransactionServiceError> GetAllTransactions(int token)
         {
-            var request = new HttpRequestMessage();
-            request.Headers.Authorization = new AuthenticationHeaderValue("", token.ToString());
-            transactionsController.Request = request;
-            return transactionsController.GetAllTransactions()
-                .InterpretAs<List<Transaction>>()
-                .MapErr(_ => TransactionServiceError.InternalServiceError);
+            return transactionsController.WithAuthToken(token, controller =>
+                controller.GetAllTransactions()
+                    .InterpretAs<List<Transaction>>()
+                    .MapErr(_ => TransactionServiceError.InternalServiceError));
         }
     }
 }
