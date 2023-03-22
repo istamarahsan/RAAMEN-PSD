@@ -8,6 +8,7 @@ namespace PSD_Project.API.Features.Commerce.Transactions
     {
         Try<Transaction, Exception> CreateTransaction(TransactionDetails transactionDetails);
         Try<List<Transaction>, Exception> GetTransactions();
+        Try<List<Transaction>, Exception> GetTransactionsForUser(int userId);
         Try<Transaction, Exception> GetTransaction(int transactionId);
     }
 }

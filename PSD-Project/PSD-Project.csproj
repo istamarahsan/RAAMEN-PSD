@@ -224,6 +224,9 @@
     <Compile Include="App\Services\Register\AdapterRegisterService.cs" />
     <Compile Include="App\Services\Register\IRegisterService.cs" />
     <Compile Include="App\Services\Register\RegisterError.cs" />
+    <Compile Include="App\Services\Transactions\AdapterTransactionService.cs" />
+    <Compile Include="App\Services\Transactions\ITransactionService.cs" />
+    <Compile Include="App\Services\Transactions\TransactionServiceError.cs" />
     <Compile Include="App\Services\Users\AdapterUserService.cs" />
     <Compile Include="App\Services\Users\IUserService.cs" />
     <Compile Include="App\Services\Users\UserServiceError.cs" />

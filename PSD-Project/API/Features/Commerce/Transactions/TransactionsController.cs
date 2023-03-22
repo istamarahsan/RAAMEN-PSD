@@ -1,7 +1,12 @@
 using System;
+using System.Management;
 using System.Threading.Tasks;
 using System.Web.Http;
+using PSD_Project.API.Features.Authentication;
+using PSD_Project.API.Features.Users;
+using PSD_Project.API.Features.Users.Authorization;
 using PSD_Project.API.Util;
+using Util.Try;
 
 namespace PSD_Project.API.Features.Commerce.Transactions
 {
@@ -9,23 +14,43 @@ namespace PSD_Project.API.Features.Commerce.Transactions
     public class TransactionsController : ApiController
     {
         private readonly ITransactionsService transactionsService;
+        private readonly IAuthorizationService authorizationService;
+        private readonly IAuthenticationService authenticationService;
+        private readonly IUsersService usersService;
 
         public TransactionsController()
         {
             transactionsService = Services.GetTransactionsService();
         }
 
-        public TransactionsController(ITransactionsService transactionsService)
+        public TransactionsController(
+            ITransactionsService transactionsService, 
+            IAuthorizationService authorizationService, 
+            IAuthenticationService authenticationService,
+            IUsersService usersService)
         {
             this.transactionsService = transactionsService;
+            this.authorizationService = authorizationService;
+            this.authenticationService = authenticationService;
+            this.usersService = usersService;
         }
 
         [Route]
         [HttpGet]
-        public IHttpActionResult GetTransactions()
+        public IHttpActionResult GetTransactions([FromUri(Name = "all")] bool getAllTransactions = false)
         {
-            var transactions = transactionsService.GetTransactions();
-            return transactions.Match(Ok, HandleError);
+            return Request.ExtractAuthToken()
+                .Bind(authenticationService.GetSession)
+                .Map(userSession => (userId: userSession.Id, roleId: userSession.Role.Id))
+                .Bind(request => usersService.GetRoleOfId(request.roleId).Map(role => (request.userId, role)))
+                .Bind(request => getAllTransactions
+                    ? authorizationService.RoleHasPermission(request.role, Permission.ReadAllTransactions)
+                        .Assert<Exception>(true, () => new UnauthorizedAccessException())
+                        .Bind(_ => transactionsService.GetTransactions())
+                    : authorizationService.RoleHasPermission(request.role, Permission.ReadOwnTransactions)
+                        .Assert<Exception>(true, () => new UnauthorizedAccessException())
+                        .Bind(_ => transactionsService.GetTransactionsForUser(request.userId)))
+                .Match(Ok, HandleError);
         }
 
         [Route("{id}")]
@@ -49,6 +74,8 @@ namespace PSD_Project.API.Features.Commerce.Transactions
             {
                 case ArgumentException _ :
                     return NotFound();
+                case UnauthorizedAccessException _ :
+                    return Unauthorized();
                 default:
                     return InternalServerError(exception);
             }

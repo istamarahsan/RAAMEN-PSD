@@ -71,6 +71,23 @@ namespace PSD_Project.API.Features.Commerce.Transactions
             }
         }
 
+        public Try<List<Transaction>, Exception> GetTransactionsForUser(int userId)
+        {
+            try
+            {
+                var transactions = readOnlyDbContext.Headers
+                    .Where(header => header.CustomerId == userId)
+                    .ToList()
+                    .Select(ConvertModel)
+                    .ToList();
+                return Try.Of<List<Transaction>, Exception>(transactions);
+            }
+            catch (Exception e)
+            {
+                return Try.Err<List<Transaction>, Exception>(e);
+            }
+        }
+
         public Try<Transaction, Exception> GetTransaction(int transactionId)
         {
             try

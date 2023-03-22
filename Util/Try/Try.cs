@@ -59,6 +59,13 @@ namespace Util.Try
                 ? new TryOk<T, TErr>(@true()) as Try<T, TErr>
                 : new TryErr<T, TErr>(@false());
         }
+        
+        public static Try<bool, TErr> Assert<TErr>(this bool statement, bool expected, Func<TErr> @false)
+        {
+            return statement == expected
+                ? new TryOk<bool, TErr>(statement) as Try<bool, TErr>
+                : new TryErr<bool, TErr>(@false());
+        }
 
         public static Try<T, TErr> OrErr<T, TErr>(this Option<T> option, Func<TErr> otherwise)
         {
