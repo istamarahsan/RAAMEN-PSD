@@ -30,9 +30,10 @@ namespace PSD_Project.API.Features.Users.Authorization
         
         [Route]
         [HttpGet]
-        public IHttpActionResult GetPermissions([FromUri] int token)
+        public IHttpActionResult GetPermissions()
         {
-            return authenticationService.GetSession(token)
+            return Request.ExtractAuthToken()
+                .Bind(authenticationService.GetSession)
                 .Bind(userSession => usersService.GetUser(userSession.Id))
                 .Map(user => user.Role.Id)
                 .Bind(roleId => usersService.GetRoleOfId(roleId))
