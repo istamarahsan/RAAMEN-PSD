@@ -215,6 +215,9 @@
     <Compile Include="App\AppServices.cs" />
     <Compile Include="App\Services\Auth\AdapterAuthService.cs" />
     <Compile Include="App\Services\Auth\IAuthService.cs" />
+    <Compile Include="App\Services\Orders\IOrderService.cs" />
+    <Compile Include="App\Services\Orders\AdapterOrderService.cs" />
+    <Compile Include="App\Services\Orders\OrderServiceError.cs" />
     <Compile Include="App\Services\RamenService\AdapterRamenService.cs" />
     <Compile Include="App\Services\RamenService\IRamenService.cs" />
     <Compile Include="App\Services\RamenService\RamenServiceError.cs" />

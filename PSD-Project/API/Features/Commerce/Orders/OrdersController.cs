@@ -50,9 +50,10 @@ namespace PSD_Project.API.Features.Commerce.Orders
 
         [Route("{id}")]
         [HttpPost]
-        public IHttpActionResult HandleOrder(int id, [FromUri] int token)
+        public IHttpActionResult HandleOrder(int id)
         {
-            return authenticationService.GetSession(token)
+            return Request.ExtractAuthToken()
+                .Bind(authenticationService.GetSession)
                 .Bind(userSession => ordersService.HandleOrder(id, userSession.Id))
                 .Match(Ok, HandleError);
         }
