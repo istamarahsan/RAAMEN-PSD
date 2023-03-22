@@ -44,8 +44,7 @@ namespace PSD_Project.API.Features.Users
         [HttpGet]
         public IHttpActionResult GetUser(int id)
         {
-            var user = usersService.GetUser(id);
-            return user.Match(Ok, HandleException);
+            return usersService.GetUser(id).Match(Ok, HandleException);
         }
         
         [Route]
@@ -53,16 +52,16 @@ namespace PSD_Project.API.Features.Users
         public IHttpActionResult GetUsersWithRole([FromUri] int roleId)
         {
             return Request.ExtractAuthToken()
-                .Bind(token => authenticationService.GetSession(token))
+                .Bind(authenticationService.GetSession)
                 .Map(user => user.Role.Id)
-                .Bind(requesterRoleId => usersService.GetRoleOfId(requesterRoleId))
-                .Bind(requesterRole => usersService.GetRoleOfId(roleId).Map(targetRole => (requesterRole, targetRole)))
+                .Bind(VerifyRoleId)
+                .Bind(requesterRole => VerifyRoleId(roleId).Map(targetRole => (requesterRole, targetRole)))
                 .Bind(request => VerifyPermissionToViewTargetRoleExists(request.targetRole).Map(permission => (request.requesterRole, permission)))
                 .Map(request => authorizationService.RoleHasPermission(request.requesterRole, request.permission))
                 .Bind(hasPermission =>
                     hasPermission
                         ? usersService.GetUsersWithRole(roleId)
-                        : Try.Err<List<User>, Exception>(new Exception("Unauthorized")))
+                        : Try.Err<List<User>, Exception>(new UnauthorizedAccessException()))
                 .Match(Ok, HandleException);
         }
 
@@ -70,8 +69,7 @@ namespace PSD_Project.API.Features.Users
         [HttpGet]
         public IHttpActionResult GetUserWithUsername([FromUri] string username)
         {
-            var user = usersService.GetUserWithUsername(username);
-            return user.Match(Ok, HandleException);
+            return usersService.GetUserWithUsername(username).Match(Ok, HandleException);
         }
 
         [Route]
@@ -79,18 +77,19 @@ namespace PSD_Project.API.Features.Users
         public IHttpActionResult CreateNewUser([FromBody] UserDetails form)
         {
             return form.ToOption()
-                .OrErr<UserDetails, IHttpActionResult>(BadRequest)
-                .Bind(u => usersService.CreateUser(u).MapErr(HandleException))
-                .Match(Ok, err => err);
+                .OrErr<UserDetails, Exception>(() => new ArgumentException())
+                .Bind(usersService.CreateUser)
+                .Match(Ok, HandleException);
         }
 
         [Route("{id}")]
         [HttpPut]
         public IHttpActionResult UpdateUser(int id, [FromBody] UserUpdateDetails form)
         {
-            if (form == null) return BadRequest();
-            var updateTry = usersService.UpdateUser(id, form);
-            return updateTry.Match(Ok, HandleException);
+            return form.ToOption()
+                .OrErr<UserUpdateDetails, Exception>(() => new ArgumentException())
+                .Bind(details => usersService.UpdateUser(id, details))
+                .Match(Ok, HandleException);
         }
 
         private IHttpActionResult HandleException(Exception exception)
@@ -99,6 +98,8 @@ namespace PSD_Project.API.Features.Users
             {
                 case ArgumentException _:
                     return BadRequest();
+                case UnauthorizedAccessException _:
+                    return Unauthorized();
                 default:
                     return InternalServerError(exception);
             }
@@ -122,6 +123,11 @@ namespace PSD_Project.API.Features.Users
         {
             return ParseViewPermissionFromTargetRole(role)
                 .OrErr(() => new Exception("No such permission exists"));
+        }
+
+        private Try<Role, Exception> VerifyRoleId(int roleId)
+        {
+            return authorizationService.RoleOfId(roleId).OrErr(() => new Exception());
         }
     }
 }

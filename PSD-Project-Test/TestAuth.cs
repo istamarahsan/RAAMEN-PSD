@@ -6,6 +6,7 @@ using PSD_Project.API.Features.Users;
 using PSD_Project.API.Features.Users.Authorization;
 using PSD_Project.App.Pages;
 using Util.Collections;
+using Util.Option;
 using Util.Try;
 
 namespace PSD_Project_Test
@@ -43,10 +44,16 @@ namespace PSD_Project_Test
             allowAllCredentials = false;
         }
 
+        public Option<Role> RoleOfId(int roleId) => throw new NotImplementedException();
+
         public bool RoleHasPermission(Role role, Permission permission)
         {
             return allowAllPermissions;
         }
+
+        public bool RoleHasPermission(int roleId, Permission permission) => throw new NotImplementedException();
+
+        public List<Permission> GetPermissions(int roleId) => throw new NotImplementedException();
 
         public List<Permission> GetPermissions(Role role)
         {

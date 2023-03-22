@@ -15,12 +15,12 @@ namespace PSD_Project.API
     {
         private static readonly IUserRepository UserRepository = new UsersRolesRepository();
         private static readonly IRolesRepository RolesRepository = new UsersRolesRepository();
-        private static readonly IUsersService UsersService = new UsersService(UserRepository, RolesRepository);
+        private static readonly IUsersService UsersService = new UsersService(UserRepository);
         private static readonly IRamenService RamenService = new RamenRepository();
         private static readonly IUserSessionsService UserSessionsService = new UserSessionsService();
         private static readonly IAuthenticationService AuthenticationService = new AuthenticationService(UserSessionsService, UsersService);
         private static readonly ITransactionsService TransactionsService = new TransactionsRepository();
-        private static readonly IAuthorizationService AuthorizationService = new AuthorizationService();
+        private static readonly IAuthorizationService AuthorizationService = new AuthorizationService(RolesRepository);
         private static readonly IOrdersService OrdersService = new OrdersService(UsersService, TransactionsService, RamenService, AuthorizationService);
         public static IAuthenticationService GetAuthenticationService() => AuthenticationService;
 

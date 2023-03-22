@@ -10,12 +10,10 @@ namespace PSD_Project.API.Features.Users
     public class UsersService : IUsersService
     {
         private readonly IUserRepository userRepository;
-        private readonly IRolesRepository rolesRepository;
 
-        public UsersService(IUserRepository userRepository, IRolesRepository rolesRepository)
+        public UsersService(IUserRepository userRepository)
         {
             this.userRepository = userRepository;
-            this.rolesRepository = rolesRepository;
         }
 
         public Try<List<User>, Exception> GetUsers()
@@ -64,28 +62,6 @@ namespace PSD_Project.API.Features.Users
         public Try<bool, Exception> CanRoleHandleOrder(int roleid)
         {
             return Try.Of<bool, Exception>(roleid == 1 || roleid == 2);
-        }
-
-        public Try<Role, Exception> GetRoleOfId(int roleId)
-        {
-            return rolesRepository.GetRole(roleId)
-                .Bind(roleDetails => ParseRoleDetails(roleDetails)
-                    .OrErr(() => new Exception("Undefined role")));
-        }
-
-        private Option<Role> ParseRoleDetails(RoleDetails roleDetails)
-        {
-            switch (roleDetails.Name.ToLower())
-            {
-                case "admin":
-                    return Option.Some(Role.Admin);
-                case "staff":
-                    return Option.Some(Role.Staff);
-                case "customer":
-                    return Option.Some(Role.Customer);
-                default:
-                    return Option.None<Role>();
-            }
         }
     }
 }

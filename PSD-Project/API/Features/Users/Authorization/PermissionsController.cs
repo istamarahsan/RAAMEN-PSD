@@ -36,8 +36,7 @@ namespace PSD_Project.API.Features.Users.Authorization
                 .Bind(authenticationService.GetSession)
                 .Bind(userSession => usersService.GetUser(userSession.Id))
                 .Map(user => user.Role.Id)
-                .Bind(roleId => usersService.GetRoleOfId(roleId))
-                .Map(role => authorizationService.GetPermissions(role))
+                .Map(authorizationService.GetPermissions)
                 .Map(permissions => permissions.Select(p => p.ToString()).ToList())
                 .Match(Ok, HandleException);
         }

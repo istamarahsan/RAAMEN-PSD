@@ -45,8 +45,7 @@ namespace PSD_Project.API.Features.Commerce.Transactions
             return Request.ExtractAuthToken()
                 .Bind(authenticationService.GetSession)
                 .Map(userSession => (userId: userSession.Id, roleId: userSession.Role.Id))
-                .Bind(request => usersService.GetRoleOfId(request.roleId).Map(role => (request.userId, role)))
-                .Bind(request => authorizationService.RoleHasPermission(request.role, Permission.ReadOwnTransactions)
+                .Bind(request => authorizationService.RoleHasPermission(request.roleId, Permission.ReadOwnTransactions)
                         .Assert<Exception>(true, () => new UnauthorizedAccessException())
                         .Bind(_ => transactionsService.GetTransactionsForUser(request.userId)))
                 .Match(Ok, HandleError);
@@ -59,8 +58,7 @@ namespace PSD_Project.API.Features.Commerce.Transactions
             return Request.ExtractAuthToken()
                 .Bind(authenticationService.GetSession)
                 .Map(userSession => (userId: userSession.Id, roleId: userSession.Role.Id))
-                .Bind(request => usersService.GetRoleOfId(request.roleId).Map(role => (request.userId, role)))
-                .Bind(request => authorizationService.RoleHasPermission(request.role, Permission.ReadAllTransactions)
+                .Bind(request => authorizationService.RoleHasPermission(request.roleId, Permission.ReadAllTransactions)
                         .Assert<Exception>(true, () => new UnauthorizedAccessException())
                         .Bind(_ => transactionsService.GetTransactions()))
                 .Match(Ok, HandleError);
