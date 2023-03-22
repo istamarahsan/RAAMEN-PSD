@@ -195,6 +195,7 @@
     <Compile Include="API\Features\Users\UsersRepository.cs" />
     <Compile Include="API\Features\Users\UsersService.cs" />
     <Compile Include="API\Features\Users\UserUpdateDetails.cs" />
+    <Compile Include="API\APIExtensions.cs" />
     <Compile Include="API\Service\Services.cs" />
     <Compile Include="API\Service\Sql\QueryStrings\MySqlQueryStringBuilder.cs" />
     <Compile Include="API\Service\Sql\QueryStrings\QueryStringBuilder.cs" />
@@ -257,7 +258,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App\Services" />
+    <Folder Include="App\Controllers" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

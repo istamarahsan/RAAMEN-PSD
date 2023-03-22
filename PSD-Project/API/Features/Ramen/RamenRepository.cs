@@ -15,8 +15,11 @@ namespace PSD_Project.API.Features.Ramen
         {
             try
             {
-                var ramen = db.Ramen.ToList();
-                return Try.Of<List<Ramen>, Exception>(ramen.Select(ConvertModel).ToList());
+                var ramen = db.Ramen
+                    .ToList()
+                    .Select(ConvertModel)
+                    .ToList();
+                return Try.Of<List<Ramen>, Exception>(ramen);
             }
             catch (Exception e)
             {

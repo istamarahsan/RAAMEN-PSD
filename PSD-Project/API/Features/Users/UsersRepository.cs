@@ -33,7 +33,7 @@ namespace PSD_Project.API.Features.Users
         {
             try
             {
-                var users = db.Users.Select(ConvertUserModel).ToList();
+                var users = db.Users.ToList().Select(ConvertUserModel).ToList();
                 return Try.Of<List<User>, Exception>(users);
             }
             catch (Exception e)
@@ -47,8 +47,9 @@ namespace PSD_Project.API.Features.Users
         {
             try
             {
-                var users = db.Users.Where(user => user.Roleid == roleId)
-                    .AsEnumerable()
+                var users = db.Users
+                    .Where(user => user.Roleid == roleId)
+                    .ToList()
                     .Select(ConvertUserModel)
                     .ToList();
                 return Try.Of<List<User>, Exception>(users);
@@ -64,7 +65,7 @@ namespace PSD_Project.API.Features.Users
             try
             {
                 var users = db.Users.Where(user => user.Username == username)
-                    .AsEnumerable()
+                    .ToList()
                     .Select(ConvertUserModel)
                     .ToList();
                 return Try.Of<List<User>, Exception>(users);
@@ -93,7 +94,7 @@ namespace PSD_Project.API.Features.Users
         {
             try
             {
-                var roles = db.Roles.Select(ConvertRoleModel).ToList();
+                var roles = db.Roles.ToList().Select(ConvertRoleModel).ToList();
                 return Try.Of<List<RoleDetails>, Exception>(roles);
             }
             catch (Exception e)
@@ -110,7 +111,6 @@ namespace PSD_Project.API.Features.Users
                 return Try.Err<User, Exception>(new ArgumentException("Role with that id does not exist"));
             
             var newId = db.Users.Select(users => users.Id).DefaultIfEmpty(0).Max() + 1;
-            
 
             db.Users.Add(new PSD_Project.EntityFramework.User
             {

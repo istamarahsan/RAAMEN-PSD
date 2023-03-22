@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Web.Http;
 using PSD_Project.API.Features.Authentication;
 using PSD_Project.API.Features.Users.Authorization;
@@ -30,10 +31,14 @@ namespace PSD_Project.API.Features.Users
             this.authenticationService = authenticationService;
             this.authorizationService = authorizationService;
         }
+        
 
         [Route]
         [HttpGet]
-        public IHttpActionResult GetAllUsers() => usersService.GetUsers().Match(Ok, HandleException);
+        public IHttpActionResult GetAllUsers()
+        {
+            return usersService.GetUsers().Match(Ok, HandleException);
+        }
 
         [Route("{id}")]
         [HttpGet]
@@ -42,16 +47,18 @@ namespace PSD_Project.API.Features.Users
             var user = usersService.GetUser(id);
             return user.Match(Ok, HandleException);
         }
-
+        
         [Route]
         [HttpGet]
-        public IHttpActionResult GetUsersWithRole([FromUri] int roleId, [FromUri] int token)
+        public IHttpActionResult GetUsersWithRole([FromUri] int roleId)
         {
-            return authenticationService.GetSession(token)
+            return Request.ExtractAuthToken()
+                .Bind(token => authenticationService.GetSession(token))
                 .Map(user => user.Role.Id)
-                .Bind(usersService.GetRoleOfId)
-                .Bind(role => VerifyPermissionToViewTargetRoleExists(role).Map(permission => (role, permission)))
-                .Map(request => authorizationService.RoleHasPermission(request.role, request.permission))
+                .Bind(requesterRoleId => usersService.GetRoleOfId(requesterRoleId))
+                .Bind(requesterRole => usersService.GetRoleOfId(roleId).Map(targetRole => (requesterRole, targetRole)))
+                .Bind(request => VerifyPermissionToViewTargetRoleExists(request.targetRole).Map(permission => (request.requesterRole, permission)))
+                .Map(request => authorizationService.RoleHasPermission(request.requesterRole, request.permission))
                 .Bind(hasPermission =>
                     hasPermission
                         ? usersService.GetUsersWithRole(roleId)
