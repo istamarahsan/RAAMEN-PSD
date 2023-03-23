@@ -16,9 +16,7 @@ namespace PSD_Project.App.Pages
         private readonly IAuthService authService = AppServices.Singletons.AuthService;
         protected void Page_Load(object sender, EventArgs e)
         {
-            var sessionTokenCookie = Request.Cookies[Globals.SessionCookieName].ToOption();
-            sessionTokenCookie.Map(cookie => cookie.Value)
-                .Bind(val => val.TryParseInt().Ok())
+            Request.GetTokenFromCookie()
                 .Bind(token => authService.GetSession(token).Ok())
                 .Match(
                     some: sessionDetails =>
@@ -35,8 +33,8 @@ namespace PSD_Project.App.Pages
                 UsernameTextBox.Text,
                 PasswordTextBox.Text);
 
-            var auth = loginService.Login(credentials);
-            auth.Map(s => s.SessionToken)
+            loginService.Login(credentials)
+                .Map(s => s.SessionToken)
                 .Match(
                     ok: token =>
                     {
@@ -85,11 +83,8 @@ namespace PSD_Project.App.Pages
 
         private void TryFillRememberedCredentials()
         {
-            var usernameCookie = Request.Cookies[Globals.SavedUsernameCookieName].ToOption();
-            var passwordCookie = Request.Cookies[Globals.SavedPasswordCookieName].ToOption();
-
-            usernameCookie.Map(cookie => cookie.Value)
-                .Bind(username => passwordCookie.Map(cookie => cookie.Value)
+            Request.GetUsernameFromCookie()
+                .Bind(username => Request.GetPasswordFromCookie()
                     .Map(password => (username, password)))
                 .Match(
                     some: credentials =>
