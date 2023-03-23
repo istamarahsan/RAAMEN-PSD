@@ -2,8 +2,11 @@ using System;
 using System.Threading.Tasks;
 using System.Web.Http;
 using PSD_Project.API.Features.Authentication;
+using PSD_Project.API.Features.Users.Authorization;
 using PSD_Project.API.Util;
 using PSD_Project.API.Util.ApiController;
+using Util.Option;
+using Util.Try;
 
 namespace PSD_Project.API.Features.Commerce.Orders
 {
@@ -11,17 +14,20 @@ namespace PSD_Project.API.Features.Commerce.Orders
     public class OrdersController : ApiController
     {
         private readonly IAuthenticationService authenticationService;
+        private readonly IAuthorizationService authorizationService;
         private readonly IOrdersService ordersService;
 
         public OrdersController()
         {
             ordersService = Services.GetOrdersService();
+            authorizationService = Services.GetAuthorizationService();
             authenticationService = Services.GetAuthenticationService();
         }
 
-        public OrdersController(IOrdersService ordersService, IAuthenticationService authenticationService)
+        public OrdersController(IOrdersService ordersService, IAuthorizationService authorizationService, IAuthenticationService authenticationService)
         {
             this.ordersService = ordersService;
+            this.authorizationService = authorizationService;
             this.authenticationService = authenticationService;
         }
 
@@ -29,24 +35,29 @@ namespace PSD_Project.API.Features.Commerce.Orders
         [HttpGet]
         public IHttpActionResult GetOrders()
         {
-            var orders = ordersService.GetOrders();
-            return orders.Match(Ok, HandleError);
+            return ordersService.GetOrders().Match(Ok, HandleError);
         }
         
         [Route("{id}")]
         [HttpGet]
         public IHttpActionResult GetOrder(int id)
         {
-            var order = ordersService.GetOrder(id);
-            return order.Match(Ok, HandleError);
+            return ordersService.GetOrder(id).Match(Ok, HandleError);
         }
 
         [Route]
         [HttpPost]
-        public IHttpActionResult CreateOrder([FromBody] NewOrderDetails newOrderDetails)
+        public IHttpActionResult PlaceOrder([FromBody] NewOrderDetails newOrderDetails)
         {
-            var error = ordersService.QueueOrder(newOrderDetails);
-            return error.Match(Ok, HandleError);
+            return Request.ExtractAuthToken()
+                .Bind(authenticationService.GetSession)
+                .Map(user => user.Role.Id)
+                .Map(roleId => authorizationService.RoleHasPermission(roleId, Permission.PlaceOrder))
+                .Bind(hasPermission => hasPermission
+                    ? newOrderDetails.ToOption().OrErr<NewOrderDetails, Exception>(() => new ArgumentException())
+                    : Try.Err<NewOrderDetails, Exception>(new UnauthorizedAccessException()))
+                .Bind(ordersService.QueueOrder)
+                .Match(Ok, HandleError);
         }
 
         [Route("{id}")]
@@ -63,6 +74,8 @@ namespace PSD_Project.API.Features.Commerce.Orders
         {
             switch (e)
             {
+                case ArgumentException _:
+                    return BadRequest();
                 default:
                     return InternalServerError();
             }
