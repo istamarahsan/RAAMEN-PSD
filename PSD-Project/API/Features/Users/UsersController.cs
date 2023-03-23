@@ -39,8 +39,7 @@ namespace PSD_Project.API.Features.Users
             return Request.ExtractAuthToken()
                 .Bind(authenticationService.GetSession)
                 .Map(session => session.Role.Id)
-                .Bind(roleId => authorizationService.RoleHasPermission(roleId, Permission.ReadAllUserdetails)
-                    .Assert<Exception>(true, () => new UnauthorizedAccessException()))
+                .Map(roleId => authorizationService.RoleHasPermission(roleId, Permission.ReadAllUserdetails))
                 .Bind(hasPermission =>
                     hasPermission
                         ? usersService.GetUsers()
