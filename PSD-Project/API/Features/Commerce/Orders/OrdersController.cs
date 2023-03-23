@@ -76,6 +76,8 @@ namespace PSD_Project.API.Features.Commerce.Orders
             {
                 case ArgumentException _:
                     return BadRequest();
+                case UnauthorizedAccessException _:
+                    return Unauthorized();
                 default:
                     return InternalServerError();
             }
