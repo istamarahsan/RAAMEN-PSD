@@ -7,8 +7,8 @@ namespace PSD_Project.App.Services.Orders
 {
     public interface IOrderService
     {
-        Try<Order, OrderServiceError> PlaceOrder(NewOrderDetails orderDetails);
-        Try<Transaction, OrderServiceError> HandleOrder(int handlerId, int orderId);
+        Try<Order, OrderServiceError> PlaceOrder(int token, NewOrderDetails orderDetails);
+        Try<Transaction, OrderServiceError> HandleOrder(int token, int orderId);
         Try<List<Order>, OrderServiceError> GetOrders();
     }
 }
