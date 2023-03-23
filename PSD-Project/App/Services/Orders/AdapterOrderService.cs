@@ -13,7 +13,7 @@ namespace PSD_Project.App.Services.Orders
         public Try<Order, OrderServiceError> PlaceOrder(int token, NewOrderDetails orderDetails)
         {
             return ordersController.WithAuthToken(token, controller =>
-                ordersController.CreateOrder(orderDetails)
+                controller.CreateOrder(orderDetails)
                     .InterpretAs<Order>()
                     .MapErr(_ => OrderServiceError.InternalServiceError));
         }
