@@ -191,7 +191,7 @@
     <Compile Include="API\Features\Users\UsersService.cs" />
     <Compile Include="API\Features\Users\UserUpdateDetails.cs" />
     <Compile Include="API\Services.cs" />
-    <Compile Include="API\Util\ApiExtensions.cs" />
+    <Compile Include="API\Util\ApiController\ApiControllerExtensions.cs" />
     <Compile Include="API\Util\Sql\QueryStrings\MySqlQueryStringBuilder.cs" />
     <Compile Include="API\Util\Sql\QueryStrings\QueryStringBuilder.cs" />
     <Compile Include="API\Util\Sql\QueryStrings\SqlServerQueryStringBuilder.cs" />

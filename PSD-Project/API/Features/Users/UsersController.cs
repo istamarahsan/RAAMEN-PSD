@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Web.Http;
 using PSD_Project.API.Features.Authentication;
 using PSD_Project.API.Features.Users.Authorization;
-using PSD_Project.API.Util;
+using PSD_Project.API.Util.ApiController;
 using Util.Option;
 using Util.Try;
 

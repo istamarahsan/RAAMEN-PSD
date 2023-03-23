@@ -6,6 +6,7 @@ using PSD_Project.API.Features.Authentication;
 using PSD_Project.API.Features.Users;
 using PSD_Project.API.Features.Users.Authorization;
 using PSD_Project.API.Util;
+using PSD_Project.API.Util.ApiController;
 using Util.Try;
 
 namespace PSD_Project.API.Features.Commerce.Transactions

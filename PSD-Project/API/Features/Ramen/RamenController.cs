@@ -1,5 +1,7 @@
 using System;
 using System.Web.Http;
+using PSD_Project.API.Features.Authentication;
+using PSD_Project.API.Features.Users.Authorization;
 using PSD_Project.API.Util;
 
 namespace PSD_Project.API.Features.Ramen
@@ -7,15 +9,21 @@ namespace PSD_Project.API.Features.Ramen
     [RoutePrefix("api/ramen")]
     public class RamenController : ApiController
     {
-        private readonly IRamenService ramenService = Services.GetRamenService();
+        private readonly IAuthenticationService authenticationService;
+        private readonly IAuthorizationService authorizationService;
+        private readonly IRamenService ramenService;
         
         public RamenController()
         {
-            
+            authenticationService = Services.GetAuthenticationService();
+            authorizationService = Services.GetAuthorizationService();
+            ramenService = Services.GetRamenService();
         }
 
-        public RamenController(IRamenService ramenService)
+        public RamenController(IAuthenticationService authenticationService, IAuthorizationService authorizationService, IRamenService ramenService)
         {
+            this.authenticationService = authenticationService;
+            this.authorizationService = authorizationService;
             this.ramenService = ramenService;
         }
 

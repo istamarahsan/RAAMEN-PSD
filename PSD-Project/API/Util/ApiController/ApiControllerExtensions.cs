@@ -4,9 +4,9 @@ using PSD_Project.App.Common;
 using Util.Option;
 using Util.Try;
 
-namespace PSD_Project.API.Util
+namespace PSD_Project.API.Util.ApiController
 {
-    public static class ApiExtensions
+    public static class ApiControllerExtensions
     {
         public static Try<int, Exception> ExtractAuthToken(this HttpRequestMessage message)
         {
