@@ -9,6 +9,9 @@ namespace PSD_Project.API.Features.Users.Authorization
         ReadStaffUserdetails,
         ReadCustomerUserdetails,
         ReadAllUserdetails,
-        ReadAllTransactions
+        ReadAllTransactions,
+        AddRamen,
+        UpdateRamen,
+        DeleteRamen
     }
 }

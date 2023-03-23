@@ -3,6 +3,9 @@ using System.Web.Http;
 using PSD_Project.API.Features.Authentication;
 using PSD_Project.API.Features.Users.Authorization;
 using PSD_Project.API.Util;
+using PSD_Project.API.Util.ApiController;
+using Util.Option;
+using Util.Try;
 
 namespace PSD_Project.API.Features.Ramen
 {
@@ -31,44 +34,59 @@ namespace PSD_Project.API.Features.Ramen
         [HttpGet]
         public IHttpActionResult GetAllRamen()
         {
-            var ramen = ramenService.GetRamen();
-            return ramen.Match(Ok, HandleError);
+            return ramenService.GetRamen().Match(Ok, HandleError);
         }
 
         [Route("{id}")]
         [HttpGet]
         public IHttpActionResult GetRamen(int id)
         {
-            var ramen = ramenService.GetRamen(id);
-            return ramen.Match(Ok, HandleError);
+            return ramenService.GetRamen(id).Match(Ok, HandleError);
         }
 
         [Route]
         [HttpPost]
         public IHttpActionResult AddRamen([FromBody] RamenDetails form)
         {
-            if (form == null) return BadRequest();
-
-            var result = ramenService.CreateRamen(form);
-            return result.Match(Ok, HandleError);
+            return Request.ExtractAuthToken()
+                .Bind(authenticationService.GetSession)
+                .Map(user => user.Role.Id)
+                .Map(roleId => authorizationService.RoleHasPermission(roleId, Permission.AddRamen))
+                .Bind(hasPermission => hasPermission
+                    ? ValidateForm(form)
+                    : Try.Err<RamenDetails, Exception>(new UnauthorizedAccessException()))
+                .Bind(ramenService.CreateRamen)
+                .Match(Ok, HandleError);
         }
 
         [Route("{id}")]
         [HttpPut]
         public IHttpActionResult UpdateRamen(int id, [FromBody] RamenDetails form)
         {
-            if (form == null) return BadRequest();
-
-            var result = ramenService.UpdateRamen(id, form);
-            return result.Match(Ok, HandleError);
+            return Request.ExtractAuthToken()
+                .Bind(authenticationService.GetSession)
+                .Map(user => user.Role.Id)
+                .Map(roleId => authorizationService.RoleHasPermission(roleId, Permission.UpdateRamen))
+                .Bind(hasPermission => hasPermission
+                    ? ValidateForm(form)
+                    : Try.Err<RamenDetails, Exception>(new UnauthorizedAccessException()))
+                .Bind(details => ramenService.UpdateRamen(id, details))
+                .Match(Ok, HandleError);
         }
 
         [Route("{id}")]
         [HttpDelete]
         public IHttpActionResult DeleteRamen(int id)
         {
-            var error = ramenService.DeleteRamen(id);
-            return error.Match(HandleError, Ok);
+            return Request.ExtractAuthToken()
+                .Bind(authenticationService.GetSession)
+                .Map(user => user.Role.Id)
+                .Map(roleId => authorizationService.RoleHasPermission(roleId, Permission.DeleteRamen))
+                .Map(hasPermission => hasPermission
+                    ? ramenService.DeleteRamen(id)
+                    : Option.Some<Exception>(new UnauthorizedAccessException()))
+                .Recover(Option.Some)
+                .Match(HandleError, Ok);
         }
         
         private IHttpActionResult HandleError(Exception exception)
@@ -77,9 +95,17 @@ namespace PSD_Project.API.Features.Ramen
             {
                 case ArgumentException _:
                     return BadRequest();
+                case UnauthorizedAccessException _ :
+                    return Unauthorized();
                 default:
                     return InternalServerError(exception);
             }
+        }
+
+        private Try<RamenDetails, Exception> ValidateForm(RamenDetails form)
+        {
+            return form.ToOption()
+                .OrErr<RamenDetails, Exception>(() => new ArgumentException());
         }
     }
 }
