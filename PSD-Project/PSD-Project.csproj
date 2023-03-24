@@ -141,10 +141,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App\Pages\Login.aspx" />
-    <Content Include="App_Data\Database2.mdf" />
-    <Content Include="App_Data\Database2_log.ldf">
-      <DependentUpon>Database2.mdf</DependentUpon>
-    </Content>
     <Content Include="EntityFramework\Raamen.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>Raamen.edmx</DependentUpon>
@@ -156,7 +152,6 @@
       <LastGenOutput>Raamen.cs</LastGenOutput>
     </Content>
     <Content Include="global.asax" />
-    <Content Include="Web.config.txt" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="API\Features\Commerce\Orders\CartItem.cs" />
