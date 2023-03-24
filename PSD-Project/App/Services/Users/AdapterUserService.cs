@@ -13,7 +13,7 @@ namespace PSD_Project.App.Services.Users
         
         public Try<List<User>, UserServiceError> GetCustomers(int token)
         {
-            return usersController.WithAuthToken(token, controller =>
+            return usersController.WithBearerToken(token, controller =>
                 controller.GetUsersWithRole(0)
                     .InterpretAs<List<User>>()
                     .MapErr(HandleError));
@@ -21,7 +21,7 @@ namespace PSD_Project.App.Services.Users
 
         public Try<List<User>, UserServiceError> GetStaff(int token)
         {
-            return usersController.WithAuthToken(token, controller =>
+            return usersController.WithBearerToken(token, controller =>
                 controller.GetUsersWithRole(1)
                     .InterpretAs<List<User>>()
                     .MapErr(HandleError));
@@ -29,7 +29,7 @@ namespace PSD_Project.App.Services.Users
 
         public Try<User, UserServiceError> UpdateUserDetails(int token, int userId, UserUpdateDetails updateDetails)
         {
-            return usersController.WithAuthToken(token, controller => 
+            return usersController.WithBearerToken(token, controller => 
                 controller.UpdateUser(userId, updateDetails)
                     .InterpretAs<User>()
                     .MapErr(HandleError));

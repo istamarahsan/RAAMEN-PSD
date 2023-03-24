@@ -28,7 +28,7 @@ namespace PSD_Project.App.Services.RamenService
 
         public Try<Ramen, RamenServiceError> CreateRamen(int token, RamenDetails ramenDetails)
         {
-            return ramenController.WithAuthToken(token, controller =>
+            return ramenController.WithBearerToken(token, controller =>
                 controller.AddRamen(ramenDetails)
                     .InterpretAs<Ramen>()
                     .MapErr(HandleError));
@@ -36,7 +36,7 @@ namespace PSD_Project.App.Services.RamenService
 
         public Try<Ramen, RamenServiceError> UpdateRamen(int token, int ramenId, RamenDetails newDetails)
         {
-            return ramenController.WithAuthToken(token, controller =>
+            return ramenController.WithBearerToken(token, controller =>
                 controller.UpdateRamen(ramenId, newDetails)
                     .InterpretAs<Ramen>()
                     .MapErr(HandleError));
@@ -44,7 +44,7 @@ namespace PSD_Project.App.Services.RamenService
 
         public Option<RamenServiceError> DeleteRamen(int token, int ramenId)
         {
-            return ramenController.WithAuthToken(token, controller =>
+            return ramenController.WithBearerToken(token, controller =>
             {
                 switch (ramenController.DeleteRamen(ramenId))
                 {

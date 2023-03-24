@@ -12,7 +12,7 @@ namespace PSD_Project.App.Services.Orders
 
         public Try<Order, OrderServiceError> PlaceOrder(int token, NewOrderDetails orderDetails)
         {
-            return ordersController.WithAuthToken(token, controller =>
+            return ordersController.WithBearerToken(token, controller =>
                 controller.PlaceOrder(orderDetails)
                     .InterpretAs<Order>()
                     .MapErr(_ => OrderServiceError.InternalServiceError));
@@ -20,7 +20,7 @@ namespace PSD_Project.App.Services.Orders
 
         public Try<Transaction, OrderServiceError> HandleOrder(int token, int orderId)
         {
-            return ordersController.WithAuthToken(token, controller =>
+            return ordersController.WithBearerToken(token, controller =>
                 controller.HandleOrder(orderId)
                     .InterpretAs<Transaction>()
                     .MapErr(_ => OrderServiceError.InternalServiceError));

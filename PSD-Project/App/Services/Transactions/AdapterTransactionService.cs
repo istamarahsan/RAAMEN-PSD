@@ -14,7 +14,7 @@ namespace PSD_Project.App.Services.Transactions
         
         public Try<List<Transaction>, TransactionServiceError> GetTransactions(int token)
         {
-            return transactionsController.WithAuthToken(token, controller => 
+            return transactionsController.WithBearerToken(token, controller => 
                 controller.GetTransactions()
                     .InterpretAs<List<Transaction>>()
                     .MapErr(_ => TransactionServiceError.InternalServiceError));
@@ -22,7 +22,7 @@ namespace PSD_Project.App.Services.Transactions
 
         public Try<List<Transaction>, TransactionServiceError> GetAllTransactions(int token)
         {
-            return transactionsController.WithAuthToken(token, controller =>
+            return transactionsController.WithBearerToken(token, controller =>
                 controller.GetAllTransactions()
                     .InterpretAs<List<Transaction>>()
                     .MapErr(_ => TransactionServiceError.InternalServiceError));

@@ -19,14 +19,12 @@ namespace PSD_Project.App.Common
                 .OrErr(() => response);
         }
 
-        public static T WithAuthToken<TController, T>(this TController controller, int token, Func<TController, T> operation) where TController : ApiController
+        public static T WithBearerToken<TController, T>(this TController controller, int token, Func<TController, T> operation) where TController : ApiController
         {
-            var prev = controller.Request;
             var request = new HttpRequestMessage();
-            request.Headers.Authorization = new AuthenticationHeaderValue("", token.ToString());
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token.ToString());
             controller.Request = request;
             var result = operation(controller);
-            controller.Request = prev;
             return result;
         }
     }
