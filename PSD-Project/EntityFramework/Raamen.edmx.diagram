@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="40403fca4a6d489ab62590066a512297" Name="Diagram1">
+        <EntityTypeShape EntityType="EntityFramework.Detail" Width="1.5" PointX="7.5" PointY="1.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="EntityFramework.Header" Width="1.5" PointX="5.25" PointY="1.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="EntityFramework.Meat" Width="1.5" PointX="3" PointY="5.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="EntityFramework.Raman" Width="1.5" PointX="5.25" PointY="5" IsExpanded="true" />
+        <EntityTypeShape EntityType="EntityFramework.Role" Width="1.5" PointX="0.75" PointY="1.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="EntityFramework.User" Width="1.5" PointX="3" PointY="1" IsExpanded="true" />
+        <AssociationConnector Association="EntityFramework.FK__Detail__Headerid__4316F928" ManuallyRouted="false" />
+        <AssociationConnector Association="EntityFramework.FK__Detail__Ramenid__440B1D61" ManuallyRouted="false" />
+        <AssociationConnector Association="EntityFramework.FK__Header__Customer__3B75D760" ManuallyRouted="false" />
+        <AssociationConnector Association="EntityFramework.FK__Ramen__Meatid__403A8C7D" ManuallyRouted="false" />
+        <AssociationConnector Association="EntityFramework.FK__User__Roleid__38996AB5" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

@@ -107,9 +107,9 @@ namespace PSD_Project.API.Features.Commerce.Transactions
         {
             return new Transaction(
                 header.id,
-                header.CustomerId ?? 0,
-                header.Staffid ?? 0,
-                header.Details.Select(d => new TransactionEntry(d.Ramenid, d.Quantity ?? 0)).ToList(),
+                header.CustomerId,
+                header.Staffid,
+                header.Details.Select(d => new TransactionEntry(d.Ramenid, d.Quantity)).ToList(),
                 header.Date);
         }
     }
