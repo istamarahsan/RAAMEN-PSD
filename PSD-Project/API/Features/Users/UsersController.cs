@@ -51,12 +51,9 @@ namespace PSD_Project.API.Features.Users
         [HttpGet]
         public IHttpActionResult GetUser(int id)
         {
-            var targetUser = usersService.GetUser(id);
-            
-            var targetPermission = targetUser
-                .Map(user => user.Role.Id)
-                .Bind(roleId => authorizationService.RoleOfId(roleId).OrErr(() => new Exception()))
-                .Bind(VerifyPermissionToViewTargetRoleExists);
+            var targetPermission = usersService.GetUser(id)
+                .Map(u => u.Role.Id)
+                .Bind(roleId => authorizationService.PermissionToRead(roleId).OrErr<Permission, Exception>(() => new ArgumentException()));
 
             return Request.ExtractAuthToken()
                 .Bind(authenticationService.GetSession)
@@ -77,10 +74,9 @@ namespace PSD_Project.API.Features.Users
             return Request.ExtractAuthToken()
                 .Bind(authenticationService.GetSession)
                 .Map(user => user.Role.Id)
-                .Bind(VerifyRoleId)
-                .Bind(requesterRole => VerifyRoleId(roleId).Map(targetRole => (requesterRole, targetRole)))
-                .Bind(request => VerifyPermissionToViewTargetRoleExists(request.targetRole).Map(permission => (request.requesterRole, permission)))
-                .Map(request => authorizationService.RoleHasPermission(request.requesterRole, request.permission))
+                .Bind(requesterRoleId => authorizationService.PermissionToRead(roleId)
+                    .OrErr<Permission, Exception>(() => new ArgumentException())
+                    .Map(permission => authorizationService.RoleHasPermission(requesterRoleId, permission)))
                 .Bind(hasPermission =>
                     hasPermission
                         ? usersService.GetUsersWithRole(roleId)
@@ -119,31 +115,6 @@ namespace PSD_Project.API.Features.Users
                 default:
                     return InternalServerError(exception);
             }
-        }
-
-        private Option<Permission> ParseViewPermissionFromTargetRole(Role role)
-        {
-            switch (role)
-            {
-                case Role.Customer:
-                    return Option.Some(Permission.ReadCustomerUserdetails);
-                case Role.Staff:
-                    return Option.Some(Permission.ReadStaffUserdetails);
-                case Role.Admin:
-                default:
-                    return Option.None<Permission>();
-            }
-        }
-        
-        private Try<Permission, Exception> VerifyPermissionToViewTargetRoleExists(Role role)
-        {
-            return ParseViewPermissionFromTargetRole(role)
-                .OrErr(() => new Exception("No such permission exists"));
-        }
-
-        private Try<Role, Exception> VerifyRoleId(int roleId)
-        {
-            return authorizationService.RoleOfId(roleId).OrErr(() => new Exception());
         }
     }
 }

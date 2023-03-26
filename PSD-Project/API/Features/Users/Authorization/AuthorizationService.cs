@@ -9,19 +9,19 @@ namespace PSD_Project.API.Features.Users.Authorization
     {
         private readonly IRolesRepository rolesRepository;
         
-        private readonly Dictionary<Role, List<Permission>> permissionsTable = new Dictionary<Role, List<Permission>>
+        private readonly Dictionary<int, List<Permission>> permissionsTable = new Dictionary<int, List<Permission>>
         {
-            [Role.Customer] = new List<Permission>
+            [0] = new List<Permission>
             {
                 Permission.PlaceOrder,
                 Permission.ReadOwnTransactions
             },
-            [Role.Staff] = new List<Permission>
+            [1] = new List<Permission>
             {
                 Permission.HandleOrder,
                 Permission.ReadCustomerUserdetails
             },
-            [Role.Admin] = new List<Permission>
+            [2] = new List<Permission>
             {
                 Permission.PlaceOrder,
                 Permission.ReadOwnTransactions,
@@ -37,22 +37,24 @@ namespace PSD_Project.API.Features.Users.Authorization
             this.rolesRepository = rolesRepository;
         }
 
-        public Option<Role> RoleOfId(int roleId) => ParseRoleId(roleId);
-
-        public bool RoleHasPermission(Role role, Permission permission)
+        public Option<Permission> PermissionToRead(int roleId)
         {
-            return permissionsTable.Get(role)
-                .Map(permissions => permissions.Contains(permission))
-                .OrElse(false);
+            switch (roleId)
+            {
+                case 0:
+                    return Option.Some(Permission.ReadCustomerUserdetails);
+                case 1:
+                    return Option.Some(Permission.ReadStaffUserdetails);
+                default:
+                    return Option.None<Permission>();
+            }
         }
 
         public bool RoleHasPermission(int roleId, Permission permission)
         {
             return rolesRepository.GetRole(roleId)
                 .Ok()
-                .Map(roleDetails => roleDetails.Id)
-                .Bind(ParseRoleId)
-                .Map(role => RoleHasPermission(role, permission))
+                .Map(roleDetails => permissionsTable[roleDetails.Id].Contains(permission))
                 .OrElse(false);
         }
 
@@ -61,24 +63,8 @@ namespace PSD_Project.API.Features.Users.Authorization
             return rolesRepository.GetRole(roleId)
                 .Ok()
                 .Map(roleDetails => roleDetails.Id)
-                .Bind(ParseRoleId)
                 .Bind(permissionsTable.Get)
                 .OrElse(new List<Permission>());
-        }
-        
-        private Option<Role> ParseRoleId(int roleId)
-        {
-            switch (roleId)
-            {
-                case 2:
-                    return Option.Some(Role.Admin);
-                case 1:
-                    return Option.Some(Role.Staff);
-                case 0:
-                    return Option.Some(Role.Customer);
-                default:
-                    return Option.None<Role>();
-            }
         }
     }
 }
