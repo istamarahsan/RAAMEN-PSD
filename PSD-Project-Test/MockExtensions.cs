@@ -14,6 +14,12 @@ namespace PSD_Project_Test
             mock.Setup(service => service.RoleHasPermission(It.IsAny<int>(), It.IsAny<Permission>()))
                 .Returns(true);
         }
+        
+        public static void AllowNone(this Mock<IAuthorizationService> mock)
+        {
+            mock.Setup(service => service.RoleHasPermission(It.IsAny<int>(), It.IsAny<Permission>()))
+                .Returns(false);
+        }
 
         public static void EmptySessionWithRoleId(this Mock<IAuthenticationService> mock, int roleId)
         {
@@ -36,6 +42,12 @@ namespace PSD_Project_Test
                         new RoleDetails(
                             roleId,
                             ""))));
+        }
+        
+        public static void NoSessionsUnauthorizedException(this Mock<IAuthenticationService> mock)
+        {
+            mock.Setup(service => service.GetSession(It.IsAny<int>()))
+                .Returns(Try.Err<UserSessionDetails, Exception>(new UnauthorizedAccessException()));
         }
     }
 }

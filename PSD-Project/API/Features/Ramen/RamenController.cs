@@ -46,7 +46,7 @@ namespace PSD_Project.API.Features.Ramen
 
         [Route]
         [HttpPost]
-        public IHttpActionResult AddRamen([FromBody] RamenDetails form)
+        public IHttpActionResult CreateRamen([FromBody] RamenDetails form)
         {
             return Request.ExtractAuthToken()
                 .Bind(authenticationService.GetSession)

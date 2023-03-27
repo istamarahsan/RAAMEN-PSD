@@ -29,7 +29,7 @@ namespace PSD_Project.App.Services.RamenService
         public Try<Ramen, RamenServiceError> CreateRamen(int token, RamenDetails ramenDetails)
         {
             return ramenController.WithBearerToken(token, controller =>
-                controller.AddRamen(ramenDetails)
+                controller.CreateRamen(ramenDetails)
                     .InterpretAs<Ramen>()
                     .MapErr(HandleError));
         }
