@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using PSD_Project.API.Features.Profile;
 using PSD_Project.API.Features.Users.Authorization;
 using Util.Try;
 
@@ -13,5 +14,6 @@ namespace PSD_Project.API.Features.Users
         Try<User, Exception> GetUserWithUsername(string username);
         Try<User, Exception> CreateUser(UserDetails userDetails);
         Try<User, Exception> UpdateUser(int userId, UserDetails form);
+        Try<ProfileDetails, Exception> UpdateProfile(int userId, ProfileDetails form);
     }
 }

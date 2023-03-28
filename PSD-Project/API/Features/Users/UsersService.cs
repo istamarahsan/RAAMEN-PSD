@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using PSD_Project.API.Features.Profile;
 using PSD_Project.API.Features.Users.Authorization;
 using Util.Option;
 using Util.Try;
@@ -41,6 +42,14 @@ namespace PSD_Project.API.Features.Users
         public Try<User, Exception> UpdateUser(int userId, UserDetails form)
         {
             return userRepository.UpdateUser(userId, form.Username, form.Email, form.Gender);
+        }
+
+        public Try<ProfileDetails, Exception> UpdateProfile(int userId, ProfileDetails form)
+        {
+            return GetUser(userId)
+                .Bind(user => UpdateUser(userId,
+                    new UserDetails(form.Username, form.Email, user.Password, form.Gender, user.Role.Id)))
+                .Map(user => new ProfileDetails(user.Username, user.Email, user.Gender));
         }
 
         public Try<User, Exception> GetUser(int userId)

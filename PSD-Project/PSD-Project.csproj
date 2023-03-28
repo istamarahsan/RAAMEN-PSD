@@ -175,6 +175,8 @@
     <Compile Include="API\Features\Authentication\UserSession.cs" />
     <Compile Include="API\Features\Authentication\UserSessionDetails.cs" />
     <Compile Include="API\Features\Authentication\UserSessionsService.cs" />
+    <Compile Include="API\Features\Profile\ProfileController.cs" />
+    <Compile Include="API\Features\Profile\ProfileDetails.cs" />
     <Compile Include="API\Features\Ramen\IRamenRepository.cs" />
     <Compile Include="API\Features\Ramen\IRamenService.cs" />
     <Compile Include="API\Features\Ramen\Meat.cs" />
@@ -295,7 +297,6 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
-  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
