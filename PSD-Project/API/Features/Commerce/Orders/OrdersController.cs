@@ -52,7 +52,7 @@ namespace PSD_Project.API.Features.Commerce.Orders
             return Request.ExtractAuthToken()
                 .Bind(authenticationService.GetSession)
                 .Map(user => user.Role.Id)
-                .Map(roleId => authorizationService.RoleHasPermission(roleId, Permission.PlaceOrder))
+                .Map(roleId => authorizationService.RoleHasPermission(roleId, Permission.PlaceOrders))
                 .Bind(hasPermission => hasPermission
                     ? newOrderDetails.ToOption().OrErr<NewOrderDetails, Exception>(() => new ArgumentException())
                     : Try.Err<NewOrderDetails, Exception>(new UnauthorizedAccessException()))

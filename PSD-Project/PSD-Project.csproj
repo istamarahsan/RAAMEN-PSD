@@ -187,7 +187,6 @@
     <Compile Include="API\Features\Users\Authorization\AuthorizationService.cs" />
     <Compile Include="API\Features\Users\Authorization\IAuthorizationService.cs" />
     <Compile Include="API\Features\Users\Authorization\Permission.cs" />
-    <Compile Include="API\Features\Users\Authorization\PermissionsController.cs" />
     <Compile Include="API\Features\Users\IRolesRepository.cs" />
     <Compile Include="API\Features\Users\IUserRepository.cs" />
     <Compile Include="API\Features\Users\IUsersService.cs" />

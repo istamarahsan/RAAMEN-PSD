@@ -51,7 +51,7 @@ namespace PSD_Project.API.Features.Ramen
             return Request.ExtractAuthToken()
                 .Bind(authenticationService.GetSession)
                 .Map(user => user.Role.Id)
-                .Map(roleId => authorizationService.RoleHasPermission(roleId, Permission.AddRamen))
+                .Map(roleId => authorizationService.RoleHasPermission(roleId, Permission.CreateRamen))
                 .Bind(hasPermission => hasPermission
                     ? ValidateForm(form)
                     : Try.Err<RamenDetails, Exception>(new UnauthorizedAccessException()))

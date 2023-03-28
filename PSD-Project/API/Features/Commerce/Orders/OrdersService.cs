@@ -86,7 +86,7 @@ namespace PSD_Project.API.Features.Commerce.Orders
         {
             return usersService.GetUser(orderDetails.CustomerId)
                 .Map(user => user.Role.Id)
-                .Map(role => authorizationService.RoleHasPermission(role, Permission.PlaceOrder))
+                .Map(role => authorizationService.RoleHasPermission(role, Permission.PlaceOrders))
                 .Bind(canPlaceOrder => canPlaceOrder.Assert(true, () => orderDetails, () => new Exception()));
         }
         
@@ -97,7 +97,7 @@ namespace PSD_Project.API.Features.Commerce.Orders
         
         private Try<User, Exception> VerifyUserCanHandleOrder(User user)
         {
-            return authorizationService.RoleHasPermission(user.Role.Id, Permission.HandleOrder)
+            return authorizationService.RoleHasPermission(user.Role.Id, Permission.HandleOrders)
                 .Assert<User, Exception>(true,() => user, () => new UnauthorizedAccessException());
         }
         

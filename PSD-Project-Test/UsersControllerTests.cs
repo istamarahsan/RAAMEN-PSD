@@ -169,7 +169,7 @@ namespace PSD_Project_Test
             authenticationServiceMock.EmptySessionWithRoleId(0);
             authorizationServiceMock.AllowAny();
             authorizationServiceMock.Setup(service => service.PermissionToRead(It.IsAny<int>()))
-                .Returns(Option.Some(Permission.ReadCustomerUserdetails));
+                .Returns(Option.Some(Permission.ViewCustomerUserdetails));
             usersServiceMock.Setup(service => service.GetUsersWithRole(roleId))
                 .Returns(Try.Of<List<User>, Exception>(users.Where(u => u.Role.Id == roleId).ToList()));
 
