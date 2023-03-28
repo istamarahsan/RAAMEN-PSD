@@ -9,6 +9,6 @@ namespace PSD_Project.App.Services.Users
     {
         Try<List<User>, UserServiceError>  GetCustomers(int token);
         Try<List<User>, UserServiceError>  GetStaff(int token);
-        Try<User, UserServiceError> UpdateUserDetails(int token, int userId, UserUpdateDetails updateDetails);
+        Try<User, UserServiceError> UpdateUserDetails(int token, int userId, UserDetails userDetails);
     }
 }

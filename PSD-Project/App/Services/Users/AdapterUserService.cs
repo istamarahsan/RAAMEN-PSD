@@ -27,10 +27,10 @@ namespace PSD_Project.App.Services.Users
                     .MapErr(HandleError));
         }
 
-        public Try<User, UserServiceError> UpdateUserDetails(int token, int userId, UserUpdateDetails updateDetails)
+        public Try<User, UserServiceError> UpdateUserDetails(int token, int userId, UserDetails userDetails)
         {
             return usersController.WithBearerToken(token, controller => 
-                controller.UpdateUser(userId, updateDetails)
+                controller.UpdateUser(userId, userDetails)
                     .InterpretAs<User>()
                     .MapErr(HandleError));
         }

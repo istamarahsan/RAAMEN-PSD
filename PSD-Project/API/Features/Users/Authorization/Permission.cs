@@ -9,12 +9,14 @@ namespace PSD_Project.API.Features.Users.Authorization
         ViewOrders,
         PlaceOrders,
         HandleOrders,
-        UpdateOwnProfile,
+        UpdateProfile,
         ViewStaffUserdetails,
         ViewCustomerUserdetails,
         ViewAllUserdetails,
         ViewOwnTransactions,
         ViewAllTransactions,
-        ViewTransactionReports
+        ViewTransactionReports,
+        CreateUser,
+        UpdateUser
     }
 }

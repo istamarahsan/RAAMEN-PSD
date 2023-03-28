@@ -53,9 +53,9 @@ namespace Util.Try
                 : new TryErr<T, TErr>(otherwise(@object));
         }
 
-        public static Try<T, TErr> Assert<T, TErr>(this bool statement, bool expected, Func<T> @true, Func<TErr> @false)
+        public static Try<T, TErr> AssertTrue<T, TErr>(this bool statement, Func<T> @true, Func<TErr> @false)
         {
-            return statement == expected
+            return statement
                 ? new TryOk<T, TErr>(@true()) as Try<T, TErr>
                 : new TryErr<T, TErr>(@false());
         }

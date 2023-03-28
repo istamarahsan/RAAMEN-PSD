@@ -87,7 +87,7 @@ namespace PSD_Project.API.Features.Commerce.Orders
             return usersService.GetUser(orderDetails.CustomerId)
                 .Map(user => user.Role.Id)
                 .Map(role => authorizationService.RoleHasPermission(role, Permission.PlaceOrders))
-                .Bind(canPlaceOrder => canPlaceOrder.Assert(true, () => orderDetails, () => new Exception()));
+                .Bind(canPlaceOrder => canPlaceOrder.AssertTrue(() => orderDetails, () => new Exception()));
         }
         
         private Try<NewOrderDetails, Exception> VerifyCartItemsExist(NewOrderDetails orderDetails)
@@ -98,7 +98,7 @@ namespace PSD_Project.API.Features.Commerce.Orders
         private Try<User, Exception> VerifyUserCanHandleOrder(User user)
         {
             return authorizationService.RoleHasPermission(user.Role.Id, Permission.HandleOrders)
-                .Assert<User, Exception>(true,() => user, () => new UnauthorizedAccessException());
+                .AssertTrue<User, Exception>(() => user, () => new UnauthorizedAccessException());
         }
         
         private bool CartItemsExist(List<CartItem> cart)

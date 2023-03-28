@@ -30,7 +30,7 @@ namespace PSD_Project.API.Features.Users.Authorization
                 Permission.ViewRamen,
                 Permission.PlaceOrders,
                 Permission.ViewOwnTransactions,
-                Permission.UpdateOwnProfile
+                Permission.UpdateProfile
             },
             [Role.Staff] = new HashSet<Permission>
             {
@@ -38,7 +38,7 @@ namespace PSD_Project.API.Features.Users.Authorization
                 Permission.CreateRamen,
                 Permission.UpdateRamen,
                 Permission.DeleteRamen,
-                Permission.UpdateOwnProfile,
+                Permission.UpdateProfile,
                 Permission.ViewOrders,
                 Permission.HandleOrders
             },

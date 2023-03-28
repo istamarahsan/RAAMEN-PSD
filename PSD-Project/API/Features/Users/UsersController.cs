@@ -88,18 +88,24 @@ namespace PSD_Project.API.Features.Users
         [HttpPost]
         public IHttpActionResult CreateNewUser([FromBody] UserDetails form)
         {
-            return form.ToOption()
-                .OrErr<UserDetails, Exception>(() => new ArgumentException())
+            return Request.ExtractAuthToken()
+                .Bind(authenticationService.GetSession)
+                .Bind(user => authorizationService.RoleHasPermission(user.Role.Id, Permission.CreateUser)
+                    .AssertTrue<UserDetails, Exception>(() => form, () => new UnauthorizedAccessException()))
+                .Bind(f => f.ToOption().OrErr<UserDetails, Exception>(() => new ArgumentException()))
                 .Bind(usersService.CreateUser)
                 .Match(Ok, HandleException);
         }
 
         [Route("{id}")]
         [HttpPut]
-        public IHttpActionResult UpdateUser(int id, [FromBody] UserUpdateDetails form)
+        public IHttpActionResult UpdateUser(int id, [FromBody] UserDetails form)
         {
-            return form.ToOption()
-                .OrErr<UserUpdateDetails, Exception>(() => new ArgumentException())
+            return Request.ExtractAuthToken()
+                .Bind(authenticationService.GetSession)
+                .Bind(user => authorizationService.RoleHasPermission(user.Role.Id, Permission.UpdateUser)
+                    .AssertTrue<UserDetails, Exception>(() => form, () => new UnauthorizedAccessException()))
+                .Bind(details => details.ToOption().OrErr<UserDetails, Exception>(() => new ArgumentException()))
                 .Bind(details => usersService.UpdateUser(id, details))
                 .Match(Ok, HandleException);
         }

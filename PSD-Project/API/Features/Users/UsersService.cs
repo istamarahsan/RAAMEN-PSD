@@ -38,7 +38,7 @@ namespace PSD_Project.API.Features.Users
                 userDetails.Gender, userDetails.RoleId);
         }
 
-        public Try<User, Exception> UpdateUser(int userId, UserUpdateDetails form)
+        public Try<User, Exception> UpdateUser(int userId, UserDetails form)
         {
             return userRepository.UpdateUser(userId, form.Username, form.Email, form.Gender);
         }
@@ -52,16 +52,6 @@ namespace PSD_Project.API.Features.Users
         {
             return usersList.Assert(l => l.Count <= 1, _ => new Exception("Duplicate usernames"))
                 .Bind(l => l.FirstOrDefault().ToOption().OrErr(() => new Exception("User not found")));
-        }
-        
-        public Try<bool, Exception> CanRolePlaceOrder(int roleId)
-        {
-            return Try.Of<bool, Exception>(roleId == 0);
-        }
-
-        public Try<bool, Exception> CanRoleHandleOrder(int roleid)
-        {
-            return Try.Of<bool, Exception>(roleid == 1 || roleid == 2);
         }
     }
 }
