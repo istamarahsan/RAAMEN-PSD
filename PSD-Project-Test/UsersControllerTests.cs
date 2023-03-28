@@ -121,7 +121,7 @@ namespace PSD_Project_Test
         {
             authenticationServiceMock.EmptySessionWithRoleId(0);
             authorizationServiceMock.AllowAny();
-            usersServiceMock.Setup(service => service.UpdateUser(It.IsAny<int>(), It.IsAny<UserUpdateDetails>()))
+            usersServiceMock.Setup(service => service.UpdateUser(It.IsAny<int>(), It.IsAny<UserDetails>()))
                 .Returns(Try.Err<User, Exception>(new Exception()));
             sut.Request = new HttpRequestMessage();
             sut.Request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", "");
