@@ -143,6 +143,7 @@
     <Content Include="App\Pages\Login.aspx" />
     <Content Include="App\Pages\ManageRamen.aspx" />
     <Content Include="App\Pages\Profile.aspx" />
+    <Content Include="App\Pages\Register.aspx" />
     <Content Include="EntityFramework\Raamen.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>Raamen.edmx</DependentUpon>
@@ -225,6 +226,13 @@
     </Compile>
     <Compile Include="App\Pages\Profile.aspx.designer.cs">
       <DependentUpon>Profile.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="App\Pages\Register.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+      <DependentUpon>Register.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="App\Pages\Register.aspx.designer.cs">
+      <DependentUpon>Register.aspx</DependentUpon>
     </Compile>
     <Compile Include="App\Services\Auth\AuthError.cs" />
     <Compile Include="App\Services\Login\AdapterLoginService.cs" />
