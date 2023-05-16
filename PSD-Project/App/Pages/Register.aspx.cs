@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Web.UI;
 using PSD_Project.API.Features.Register;
+using PSD_Project.App.Common;
 using PSD_Project.App.Services.Register;
 using Util.Option;
 using Util.Try;
@@ -15,12 +16,12 @@ namespace PSD_Project.App.Pages
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (IsPostBack) return;
+            if (Session.GetUserSession().IsSome())
+            {
+                Response.Redirect("Home.aspx");
+            }
             GenderRadioButtonList.SelectedIndex = 0;
-        }
-
-        protected void TextBox2_TextChanged(object sender, EventArgs e)
-        {
-            throw new NotImplementedException();
         }
 
         protected void SubmitButton_OnClick(object sender, EventArgs e)
@@ -58,7 +59,8 @@ namespace PSD_Project.App.Pages
             }
         }
 
-        private RegistrationFormDetails ParseForm(string username, string email, string gender, string password, string confirmPassword)
+        private RegistrationFormDetails ParseForm(string username, string email, string gender, string password,
+            string confirmPassword)
         {
             if (!(username.Length >= 5 && username.Length <= 15))
             {
@@ -85,10 +87,6 @@ namespace PSD_Project.App.Pages
                 email,
                 gender,
                 password);
-        }
-        private bool EndsWithDotCom(string str)
-        {
-            return str.EndsWith(".com");
         }
     }
 }
