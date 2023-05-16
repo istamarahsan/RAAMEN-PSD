@@ -72,7 +72,7 @@
         <div style="display: flex; flex-flow: column" id="cart">
 
         </div>
-        <button></button>
+        <button onclick="onClearCart()">Clear</button>
     </div>
 
 </div>
