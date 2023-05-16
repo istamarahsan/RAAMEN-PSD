@@ -80,19 +80,19 @@
                 <tr>
                     <td class="auto-style3">Username</td>
                     <td class="auto-style7">
-                        <asp:TextBox ID="TextBox1" runat="server"></asp:TextBox>
+                        <asp:TextBox ID="UsernameTextBox" runat="server"></asp:TextBox>
                     </td>
                 </tr>
                 <tr>
                     <td class="auto-style4">Email</td>
                     <td class="auto-style2">
-                        <asp:TextBox ID="TextBox2" runat="server" OnTextChanged="TextBox2_TextChanged"></asp:TextBox>
+                        <asp:TextBox ID="EmailTextBox" runat="server"></asp:TextBox>
                     </td>
                 </tr>
                 <tr>
                     <td class="auto-style3">Gender</td>
                     <td class="auto-style8">
-                        <asp:RadioButtonList ID="GenderCheckBoxList" RepeatDirection="Horizontal" runat="server">
+                        <asp:RadioButtonList ID="GenderRadioButtonList" RepeatDirection="Horizontal" runat="server">
                             <asp:ListItem>
                                 Male
                             </asp:ListItem>
@@ -108,21 +108,24 @@
                 <tr>
                     <td class="auto-style3">Password</td>
                     <td class="auto-style7">
-                        <asp:TextBox ID="TextBox3" runat="server"></asp:TextBox>
+                        <asp:TextBox ID="PasswordTextBox" runat="server"></asp:TextBox>
                     </td>
                 </tr>
                 <tr>
                     <td class="auto-style3">Confirmation Password</td>
                     <td class="auto-style7">
-                        <asp:TextBox ID="TextBox4" runat="server"></asp:TextBox>
+                        <asp:TextBox ID="ConfirmPasswordTextBox" runat="server"></asp:TextBox>
                     </td>
+                </tr>
+                <tr>
+                    <asp:Label runat="server" ID="ErrorLabel"></asp:Label>
                 </tr>
             </table>
 
             <center>
                 <br/>
-                <asp:Button ID="Button1" runat="server" Text="Back" CssClass="auto-style6" Width="150px" BackColor="#D07402"/>
-                <asp:Button ID="Button2" runat="server" Text="Create" Width="150px" BackColor="#D07402"/>
+                <asp:Button ID="BackButton" runat="server" Text="Back" CssClass="auto-style6" Width="150px" BackColor="#D07402"/>
+                <asp:Button ID="SubmitButton" runat="server" Text="Create" Width="150px" BackColor="#D07402" OnClick="SubmitButton_OnClick"/>
                 <br/>
                 <br/>
             </center>
