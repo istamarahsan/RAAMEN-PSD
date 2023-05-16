@@ -65,54 +65,63 @@
     </style>
 </head>
 <body>
-    <form id="form1" runat="server">
+<form id="form1" runat="server">
 
-        <%--Header--%>
-        <div class ="header">
+    <%--Header--%>
+    <div class="header">
 
-            <h1>RAAMEN</h1>
+        <h1>RAAMEN</h1>
 
+    </div>
+    <div class="content">
+        <div>
+            <br/>
+            <table class="auto-style1">
+                <tr>
+                    <td class="auto-style3">Username</td>
+                    <td>
+                        <asp:TextBox ID="UsernameTextBox" runat="server"></asp:TextBox>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="auto-style3">Email</td>
+                    <td>
+                        <asp:TextBox ID="EmailTextBox" runat="server"></asp:TextBox>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="auto-style5">Gender</td>
+                    <td class="auto-style6">
+                        <asp:RadioButtonList RepeatDirection="Horizontal" ID="GenderDropDownList" runat="server">
+                            <asp:ListItem>
+                                Male
+                            </asp:ListItem>
+                            <asp:ListItem>
+                                Female
+                            </asp:ListItem>
+                            <asp:ListItem>
+                                Rather Not Say
+                            </asp:ListItem>
+                        </asp:RadioButtonList>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="auto-style4">Password</td>
+                    <td class="auto-style2">
+                        <asp:TextBox ID="PasswordTextBox" runat="server"></asp:TextBox>
+                    </td>
+                </tr>
+            </table>
         </div>
-        <div class="content">
-            <div>
-                <br />
-                <table class="auto-style1">
-                    <tr>
-                        <td class="auto-style3">Username</td>
-                        <td>
-                            <asp:TextBox ID="UsernameTextBox" runat="server"></asp:TextBox>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="auto-style3">Email</td>
-                        <td>
-                            <asp:TextBox ID="EmailTextBox" runat="server"></asp:TextBox>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="auto-style5">Gender</td>
-                        <td class="auto-style6">
-                            <asp:DropDownList ID="GenderDropDownList" runat="server">
-                            </asp:DropDownList>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="auto-style4">Password</td>
-                        <td class="auto-style2">
-                            <asp:TextBox ID="PasswordTextBox" runat="server"></asp:TextBox>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <div>
-                <br />
-                <asp:Button ID="UpdateButton" runat="server" Text="Update" Cssclass="updatebtn" />
-            </div>
+        <div>
+            <br/>
+            <asp:Button ID="UpdateButton" runat="server" Text="Update" Cssclass="updatebtn" OnClick="UpdateButton_OnClick"/>
         </div>
-        <%--footer--%>
-        <div class="footer">
+    </div>
+    <%--footer--%>
+    <div class="footer">
 
-        </div>
-    </form>
+    </div>
+</form>
 </body>
 </html>

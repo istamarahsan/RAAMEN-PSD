@@ -24,10 +24,12 @@ namespace PSD_Project.App.Pages
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (Session.GetUserSession().IsNone())
+            {
+                Response.Redirect("Login.aspx");
+            }
             if (IsPostBack) return;
-            Session.GetUserSession().Match(
-                some: InitPage,
-                none: () => Response.Redirect("Login.aspx"));
+            InitPage(Session.GetUserSession().Unwrap());
         }
 
         private void InitPage(UserSessionDetails userSessionDetails)
