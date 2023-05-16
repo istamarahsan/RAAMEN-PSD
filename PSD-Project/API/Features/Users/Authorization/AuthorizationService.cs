@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Util.Collections;
@@ -21,15 +22,9 @@ namespace PSD_Project.API.Features.Users.Authorization
                 Permission.HandleOrder,
                 Permission.ReadCustomerUserdetails
             },
-            [Role.Admin] = new List<Permission>
-            {
-                Permission.PlaceOrder,
-                Permission.ReadOwnTransactions,
-                Permission.HandleOrder,
-                Permission.ReadCustomerUserdetails,
-                Permission.ReadStaffUserdetails,
-                Permission.ReadAllTransactions
-            }
+            [Role.Admin] = Enum.GetValues(typeof(Permission))
+                .Cast<Permission>()
+                .ToList()
         };
 
         public AuthorizationService(IRolesRepository rolesRepository)
