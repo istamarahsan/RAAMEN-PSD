@@ -141,6 +141,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App\Pages\Login.aspx" />
+    <Content Include="App\Pages\ManageRamen.aspx" />
+    <Content Include="App\Pages\Profile.aspx" />
     <Content Include="EntityFramework\Raamen.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>Raamen.edmx</DependentUpon>
@@ -210,6 +212,20 @@
     <Compile Include="App\Common\SerDe.cs" />
     <Compile Include="App\Common\FalliblesExtensions.cs" />
     <Compile Include="App\Common\Session.cs" />
+    <Compile Include="App\Pages\ManageRamen.aspx.cs">
+      <DependentUpon>ManageRamen.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="App\Pages\ManageRamen.aspx.designer.cs">
+      <DependentUpon>ManageRamen.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="App\Pages\Profile.aspx.cs">
+      <DependentUpon>Profile.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="App\Pages\Profile.aspx.designer.cs">
+      <DependentUpon>Profile.aspx</DependentUpon>
+    </Compile>
     <Compile Include="App\Services\Auth\AuthError.cs" />
     <Compile Include="App\Services\Login\AdapterLoginService.cs" />
     <Compile Include="App\Services\Login\ILoginService.cs" />
