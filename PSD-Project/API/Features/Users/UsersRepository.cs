@@ -152,6 +152,18 @@ namespace PSD_Project.API.Features.Users
             return Try.Of<User, Exception>(ConvertUserModel(user));
         }
 
+        public Try<bool, Exception> UsernameExists(string username)
+        {
+            try
+            {
+                return Try.Of<bool, Exception>(db.Users.Any(user => user.Username == username));
+            }
+            catch (Exception e)
+            {
+                return Try.Err<bool, Exception>(e);
+            }
+        }
+
         private User ConvertUserModel(PSD_Project.EntityFramework.User user) => 
             new User(
                 user.Id, 

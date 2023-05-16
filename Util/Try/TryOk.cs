@@ -72,6 +72,6 @@ namespace Util.Try
 
         public override T Unwrap() => Value;
 
-        public override TErr UnwrapError() => throw new InvalidOperationException();
+        public override TErr UnwrapError() => throw new InvalidOperationException("No Error to Unwrap");
     }
 }

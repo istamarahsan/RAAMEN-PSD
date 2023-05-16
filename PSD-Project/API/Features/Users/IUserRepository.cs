@@ -14,5 +14,6 @@ namespace PSD_Project.API.Features.Users
         Try<List<User>, Exception> GetUsersWithUsername(string username);
         Try<User, Exception> AddNewUser(string username, string email, string password, string gender, int roleId);
         Try<User, Exception> UpdateUser(int userId, string username, string email, string gender);
+        Try<bool, Exception> UsernameExists(string username);
     }
 }

@@ -5,6 +5,7 @@ using PSD_Project.API.Features.Register;
 using PSD_Project.App.Services.Register;
 using Util.Option;
 using Util.Try;
+using IRegisterService = PSD_Project.App.Services.Register.IRegisterService;
 
 namespace PSD_Project.App.Pages
 {
@@ -29,13 +30,29 @@ namespace PSD_Project.App.Pages
                 var form = ParseForm(
                     UsernameTextBox.Text, 
                     EmailTextBox.Text, 
-                    GenderRadioButtonList.SelectedValue,
+                    GenderRadioButtonList.SelectedValue.Trim(' ', '\n'),
                     PasswordTextBox.Text, 
                     ConfirmPasswordTextBox.Text);
-                var registerResult = registerService.RegisterNewUser(form).Unwrap();
-                Response.Redirect("Login.aspx");
+                var registerResult = registerService.RegisterNewUser(form);
+                registerResult.Match(
+                    ok: _ =>
+                    {
+                        Response.Redirect("Login.aspx");
+                    },
+                    err: error =>
+                    {
+                        switch (error)
+                        {
+                            case RegisterError.UsernameTaken:
+                                ErrorLabel.Text = "That username is already taken.";
+                                break;
+                            case RegisterError.InternalServiceError:
+                                ErrorLabel.Text = "Something went wrong. Please try again later.";
+                                break;
+                        }
+                    });
             }
-            catch (Exception exception)
+            catch (ArgumentException exception)
             {
                 ErrorLabel.Text = exception.Message;
             }

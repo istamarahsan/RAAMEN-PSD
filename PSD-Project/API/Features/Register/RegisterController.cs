@@ -12,18 +12,18 @@ using Util.Try;
 namespace PSD_Project.API.Features.Register
 {
     [RoutePrefix("api/register")]
-    public partial class RegisterController : ApiController
+    public class RegisterController : ApiController
     {
-        private readonly IUsersService usersService;
+        private readonly IRegisterService registerService;
 
         public RegisterController()
         {
-            usersService = Services.GetUsersService();
+            registerService = Services.GetRegisterService();
         }
 
-        public RegisterController(IUsersService usersService)
+        public RegisterController(IRegisterService registerService)
         {
-            this.usersService = usersService;
+            this.registerService = registerService;
         }
 
         [Route]
@@ -31,15 +31,8 @@ namespace PSD_Project.API.Features.Register
         public IHttpActionResult Register([FromBody] RegistrationFormDetails form)
         {
             if (form == null) return BadRequest();
-
-            var newUserDetails = new UserDetails(username: form.Username, email: form.Email, password: form.Password, gender: form.Gender, 0);
-            
-            var requestForUsersWithSameUsername = usersService.GetUserWithUsername(form.Username);
-            var createUser = requestForUsersWithSameUsername.Err()
-                .OrErr(() => new Exception("username already exists"))
-                .Bind(_ => usersService.CreateUser(newUserDetails));
-
-            return createUser.Match<IHttpActionResult>(Ok, _ => InternalServerError());
+            return registerService.Register(form)
+                .Match<IHttpActionResult>(Ok, _ => InternalServerError());
         }
     }
 }

@@ -15,7 +15,7 @@ namespace PSD_Project.API
     {
         private static readonly IUserRepository UserRepository = new UsersRolesRepository();
         private static readonly IRolesRepository RolesRepository = new UsersRolesRepository();
-        private static readonly IUsersService UsersService = new UsersService(UserRepository);
+        private static readonly UsersService UsersService = new UsersService(UserRepository);
         private static readonly IRamenService RamenService = new RamenRepository();
         private static readonly IUserSessionsService UserSessionsService = new UserSessionsService();
         private static readonly IAuthenticationService AuthenticationService = new AuthenticationService(UserSessionsService, UsersService);
@@ -35,6 +35,8 @@ namespace PSD_Project.API
         public static ITransactionsService GetTransactionsService() => TransactionsService;
         
         public static IAuthorizationService GetAuthorizationService() => AuthorizationService;
+
+        public static IRegisterService GetRegisterService() => UsersService;
 
         public static SqlDialect GetConfiguredDialect()
         {

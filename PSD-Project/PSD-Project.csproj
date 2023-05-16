@@ -144,16 +144,6 @@
     <Content Include="App\Pages\ManageRamen.aspx" />
     <Content Include="App\Pages\Profile.aspx" />
     <Content Include="App\Pages\Register.aspx" />
-    <Content Include="EntityFramework\Raamen.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>Raamen.edmx</DependentUpon>
-      <LastGenOutput>Raamen.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="EntityFramework\Raamen.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>Raamen.edmx</DependentUpon>
-      <LastGenOutput>Raamen.cs</LastGenOutput>
-    </Content>
     <Content Include="global.asax" />
   </ItemGroup>
   <ItemGroup>
@@ -185,6 +175,7 @@
     <Compile Include="API\Features\Ramen\Ramen.cs" />
     <Compile Include="API\Features\Ramen\RamenController.cs" />
     <Compile Include="API\Features\Ramen\RamenRepository.cs" />
+    <Compile Include="API\Features\Register\IRegisterService.cs" />
     <Compile Include="API\Features\Register\RegisterController.cs" />
     <Compile Include="API\Features\Register\RegistrationFormDetails.cs" />
     <Compile Include="API\Features\Users\Authorization\AuthorizationService.cs" />
@@ -264,51 +255,18 @@
     <Compile Include="App\Services\Users\IUserService.cs" />
     <Compile Include="App\Services\Users\UserServiceError.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="EntityFramework\Detail.cs">
-      <DependentUpon>Raamen.tt</DependentUpon>
-    </Compile>
-    <Compile Include="EntityFramework\Header.cs">
-      <DependentUpon>Raamen.tt</DependentUpon>
-    </Compile>
-    <Compile Include="EntityFramework\Meat.cs">
-      <DependentUpon>Raamen.tt</DependentUpon>
-    </Compile>
-    <Compile Include="EntityFramework\Raamen.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Raamen.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="EntityFramework\Raamen.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Raamen.tt</DependentUpon>
-    </Compile>
-    <Compile Include="EntityFramework\Raamen.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Raamen.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="EntityFramework\Raman.cs">
-      <DependentUpon>Raamen.tt</DependentUpon>
-    </Compile>
-    <Compile Include="EntityFramework\Role.cs">
-      <DependentUpon>Raamen.tt</DependentUpon>
-    </Compile>
-    <Compile Include="EntityFramework\User.cs">
-      <DependentUpon>Raamen.tt</DependentUpon>
-    </Compile>
+    <Compile Include="EntityFramework\Detail.cs" />
+    <Compile Include="EntityFramework\Header.cs" />
+    <Compile Include="EntityFramework\Meat.cs" />
+    <Compile Include="EntityFramework\Raamen.cs" />
+    <Compile Include="EntityFramework\Raman.cs" />
+    <Compile Include="EntityFramework\Role.cs" />
+    <Compile Include="EntityFramework\User.cs" />
     <Compile Include="global.asax.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Web.config" />
-    <EntityDeploy Include="EntityFramework\Raamen.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>Raamen.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="EntityFramework\Raamen.edmx.diagram">
-      <DependentUpon>Raamen.edmx</DependentUpon>
-    </Content>
     <None Include="packages.config" />
     <None Include="Base-Web.config" />
   </ItemGroup>
@@ -321,7 +279,6 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
-  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

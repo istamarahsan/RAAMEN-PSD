@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using PSD_Project.API.Features.Users.Authorization;
+using PSD_Project.API.Features.Register;
 using Util.Option;
 using Util.Try;
 
 namespace PSD_Project.API.Features.Users
 {
-    public class UsersService : IUsersService
+    public class UsersService : IUsersService, IRegisterService
     {
         private readonly IUserRepository userRepository;
 
@@ -53,15 +53,25 @@ namespace PSD_Project.API.Features.Users
             return usersList.Assert(l => l.Count <= 1, _ => new Exception("Duplicate usernames"))
                 .Bind(l => l.FirstOrDefault().ToOption().OrErr(() => new Exception("User not found")));
         }
-        
-        public Try<bool, Exception> CanRolePlaceOrder(int roleId)
-        {
-            return Try.Of<bool, Exception>(roleId == 0);
-        }
 
-        public Try<bool, Exception> CanRoleHandleOrder(int roleid)
+        public Try<User, Exception> Register(RegistrationFormDetails registrationForm)
         {
-            return Try.Of<bool, Exception>(roleid == 1 || roleid == 2);
+            return userRepository.UsernameExists(registrationForm.Username)
+                .Bind(userExists =>
+                {
+                    switch (userExists)
+                    {
+                        case false:
+                            return userRepository.AddNewUser(
+                                registrationForm.Username,
+                                registrationForm.Email,
+                                registrationForm.Password,
+                                registrationForm.Gender,
+                                0);
+                        default:
+                            return Try.Err<User, Exception>(new Exception("Username exists"));
+                    }
+                });
         }
     }
 }
