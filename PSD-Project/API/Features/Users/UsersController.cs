@@ -143,7 +143,7 @@ namespace PSD_Project.API.Features.Users
 
         private Try<Role, Exception> VerifyRoleId(int roleId)
         {
-            return authorizationService.RoleOfId(roleId).OrErr(() => new Exception());
+            return authorizationService.RoleOfId(roleId).OrErr(() => new Exception("Role not found"));
         }
     }
 }

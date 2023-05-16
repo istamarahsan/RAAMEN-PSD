@@ -23,10 +23,11 @@ namespace PSD_Project.App.Common
         {
             var prev = controller.Request;
             var request = new HttpRequestMessage();
-            request.Headers.Authorization = new AuthenticationHeaderValue("", token.ToString());
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token.ToString());
             controller.Request = request;
             var result = operation(controller);
-            controller.Request = prev;
+            if (prev != null)
+                controller.Request = prev;
             return result;
         }
     }

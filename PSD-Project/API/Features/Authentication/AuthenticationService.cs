@@ -18,7 +18,7 @@ namespace PSD_Project.API.Features.Authentication
 
         public Try<UserSessionDetails, Exception> GetSession(int token)
         {
-            return userSessionsService.GetSession(token).OrErr(() => new Exception());
+            return userSessionsService.GetSession(token).OrErr(() => new Exception("Session not found"));
         }
 
         public Try<UserSession, Exception> Authenticate(UserCredentials credentials)

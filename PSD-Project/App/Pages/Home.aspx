@@ -10,8 +10,36 @@
 <form style="width: 100%; display: flex; justify-content: center; align-items: center" id="HtmlForm" runat="server">
     <div style="width: 50%; display: flex; flex-flow: column;">
         <div>
-            <h1>Welcome, <%=UserSession.Username%>! (<%=UserSession.Role.Name%>)</h1>
+            <h1>Welcome, <%= CurrentUser.Username %>! (<%= CurrentUser.Rolename %>)</h1>
         </div>
+        <% if (Customers != null)
+           { %>
+            <table>
+                <% foreach (var customer in Customers)
+                   { %>
+                    <tr>
+                        <td><%=customer.Username%></td>
+                        <td><%=customer.Email%></td>
+                        <td><%=customer.Rolename%></td>
+                    </tr>
+
+                <% } %>
+            </table>
+        <% } %>
+        <% if (Staff != null)
+                   { %>
+                    <table>
+                        <% foreach (var staff in Staff)
+                           { %>
+                            <tr>
+                                <td><%=staff.Username%></td>
+                                <td><%=staff.Email%></td>
+                                <td><%=staff.Rolename%></td>
+                            </tr>
+        
+                        <% } %>
+                    </table>
+                <% } %>
     </div>
 </form>
 </body>
