@@ -10,7 +10,7 @@
         <% foreach (var ramen in Ramen)
            { %>
            <%= ramen.Id %> : {
-            '<%= ramen.Name %>'
+            'name': '<%= ramen.Name %>'
            },
         <% } %>
     }
@@ -24,8 +24,8 @@
       for (const ramenIdKey in cartItems) {
       if (cartItems[ramenIdKey] <= 0) continue
         cart.appendChild(renderCartItem({
-            name: ramen[ramenIdKey]['name'],
-            quantity: cartItems[ramenIdKey]
+            'name': ramen[ramenIdKey]['name'],
+            'quantity': cartItems[ramenIdKey]
         })) 
       }
     }
@@ -64,7 +64,7 @@
                 <div><%= ramen.Borth %></div>
                 <div>Rp. <%= ramen.Price %></div>
                 <div id="quantity-<%= ramen.Id %>"></div>
-                <button onclick="onAddToCart(<%= ramen.Id %>)">Add to Cart</button>
+                <button onclick="onAddToCart('<%= ramen.Id %>')">Add to Cart</button>
             </div>
         <% } %>
     </div>
