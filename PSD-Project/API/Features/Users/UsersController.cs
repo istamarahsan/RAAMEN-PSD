@@ -65,8 +65,8 @@ namespace PSD_Project.API.Features.Users
                     targetPermission.Map(permission => authorizationService.RoleHasPermission(roleId, permission)))
                 .Bind(hasPermission =>
                     hasPermission
-                        ? targetUser.Cast<object>(() => new Exception())
-                        : targetUser.Map<object>(u => new BasicUserDetailsDto{ Id = u.Id, Username = u.Username}))
+                        ? targetUser
+                        : targetUser.Map(u => new User(u.Id, u.Username, null, null, null, null)))
                 .Match(Ok, HandleException);
         }
         
