@@ -13,5 +13,23 @@ namespace PSD_Project.App.Pages
 
     public partial class OrderRamen
     {
+
+        /// <summary>
+        /// ClearCartButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button ClearCartButton;
+
+        /// <summary>
+        /// PlaceOrderButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button PlaceOrderButton;
     }
 }
