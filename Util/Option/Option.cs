@@ -36,5 +36,7 @@ namespace Util.Option
         {
             return (obj as T).ToOption();
         }
+
+        public static T UnwrapOrNull<T>(this Option<T> @this) where T : class => @this.Match(o => o, () => null);
     }
 }

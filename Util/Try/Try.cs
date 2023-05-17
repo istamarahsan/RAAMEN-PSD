@@ -88,5 +88,8 @@ namespace Util.Try
                 }
             };
         }
+
+        public static T UnwrapOrThrow<T, TException>(Try<T, TException> @this) where TException : Exception =>
+            @this.Recover(exc => throw exc);
     }
 }

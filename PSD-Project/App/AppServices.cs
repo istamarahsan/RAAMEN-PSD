@@ -3,6 +3,7 @@ using PSD_Project.App.Services.Auth;
 using PSD_Project.App.Services.Login;
 using PSD_Project.App.Services.Orders;
 using PSD_Project.App.Services.Register;
+using PSD_Project.App.Services.Transactions;
 using PSD_Project.App.Services.Users;
 
 namespace PSD_Project.App
@@ -17,6 +18,7 @@ namespace PSD_Project.App
             public readonly IUserService UserService = new AdapterUserService();
             public readonly IRamenService RamenService = new AdapterRamenService();
             public readonly IOrderService OrderService = new AdapterOrderService();
+            public readonly ITransactionService TransactionService = new AdapterTransactionService();
         }
 
         public static readonly AppSingletons Singletons = new AppSingletons();

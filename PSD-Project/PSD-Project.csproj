@@ -140,6 +140,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App\Pages\History.aspx" />
     <Content Include="App\Pages\Home.aspx" />
     <Content Include="App\Pages\Login.aspx" />
     <Content Include="App\Pages\ManageRamen.aspx" />
@@ -206,6 +207,13 @@
     <Compile Include="App\Common\SerDe.cs" />
     <Compile Include="App\Common\FalliblesExtensions.cs" />
     <Compile Include="App\Common\Session.cs" />
+    <Compile Include="App\Pages\History.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+      <DependentUpon>History.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="App\Pages\History.aspx.designer.cs">
+      <DependentUpon>History.aspx</DependentUpon>
+    </Compile>
     <Compile Include="App\Pages\Home.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
       <DependentUpon>Home.aspx</DependentUpon>

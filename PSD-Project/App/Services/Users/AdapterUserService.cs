@@ -35,6 +35,14 @@ namespace PSD_Project.App.Services.Users
                     .MapErr(HandleError));
         }
 
+        public Try<User, UserServiceError> GetUser(int token, int userId)
+        {
+            return usersController.WithAuthToken(token, controller =>
+                controller.GetUser(userId)
+                    .InterpretAs<User>()
+                    .MapErr(HandleError));
+        }
+
         private UserServiceError HandleError(IHttpActionResult response)
         {
             switch (response)
