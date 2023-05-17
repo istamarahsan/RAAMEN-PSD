@@ -13,6 +13,7 @@ namespace Util.Option
         public abstract bool IsSome();
         public abstract bool IsNone();
         public abstract T Unwrap();
+        public abstract T Unwrap(string expect);
     }
 
     public static class Option

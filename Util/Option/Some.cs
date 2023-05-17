@@ -23,5 +23,6 @@ namespace Util.Option
 
         public override bool IsNone() => false;
         public override T Unwrap() => data;
+        public override T Unwrap(string expect) => data;
     }
 }

@@ -23,6 +23,7 @@
                     <td><%=transaction.StaffName ?? "NOT FOUND"%></td>
                     <td><%=transaction.CustomerName ?? "NOT FOUND"%></td>
                     <td><%=transaction.Total%></td>
+                    <td><a href="Transaction.aspx?transaction=<%=transaction.Id%>">View Details</a></td>
                 </tr>
             <% } %>
         </table>

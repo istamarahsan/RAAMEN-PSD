@@ -68,15 +68,11 @@ namespace Util.Try
             return true;
         }
 
-        public override T Unwrap()
-        {
-            if (Value is Exception exception)
-            {
-                throw exception;
-            }
-
-            throw new InvalidOperationException("No value to unwrap.");
-        }
+        public override T Unwrap() => throw (Value as Exception ?? new InvalidOperationException("No value to unwrap."));
+        
+        public override T Unwrap(string expect) => throw (Value is Exception exception
+            ? new InvalidOperationException(expect, exception)
+            : new InvalidOperationException(expect));
 
         public override TErr UnwrapError() => Value;
     }

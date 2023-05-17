@@ -19,6 +19,7 @@ namespace Util.Try
         public abstract bool IsOk();
         public abstract bool IsErr();
         public abstract T Unwrap();
+        public abstract T Unwrap(string expect);
         public abstract TErr UnwrapError();
     }
 

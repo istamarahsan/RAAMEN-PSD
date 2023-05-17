@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.UI;
 using PSD_Project.API.Features.Authentication;
-using PSD_Project.API.Features.Users;
 using PSD_Project.App.Common;
 using PSD_Project.App.Services.RamenService;
 using PSD_Project.App.Services.Transactions;
@@ -22,6 +21,7 @@ namespace PSD_Project.App.Pages
         
         protected class TransactionViewModel
         {
+            public int Id;
             public DateTime? Date;
             public string StaffName;
             public string CustomerName;
@@ -63,6 +63,7 @@ namespace PSD_Project.App.Pages
             Transactions = transactionsFetch
                 .Select(t => new TransactionViewModel
                 {
+                    Id = t.Id,
                     Date = t.Date,
                     StaffName = usersFetch.Get(t.StaffId).Map(u => u.Username).UnwrapOrNull(),
                     CustomerName = usersFetch.Get(t.CustomerId).Map(u => u.Username).UnwrapOrNull(),

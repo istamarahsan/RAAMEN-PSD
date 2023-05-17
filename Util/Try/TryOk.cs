@@ -71,6 +71,7 @@ namespace Util.Try
         }
 
         public override T Unwrap() => Value;
+        public override T Unwrap(string expect) => Value;
 
         public override TErr UnwrapError() => throw new InvalidOperationException("No Error to Unwrap");
     }
