@@ -12,5 +12,6 @@ namespace PSD_Project.App.Services.RamenService
         Try<Ramen, RamenServiceError> CreateRamen(int token, RamenDetails ramenDetails);
         Try<Ramen, RamenServiceError> UpdateRamen(int token, int ramenId, RamenDetails newDetails);
         Option<RamenServiceError> DeleteRamen(int token, int ramenId);
+        Try<List<Meat>, RamenServiceError> GetMeats();
     }
 }

@@ -12,5 +12,6 @@ namespace PSD_Project.API.Features.Ramen
         Try<Ramen, Exception> CreateRamen(RamenDetails ramenDetails);
         Try<Ramen, Exception> UpdateRamen(int id, RamenDetails ramenDetails);
         Option<Exception> DeleteRamen(int id);
+        Try<List<Meat>, Exception> GetMeats();
     }
 }

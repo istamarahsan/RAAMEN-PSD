@@ -112,10 +112,28 @@ namespace PSD_Project.API.Features.Ramen
                 return Option.Some(e);
             }
         }
-        
+
+        public Try<List<Meat>, Exception> GetMeats()
+        {
+            try
+            {
+                var result = db.Meats.ToList().Select(ConvertModel).ToList();
+                return Try.Of<List<Meat>, Exception>(result);
+            }
+            catch (Exception e)
+            {
+                return Try.Err<List<Meat>, Exception>(e);
+            }
+        }
+
         private Ramen ConvertModel(Raman ramen)
         {
             return new Ramen(ramen.id, ramen.Name, ramen.Borth, ramen.Price, new Meat(ramen.Meat.id, ramen.Meat.name));
+        }
+
+        private Meat ConvertModel(EntityFramework.Meat meat)
+        {
+            return new Meat(meat.id, meat.name);
         }
     }
 }

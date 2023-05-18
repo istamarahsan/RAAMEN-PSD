@@ -88,6 +88,13 @@ namespace PSD_Project.API.Features.Ramen
                 .Recover(Option.Some)
                 .Match(HandleError, Ok);
         }
+
+        [Route("meat")]
+        [HttpGet]
+        public IHttpActionResult GetMeats()
+        {
+            return ramenService.GetMeats().Match(Ok, HandleError);
+        }
         
         private IHttpActionResult HandleError(Exception exception)
         {

@@ -56,6 +56,13 @@ namespace PSD_Project.App.Services.RamenService
             });
         }
 
+        public Try<List<Meat>, RamenServiceError> GetMeats()
+        {
+            return ramenController.GetMeats()
+                .InterpretAs<List<Meat>>()
+                .MapErr(HandleError);
+        }
+
         private RamenServiceError HandleError(IHttpActionResult response)
         {
             switch (response)

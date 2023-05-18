@@ -31,7 +31,7 @@
                 </tr>
             <% } %>
         </table>
-        <a>New Ramen</a>
+        <a href="InsertRamen.aspx">New Ramen</a>
     </div>
 </form>
 </body>

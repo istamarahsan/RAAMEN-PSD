@@ -142,6 +142,7 @@
   <ItemGroup>
     <Content Include="App\Pages\History.aspx" />
     <Content Include="App\Pages\Home.aspx" />
+    <Content Include="App\Pages\InsertRamen.aspx" />
     <Content Include="App\Pages\Login.aspx" />
     <Content Include="App\Pages\ManageRamen.aspx" />
     <Content Include="App\Pages\OrderRamen.aspx" />
@@ -222,6 +223,13 @@
     </Compile>
     <Compile Include="App\Pages\Home.aspx.designer.cs">
       <DependentUpon>Home.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="App\Pages\InsertRamen.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+      <DependentUpon>InsertRamen.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="App\Pages\InsertRamen.aspx.designer.cs">
+      <DependentUpon>InsertRamen.aspx</DependentUpon>
     </Compile>
     <Compile Include="App\Pages\ManageRamen.aspx.cs">
       <DependentUpon>ManageRamen.aspx</DependentUpon>
