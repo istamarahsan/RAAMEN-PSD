@@ -30,6 +30,7 @@
                 <td><asp:Label runat="server" ID="PriceErrorLabel"></asp:Label></td>
             </tr>
         </table>
+        <asp:Button runat="server" ID="BackButton" OnClick="BackButton_OnClick" Text="Back"/>
         <asp:Button runat="server" ID="SubmitButton" OnClick="SubmitButton_OnClick" Text="Create" />
     </div>
 </form>

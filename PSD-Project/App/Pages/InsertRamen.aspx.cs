@@ -68,5 +68,10 @@ namespace PSD_Project.App.Pages
                 Response.Redirect("ManageRamen.aspx");
             }
         }
+
+        protected void BackButton_OnClick(object sender, EventArgs e)
+        {
+            Response.Redirect("ManageRamen.aspx");
+        }
     }
 }
