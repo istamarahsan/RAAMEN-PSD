@@ -150,6 +150,7 @@
     <Content Include="App\Pages\Profile.aspx" />
     <Content Include="App\Pages\Register.aspx" />
     <Content Include="App\Pages\Transaction.aspx" />
+    <Content Include="App\Pages\UpdateRamen.aspx" />
     <Content Include="global.asax" />
   </ItemGroup>
   <ItemGroup>
@@ -272,6 +273,13 @@
     </Compile>
     <Compile Include="App\Pages\Transaction.aspx.designer.cs">
       <DependentUpon>Transaction.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="App\Pages\UpdateRamen.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+      <DependentUpon>UpdateRamen.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="App\Pages\UpdateRamen.aspx.designer.cs">
+      <DependentUpon>UpdateRamen.aspx</DependentUpon>
     </Compile>
     <Compile Include="App\Services\Auth\AuthError.cs" />
     <Compile Include="App\Services\Login\AdapterLoginService.cs" />

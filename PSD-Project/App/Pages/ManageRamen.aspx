@@ -22,12 +22,14 @@
             <% foreach (var ramen in Ramen)
                { %>
                 <tr>
-                    <td><%=ramen.Id%></td>
-                    <td><%=ramen.Name%></td>
-                    <td><%=ramen.Borth%></td>
-                    <td><%=ramen.Meat.Name%></td>
-                    <td><%=ramen.Price.TryParseDouble().Ok().OrElse(0)%></td>
-                    <td><a>Update</a></td>
+                    <td><%= ramen.Id %></td>
+                    <td><%= ramen.Name %></td>
+                    <td><%= ramen.Borth %></td>
+                    <td><%= ramen.Meat.Name %></td>
+                    <td><%= ramen.Price.TryParseDouble().Ok().OrElse(0) %></td>
+                    <td>
+                        <a href="UpdateRamen.aspx?ramenId=<%= ramen.Id %>">Update</a>
+                    </td>
                 </tr>
             <% } %>
         </table>
