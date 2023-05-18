@@ -145,6 +145,7 @@
     <Content Include="App\Pages\Login.aspx" />
     <Content Include="App\Pages\ManageRamen.aspx" />
     <Content Include="App\Pages\OrderRamen.aspx" />
+    <Content Include="App\Pages\Orders.aspx" />
     <Content Include="App\Pages\Profile.aspx" />
     <Content Include="App\Pages\Register.aspx" />
     <Content Include="App\Pages\Transaction.aspx" />
@@ -235,6 +236,13 @@
     </Compile>
     <Compile Include="App\Pages\OrderRamen.aspx.designer.cs">
       <DependentUpon>OrderRamen.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="App\Pages\Orders.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+      <DependentUpon>Orders.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="App\Pages\Orders.aspx.designer.cs">
+      <DependentUpon>Orders.aspx</DependentUpon>
     </Compile>
     <Compile Include="App\Pages\Profile.aspx.cs">
       <DependentUpon>Profile.aspx</DependentUpon>
