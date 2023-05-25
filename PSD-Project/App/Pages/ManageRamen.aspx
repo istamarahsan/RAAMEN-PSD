@@ -1,14 +1,11 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="ManageRamen.aspx.cs" Inherits="PSD_Project.App.Pages.ManageRamen" %>
+﻿<%@ Page Language="C#" MasterPageFile="Main.master" AutoEventWireup="true" CodeBehind="ManageRamen.aspx.cs" Inherits="PSD_Project.App.Pages.ManageRamen" %>
 <%@ Import Namespace="PSD_Project.App.Common" %>
 
-<!DOCTYPE html>
-
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head runat="server">
+<asp:Content runat="server" ContentPlaceHolderID="Head">
     <title>Manage Ramen</title>
-</head>
-<body>
-<form id="form1" runat="server">
+</asp:Content>
+
+<asp:Content runat="server" ContentPlaceHolderID="Content">
     <div>
         <table>
             <tr>
@@ -35,6 +32,4 @@
         </table>
         <a href="InsertRamen.aspx">New Ramen</a>
     </div>
-</form>
-</body>
-</html>
+</asp:Content>

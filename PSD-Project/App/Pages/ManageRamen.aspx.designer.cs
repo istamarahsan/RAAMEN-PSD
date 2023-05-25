@@ -15,12 +15,17 @@ namespace PSD_Project.App.Pages
     {
 
         /// <summary>
-        /// form1 control.
+        /// Master property.
         /// </summary>
         /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
+        /// Auto-generated property.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlForm form1;
+        public new PSD_Project.App.Pages.Main Master
+        {
+            get
+            {
+                return ((PSD_Project.App.Pages.Main)(base.Master));
+            }
+        }
     }
 }

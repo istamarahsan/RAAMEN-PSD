@@ -1,13 +1,10 @@
-<%@ Page Language="C#" CodeBehind="History.aspx.cs" Inherits="PSD_Project.App.Pages.History" %>
+<%@ Page Language="C#" MasterPageFile="Main.master" CodeBehind="History.aspx.cs" Inherits="PSD_Project.App.Pages.History" %>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head runat="server">
+<asp:Content runat="server" ContentPlaceHolderID="Head">
     <title>Transaction History</title>
-</head>
-<body>
-<form runat="server">
+</asp:Content>
+
+<asp:Content runat="server" ContentPlaceHolderID="Content">
     <div>
         <table style="border: medium #34334c;">
             <tr>
@@ -19,15 +16,15 @@
             <% foreach (var transaction in Transactions)
                { %>
                 <tr>
-                    <td><%=transaction.Date?.ToShortDateString() ?? "No date available"%></td>
-                    <td><%=transaction.StaffName ?? "NOT FOUND"%></td>
-                    <td><%=transaction.CustomerName ?? "NOT FOUND"%></td>
-                    <td><%=transaction.Total%></td>
-                    <td><a href="Transaction.aspx?transaction=<%=transaction.Id%>">View Details</a></td>
+                    <td><%= transaction.Date?.ToShortDateString() ?? "No date available" %></td>
+                    <td><%= transaction.StaffName ?? "NOT FOUND" %></td>
+                    <td><%= transaction.CustomerName ?? "NOT FOUND" %></td>
+                    <td><%= transaction.Total %></td>
+                    <td>
+                        <a href="Transaction.aspx?transaction=<%= transaction.Id %>">View Details</a>
+                    </td>
                 </tr>
             <% } %>
         </table>
     </div>
-</form>
-</body>
-</html>
+</asp:Content>

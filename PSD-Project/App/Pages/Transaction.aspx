@@ -1,13 +1,10 @@
-<%@ Page Language="C#" CodeBehind="Transaction.aspx.cs" Inherits="PSD_Project.App.Pages.Transaction" %>
+<%@ Page Language="C#" MasterPageFile="Main.master" CodeBehind="Transaction.aspx.cs" Inherits="PSD_Project.App.Pages.Transaction" %>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<asp:Content runat="server" ContentPlaceHolderID="Head">
+    <title>Transaction ID: <%= TransactionId %></title>
+</asp:Content>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head runat="server">
-    <title>Transaction: <%= TransactionId %></title>
-</head>
-<body>
-<form id="HtmlForm" runat="server">
+<asp:Content runat="server" ContentPlaceHolderID="Content">
     <div>
         <table>
             <tr>
@@ -29,6 +26,4 @@
             <% } %>
         </table>
     </div>
-</form>
-</body>
-</html>
+</asp:Content>

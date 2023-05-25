@@ -47,7 +47,8 @@ namespace PSD_Project.App.Pages
 
             var retrievedTransactions = getTransactions.Unwrap("Failed to retrieve transactions");
 
-            var targetTransaction = retrievedTransactions.FirstOrDefault()
+            var targetTransaction = retrievedTransactions
+                .FirstOrDefault(t => t.Id == transactionId)
                 .ToOption()
                 .Unwrap("Transaction not found");
 

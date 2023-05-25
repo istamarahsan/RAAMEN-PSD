@@ -35,7 +35,7 @@ namespace PSD_Project.App.Pages
             if (ramenIdOption.IsSome() && quantityOption.IsSome())
             {
                 var ramenId = ramenIdOption.Unwrap();
-                var quantity = ramenIdOption.Unwrap();
+                var quantity = quantityOption.Unwrap();
                 Cart[ramenId] = Math.Max(Cart.Get(ramenId).OrElse(0) + quantity, 0);
                 Session["Cart"] = Cart;
             }

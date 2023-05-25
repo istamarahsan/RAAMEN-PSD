@@ -13,5 +13,19 @@ namespace PSD_Project.App.Pages
 
     public partial class History
     {
+
+        /// <summary>
+        /// Master property.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated property.
+        /// </remarks>
+        public new PSD_Project.App.Pages.Main Master
+        {
+            get
+            {
+                return ((PSD_Project.App.Pages.Main)(base.Master));
+            }
+        }
     }
 }

@@ -1,13 +1,8 @@
-<%@ Page Language="C#" CodeBehind="Orders.aspx.cs" Inherits="PSD_Project.App.Pages.HandleOrders" %>
+<%@ Page Language="C#" MasterPageFile="Main.master" CodeBehind="Orders.aspx.cs" Inherits="PSD_Project.App.Pages.HandleOrders" %>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<asp:Content runat="server" ContentPlaceHolderID="Head"><title>Orders</title></asp:Content>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head runat="server">
-    <title>Orders</title>
-</head>
-<body>
-<form id="HtmlForm" runat="server">
+<asp:Content runat="server" ContentPlaceHolderID="Content">
     <div>
         <table>
             <tr>
@@ -26,11 +21,11 @@
                     <td><%= order.CustomerId %></td>
                     <td><%= order.CustomerUsername %></td>
                     <td><%= order.Items.Count %></td>
-                    <td><a href="Orders.aspx?handle=<%=order.Id%>">Handle</a></td>
+                    <td>
+                        <a href="Orders.aspx?handle=<%= order.Id %>">Handle</a>
+                    </td>
                 </tr>
             <% } %>
         </table>
     </div>
-</form>
-</body>
-</html>
+</asp:Content>

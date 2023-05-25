@@ -1,0 +1,104 @@
+<%@ Master Language="C#" CodeBehind="~/App/Pages/Main.aspx.cs" Inherits="PSD_Project.App.Pages.Main" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <asp:ContentPlaceHolder id="Head" runat="server">
+        </asp:ContentPlaceHolder>
+    <style>
+            .header{
+                height: 100px;
+                width: 100%;
+                background-color: #9f1618;
+            }
+            .header h1{
+                font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+                text-align: center;
+                color: white;
+            }
+            .content{
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                background-color: #fff5ee;
+                text-align: center;
+            }
+            .updatebtn {
+                background-color: #8F481E;
+    
+                padding: 5px 5px 5px 5px;
+                border: none;
+                border-radius: 5px;
+            }
+            .footer{
+                height: 100px;
+                width: 100%;
+                background-color: #34334c;
+            }
+        </style>
+        <style type="text/css">
+            .auto-style1 {
+                width: 31%;
+                border: 2px solid #834d4d;
+                background-color: #fff5ee;
+                border-radius: 10px;
+                margin: auto;
+            }
+            .auto-style2 {
+                height: 26px;
+            }
+            .auto-style3 {
+                width: 194px;
+            }
+            .auto-style4 {
+                height: 26px;
+                width: 194px;
+            }
+            .auto-style5 {
+                width: 194px;
+                height: 29px;
+            }
+            .auto-style6 {
+                height: 29px;
+            }
+        </style>
+</head>
+<body>
+<form style="width: 100%; display: flex; flex-flow: column; align-content: center" id="form" runat="server">
+    <div class="header">
+        <h1>RAAMEN</h1>
+    </div>
+    <div class="nav">
+        <ul style="display: flex; flex-flow: row; gap: 3rem">
+            <% if (LoggedInAs == LoggedInAsRole.Customer)
+               { %>
+                <li><a href="OrderRamen.aspx">Order Ramen</a></li>
+                <li><a href="History.aspx">History</a></li>
+            <% } %>
+            <% else if (LoggedInAs == LoggedInAsRole.Staff)
+               { %>
+                <li><a href="Home.aspx">Home</a></li>
+                <li><a href="ManageRamen.aspx">Manage Ramen</a></li>
+                <li><a href="Orders.aspx">Order Queue</a></li>
+            <% } %>
+            <% else if (LoggedInAs == LoggedInAsRole.Admin)
+               { %>
+                <li><a href="ManageRamen.aspx">Manage Ramen</a></li>
+                <li><a href="Orders.aspx">Order Queue</a></li>
+                <li><a href="History.aspx">History</a></li>
+                <li><a>Report</a></li>
+            <% } %>
+            <li><a href="Profile.aspx">Profile</a></li>
+            <li><asp:Button runat="server" Text="Logout" ID="LogoutButton" OnClick="LogoutButton_OnClick"/></li>
+        </ul>
+    </div>
+    <div class="content" style="width: 100%; display: flex; flex-flow: column; justify-content: flex-start; align-items: center;">
+        <asp:ContentPlaceHolder id="Content" runat="server">
+            
+        </asp:ContentPlaceHolder>
+    </div>
+</form>
+</body>
+</html>

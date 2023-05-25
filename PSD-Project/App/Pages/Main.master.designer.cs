@@ -11,66 +11,43 @@ namespace PSD_Project.App.Pages
 {
 
 
-    public partial class Profile
+    public partial class Main
     {
 
         /// <summary>
-        /// UsernameTextBox control.
+        /// Head control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox UsernameTextBox;
+        protected global::System.Web.UI.WebControls.ContentPlaceHolder Head;
 
         /// <summary>
-        /// EmailTextBox control.
+        /// form control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox EmailTextBox;
+        protected global::System.Web.UI.HtmlControls.HtmlForm form;
 
         /// <summary>
-        /// GenderDropDownList control.
+        /// LogoutButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RadioButtonList GenderDropDownList;
+        protected global::System.Web.UI.WebControls.Button LogoutButton;
 
         /// <summary>
-        /// PasswordTextBox control.
+        /// Content control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox PasswordTextBox;
-
-        /// <summary>
-        /// UpdateButton control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button UpdateButton;
-
-        /// <summary>
-        /// Master property.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated property.
-        /// </remarks>
-        public new PSD_Project.App.Pages.Main Master
-        {
-            get
-            {
-                return ((PSD_Project.App.Pages.Main)(base.Master));
-            }
-        }
+        protected global::System.Web.UI.WebControls.ContentPlaceHolder Content;
     }
 }

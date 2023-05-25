@@ -15,15 +15,6 @@ namespace PSD_Project.App.Pages
     {
 
         /// <summary>
-        /// HtmlForm control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlForm HtmlForm;
-
-        /// <summary>
         /// RamenNameTextBox control.
         /// </summary>
         /// <remarks>
@@ -103,5 +94,19 @@ namespace PSD_Project.App.Pages
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button SubmitButton;
+
+        /// <summary>
+        /// Master property.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated property.
+        /// </remarks>
+        public new PSD_Project.App.Pages.Main Master
+        {
+            get
+            {
+                return ((PSD_Project.App.Pages.Main)(base.Master));
+            }
+        }
     }
 }

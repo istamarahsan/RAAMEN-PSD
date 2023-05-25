@@ -1,16 +1,13 @@
-<%@ Page Language="C#" CodeBehind="OrderRamen.aspx.cs" Inherits="PSD_Project.App.Pages.OrderRamen" %>
+<%@ Page Language="C#" MasterPageFile="Main.master" CodeBehind="OrderRamen.aspx.cs" Inherits="PSD_Project.App.Pages.OrderRamen" %>
 <%@ Import Namespace="System.Collections.Generic" %>
 <%@ Import Namespace="System.Linq" %>
 <%@ Import Namespace="PSD_Project.API.Features.Ramen" %>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head runat="server">
+<asp:Content runat="server" ContentPlaceHolderID="Head">
     <title>Order</title>
-</head>
-<body>
-<form runat="server">
+</asp:Content>
+
+<asp:Content runat="server" ContentPlaceHolderID="Content">
     <div style="display: flex; flex-flow: row; flex-wrap: nowrap">
         <div style="display: flex; flex-flow: row; flex-wrap: wrap">
             <% foreach (var ramen in Ramen?.Values.ToList() ?? new List<Ramen>())
@@ -21,7 +18,9 @@
                     <div><%= ramen.Borth %></div>
                     <div>Rp. <%= ramen.Price %></div>
                     <div id="quantity-<%= ramen.Id %>"></div>
-                    <div><a href="?ramenId=<%=ramen.Id%>&quantity=1">Add to Cart</a></div>
+                    <div>
+                        <a href="?ramenId=<%= ramen.Id %>&quantity=1">Add to Cart</a>
+                    </div>
                 </div>
             <% } %>
         </div>
@@ -33,12 +32,12 @@
                         <td>Quantity</td>
                     </tr>
                     <% foreach (var item in Cart ?? new Dictionary<int, int>())
-                   {
-                       var details = Ramen[item.Key];
+                       {
+                           var details = Ramen[item.Key];
                     %>
                         <tr>
-                            <td><%=details.Name%></td>
-                            <td><%=item.Value%></td>
+                            <td><%= details.Name %></td>
+                            <td><%= item.Value %></td>
                         </tr>
                     <% } %>
                 </tb>
@@ -47,7 +46,4 @@
             <asp:BUtton runat="server" ID="PlaceOrderButton" OnClick="PlaceOrderButton_OnClick" Text="Place Order"/>
         </div>
     </div>
-</form>
-
-</body>
-</html>
+</asp:Content>
