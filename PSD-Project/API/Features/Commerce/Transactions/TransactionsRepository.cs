@@ -109,7 +109,8 @@ namespace PSD_Project.API.Features.Commerce.Transactions
                 header.id,
                 header.CustomerId ?? 0,
                 header.Staffid ?? 0,
-                header.Details.Select(d => new TransactionEntry(d.Ramenid, d.Quantity ?? 0)).ToList());
+                header.Details.Select(d => new TransactionEntry(d.Ramenid, d.Quantity ?? 0)).ToList(),
+                header.Date);
         }
     }
 }

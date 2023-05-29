@@ -47,7 +47,7 @@ namespace PSD_Project.API.Features.Ramen
 
         public Try<Ramen, Exception> CreateRamen(string name, string borth, string price, int meatId)
         {
-            var nextId = db.Ramen.Select(ramen => ramen.id).Max() + 1;
+            var nextId = db.Ramen.Select(ramen => ramen.id).DefaultIfEmpty(0).Max() + 1;
             var meat = db.Meats.Find(meatId);
 
             if (meat == null) return Try.Err<Ramen, Exception>(new ArgumentException());

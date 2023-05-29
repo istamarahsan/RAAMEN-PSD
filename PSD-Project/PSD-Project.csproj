@@ -152,6 +152,10 @@
     <Content Include="App\Pages\Register.aspx" />
     <Content Include="App\Pages\Transaction.aspx" />
     <Content Include="App\Pages\UpdateRamen.aspx" />
+    <Content Include="App_Data\Raamen.mdf" />
+    <Content Include="App_Data\Raamen_log.ldf">
+      <DependentUpon>Raamen.mdf</DependentUpon>
+    </Content>
     <Content Include="global.asax" />
   </ItemGroup>
   <ItemGroup>
